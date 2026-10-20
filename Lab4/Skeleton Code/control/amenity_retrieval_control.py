@@ -1,18 +1,33 @@
 from __future__ import annotations
 
-from sgpropfinder.control.retrieval_control import RetrievalControl
+from control.retrieval_control import RetrievalControl
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from sgpropfinder.entity.amenity_info import AmenityInfo
-    from sgpropfinder.entity.types import RawResponse
+    from entity.amenity_info import AmenityInfo
+    from entity.types import RawResponse
 
 
 class AmenityRetrievalControl(RetrievalControl):
-    """«control»"""
-
-    def retrieveAmenityInfo(self, subzoneCode: str) -> list[AmenityInfo]:
-        raise NotImplementedError  # TODO
+    """«control» Retrieves and parses amenity data for a subzone."""
 
     def parseResponse(self, data: RawResponse) -> list[AmenityInfo]:
+        """Parse response (protected).
+
+        Args:
+            data: RawResponse
+        Returns:
+            list[AmenityInfo]
+        """
+        raise NotImplementedError  # TODO
+
+    def fetchAmenitiesForSubzone(self, subzoneId: str) -> list[AmenityInfo]:
+        """Fetch amenities for subzone (public).
+
+        Args:
+            subzoneId: str
+        Returns:
+            list[AmenityInfo]
+        """
         raise NotImplementedError  # TODO

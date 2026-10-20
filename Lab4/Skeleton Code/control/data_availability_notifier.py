@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from sgpropfinder.boundary.notification_modal_ui import NotificationModalUI
-
 
 class DataAvailabilityNotifier:
-    """«control»"""
+    """«control» Tells the user when data for a subzone or criterion is unavailable."""
 
-    notificationUI: NotificationModalUI
+    def notifyMissingData(self, source: str, entityId: str) -> None:
+        """Notify missing data (public).
 
-    def notifyDataUnavailable(self, datasetName: str) -> None:
+        Args:
+            source: str
+            entityId: str
+        """
         raise NotImplementedError  # TODO

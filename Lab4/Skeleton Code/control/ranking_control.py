@@ -3,26 +3,42 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from sgpropfinder.control.commute_control import CommuteControl
-    from sgpropfinder.container.profile_catalog import ProfileCatalog
-    from sgpropfinder.entity.recommendation_set import RecommendationSet
-    from sgpropfinder.strategy.scoring_strategy import ScoringStrategy
-    from sgpropfinder.container.subzone_registry import SubzoneRegistry
+    from adapter.one_map_api_adapter import OneMapApiAdapter
+    from container.subzone_registry import SubzoneRegistry
+    from control.commute_control import CommuteControl
+    from entity.types import Coordinates
+    from entity.types import MapData
+    from entity.types import RouteData
 
 
 class RankingControl:
-    """«control»"""
+    """«control» Ranks subzones against the selected profile using a scoring strategy."""
 
-    profileCatalog: ProfileCatalog
-    subzoneRegistry: SubzoneRegistry
-    scoringStrategy: ScoringStrategy
-    commuteControl: CommuteControl
+    subzoneRegistry: SubzoneRegistry  # private
+    commuteControl: CommuteControl  # private
+    mapAdapter: OneMapApiAdapter  # private
 
-    def selectProfile(self, profileId: str) -> None:
+    def __init__(self, subzoneRegistry: SubzoneRegistry, commuteControl: CommuteControl, mapAdapter: OneMapApiAdapter) -> None:
+        """Create a RankingControl with its attributes (TODO: add validation if needed)."""
+        self.subzoneRegistry = subzoneRegistry
+        self.commuteControl = commuteControl
+        self.mapAdapter = mapAdapter
+
+    def getSubzonePolygons(self) -> MapData:
+        """Get subzone polygons (public).
+
+        Returns:
+            MapData
+        """
         raise NotImplementedError  # TODO
 
-    def calculateScore(self, profileId: str, subzoneCode: str) -> float:
-        raise NotImplementedError  # TODO
+    def getCommuteOverlay(self, start: Coordinates, dest: Coordinates) -> RouteData:
+        """Get commute overlay (public).
 
-    def generateRankedRecommendations(self, profileId: str) -> RecommendationSet:
+        Args:
+            start: Coordinates
+            dest: Coordinates
+        Returns:
+            RouteData
+        """
         raise NotImplementedError  # TODO

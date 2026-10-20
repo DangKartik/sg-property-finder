@@ -1,240 +1,407 @@
 # Skeleton Code — File Responsibilities
 
-This document describes what each file in the skeleton code is responsible for, based on the class design model (Lab 3) and the project description.
+Generated from `Lab3/Class_Diagram.drawio`. Each file holds one class from the class diagram. Attribute and method names follow the diagram exactly (camelCase), with diagram types mapped to Python types (`String`→`str`, `double`→`float`, `List<T>`→`list[T]`, `Map<K,V>`→`dict[K, V]`).
 
-The codebase follows a layered architecture:
+**Running / importing:** imports are rooted at this folder, so run Python from inside `Skeleton Code` (for example `python -c "import control.ranking_control"`). Method bodies are `raise NotImplementedError  # TODO` until implemented.
 
 | Package | Role |
 | --- | --- |
-| `boundary` | UI classes — render the interface and capture user input |
-| `control` | Control classes — coordinate use cases and business logic |
-| `entity` | Entity classes — domain data objects |
-| `container` | Containers/registries — hold and persist collections of entities |
-| `adapter` | Adapters — wrap the external APIs (data.gov.sg, OneMap) |
-| `strategy` | Strategy pattern — pluggable scoring algorithm |
+| `boundary` | UI classes: render the interface and capture user input |
+| `control` | Control classes: coordinate use cases and business logic |
+| `entity` | Entity classes: domain data objects |
+| `container` | Containers/registries: hold and persist collections of entities |
+| `adapter` | Adapters: wrap the external APIs (data.gov.sg, OneMap) |
+| `strategy` | Strategy pattern: pluggable scoring algorithm |
 
----
-
-## Root
-
-### `__init__.py`
-Marks the `Skeleton Code` folder as a Python package. Intentionally empty.
-
-### `README.md`
-Project readme with repository/deliverable instructions (not part of the code itself).
-
----
-
-## `adapter/`
-
-### `__init__.py`
-Marks `adapter` as a Python package. Intentionally empty.
-
-### `data_gov_sg_adapter.py` — `DataGovSgAdapter`
-Adapter for the **data.gov.sg API**. Responsible for:
-- Fetching datasets (housing/resale prices, amenities, environment data) by `resourceId`.
-- Keeping the API endpoint and any API-specific details private to this class (encapsulation/access control) so no other class deals with the raw API.
-
-### `one_map_api_adapter.py` — `OneMapApiAdapter`
-Adapter for the **OneMap API**. Responsible for:
-- Getting routing data (`getRoutingData`) between an origin and destination for a travel mode, used for commute estimates.
-- Getting basemap tiles (`getBasemapTile`) for the Leaflet map.
-- Storing the `apiKey` and `baseUrl` privately — API keys never leave this class.
+Shared types the diagram uses but never defines (`Coordinates`, `ProfileForm`, `ValidationResult`, `RawResponse`, `MapData`, `RouteData`, `FactSheetData`, `TransitMode`) are declared as empty placeholder classes in `entity/types.py`.
 
 ---
 
 ## `boundary/`
 
-### `__init__.py`
-Marks `boundary` as a Python package. Intentionally empty.
+### `boundary/notification_modal_ui.py` — `NotificationModalUI` («boundary»)
+Shows notifications and error messages to the user in a modal.
 
-### `profile_form_ui.py` — `ProfileFormUI`
-The preference input form. Responsible for:
-- Rendering the form where users key in preferences (budget range, flat types, workplace address) and adjust criterion sliders.
-- Submitting the entered profile data.
-- Displaying validation error messages when input is invalid.
+Attributes:
+- `- currentMessage: String`
 
-### `profile_selector_ui.py` — `ProfileSelectorUI`
-The saved-profiles dropdown. Responsible for:
-- Rendering the list of previously saved `PreferenceProfile`s.
-- Handling selection of a profile (`onProfileSelected`).
+Operations:
+- `+ showNotification(message: String, type: String): void`
+- `+ dismiss(): void`
 
-### `results_list_ui.py` — `ResultsListUI`
-The ranked recommendations list. Responsible for:
-- Rendering a `RecommendationSet` as a ranked list.
-- Handling clicks on a subzone to drill into its details.
+### `boundary/profile_form_ui.py` — `ProfileFormUI` («boundary»)
+Form where the user keys in a preference profile and criterion weights.
 
-### `neighborhood_map_ui.py` — `NeighborhoodMapUI`
-The interactive map (Leaflet). Responsible for:
-- Rendering the map of Singapore with choropleth layers for subzones.
-- Highlighting a selected subzone.
-- Rendering a commute overlay (e.g., route/time from the workplace to a subzone).
+Attributes:
+- `- profileControl: ProfileControl`
 
-### `fact_sheet_ui.py` — `FactSheetUI`
-The neighbourhood detail view. Responsible for:
-- Displaying all details of the selected subzone: amenities, environment info, housing pricing, and commute estimate.
+Operations:
+- `+ renderForm(): void`
+- `+ onSubmit(formData: Map<String, Object>): void`
 
-### `export_report_ui.py` — `ExportReportUI`
-The PDF export modal. Responsible for:
-- Rendering the export modal.
-- Triggering PDF generation.
-- Displaying the download link for the generated report.
+### `boundary/profile_selector_ui.py` — `ProfileSelectorUI` («boundary»)
+Dropdown of saved preference profiles; selecting one triggers ranking.
 
-### `notification_modal_ui.py` — `NotificationModalUI`
-A generic notification modal. Responsible for:
-- Showing a modal with a title and message (`showModal`).
-- Closing the modal (`closeModal`).
-- Used by `DataAvailabilityNotifier` to inform users when data is missing/unavailable.
+Attributes:
+- `- rankingControl: RankingControl`
 
----
+Operations:
+- `+ renderSelector(profiles: List<PreferenceProfile>): void`
+- `+ onSelectProfile(profileId: String): void`
 
-## `container/`
+### `boundary/results_list_ui.py` — `ResultsListUI` («boundary»)
+Displays the ranked list of recommended subzones.
 
-### `__init__.py`
-Marks `container` as a Python package. Intentionally empty.
+Attributes:
+- `- rankingControl: RankingControl`
 
-### `profile_catalog.py` — `ProfileCatalog`
-In-memory store of all saved `PreferenceProfile`s. Responsible for:
-- Adding, retrieving, listing, and removing profiles.
-- **Persistence**: reading/writing profiles to IndexedDB/local storage (`saveToLocalStorage`, `loadFromLocalStorage`, `deleteProfile`). Centralizing storage here means a future storage change is a single-point change.
+Operations:
+- `+ renderResults(results: RecommendationSet): void`
+- `+ onSubzoneClick(subzoneId: String): void`
 
-### `subzone_registry.py` — `SubzoneRegistry`
-In-memory store of all `Subzone`s. Responsible for:
-- Registering, retrieving (by subzone code), and listing subzones used across ranking, mapping, and details views.
+### `boundary/neighborhood_map_ui.py` — `NeighborhoodMapUI` («boundary»)
+Interactive map of subzones with the commute route layer.
 
----
+Attributes:
+- `- mapControl: MapControl`
+
+Operations:
+- `+ renderMap(subzones: List<Subzone>): void`
+- `+ renderCommuteLayer(routes: List<CommuteEstimate>): void`
+
+### `boundary/fact_sheet_ui.py` — `FactSheetUI` («boundary»)
+Fact sheet with amenities, pricing, environment and commute details of one subzone.
+
+Attributes:
+- `- detailsControl: NeighborhoodDetailsControl`
+
+Operations:
+- `+ displaySubzoneDetails(subzoneId: String): void`
+
+### `boundary/export_report_ui.py` — `ExportReportUI` («boundary»)
+Export dialog used to download the recommendations as a PDF report.
+
+Attributes:
+- `- reportControl: ReportControl`
+
+Operations:
+- `+ openExportModal(): void`
+- `+ onConfirmExport(format: String): void`
 
 ## `control/`
 
-### `__init__.py`
-Marks `control` as a Python package. Intentionally empty.
+### `control/system_startup_control.py` — `SystemStartupControl` («control»)
+Singleton start-up class that initialises the system on launch.
 
-### `system_startup_control.py` — `SystemStartupControl`
-Application entry point. Responsible for:
-- Initializing the system (`initializeSystem`): loading the `ProfileCatalog` and `SubzoneRegistry`.
-- Launching the UI (`launchUI`).
+Attributes:
+- `- instance: SystemStartupControl`
+- `- profileCatalog: ProfileCatalog`
+- `- subzoneRegistry: SubzoneRegistry`
 
-### `profile_control.py` — `ProfileControl`
-Coordinates the create/update/delete profile use case. Responsible for:
-- Creating new profiles, updating and deleting existing ones via `ProfileCatalog`.
-- Delegating input checks to `InputValidationControl`.
+Operations:
+- `+ getInstance(): SystemStartupControl`
+- `+ main(args: String[]): void`
+- `+ initializeSystem(): void`
 
-### `input_validation_control.py` — `InputValidationControl`
-Validates user-entered profile data. Responsible for:
-- Checking profile form data (`validateProfileData`) and returning a `ValidationResult`.
-- Enabling the system to notify users when inputs are invalid.
+### `control/profile_control.py` — `ProfileControl` («control»)
+Creates and updates preference profiles after validating the input.
 
-### `ranking_control.py` — `RankingControl`
-Coordinates the recommendation ranking use case. Responsible for:
-- Selecting the active profile.
-- Computing the suitability score for each subzone using the pluggable `ScoringStrategy`.
-- Generating a ranked `RecommendationSet` (`generateRankedRecommendations`).
+Attributes:
+- `- profileCatalog: ProfileCatalog`
 
-### `map_control.py` — `MapControl`
-Coordinates map data. Responsible for:
-- Generating the list of subzones to show on the map.
-- Fetching subzone boundary polygons via `OneMapApiAdapter`.
+Operations:
+- `+ createProfile(profileData: ProfileForm): boolean`
+- `+ updateProfile(id: String, profileData: ProfileForm): boolean`
 
-### `commute_control.py` — `CommuteControl`
-Coordinates commute estimation. Responsible for:
-- Retrieving a `CommuteEstimate` (duration, distance, transfers) for an origin/destination pair and travel mode via `OneMapApiAdapter`.
+### `control/input_validation_control.py` — `InputValidationControl` («control»)
+Validates profile form input and reports errors.
 
-### `neighborhood_details_control.py` — `NeighborhoodDetailsControl`
-Coordinates the "view neighbourhood details" use case. Responsible for:
-- Orchestrating the amenity, environment, pricing, and commute retrieval controls.
-- Assembling their results into a single neighbourhood detail DTO for the UI.
+Operations:
+- `+ validateProfileForm(formData: Map<String, Object>): ValidationResult`
 
-### `retrieval_control.py` — `RetrievalControl` (abstract)
-**Template Method** base class for all data.gov.sg retrievals. Responsible for:
-- Defining the common fetch → parse → notify-if-missing flow (`fetchData`).
-- Handling missing data (`handleMissingData`) via `DataAvailabilityNotifier`.
-- Subclasses override only the parsing step (`parseResponse`).
+### `control/data_availability_notifier.py` — `DataAvailabilityNotifier` («control»)
+Tells the user when data for a subzone or criterion is unavailable.
 
-### `amenity_retrieval_control.py` — `AmenityRetrievalControl`
-Extends `RetrievalControl`. Responsible for:
-- Retrieving amenities (parks, schools, hospitals, malls, transport) for a subzone and returning `List<AmenityInfo>`.
+Operations:
+- `+ notifyMissingData(source: String, entityId: String): void`
 
-### `environment_retrieval_control.py` — `EnvironmentRetrievalControl`
-Extends `RetrievalControl`. Responsible for:
-- Retrieving environment data (weather pattern, green coverage) for a subzone and returning `EnvironmentInfo`.
+### `control/ranking_control.py` — `RankingControl` («control»)
+Ranks subzones against the selected profile using a scoring strategy.
 
-### `house_pricing_retrieval_control.py` — `HousePricingRetrievalControl`
-Extends `RetrievalControl`. Responsible for:
-- Retrieving housing price data (average price, median price per sqm, price trend) for a subzone and returning `HousePricing`.
+Attributes:
+- `- subzoneRegistry: SubzoneRegistry`
+- `- commuteControl: CommuteControl`
+- `- mapAdapter: OneMapApiAdapter`
 
-### `report_control.py` — `ReportControl`
-Coordinates the "export to PDF" use case. Responsible for:
-- Generating a `PdfReport` from a `RecommendationSet` and neighbourhood details (showing which neighbourhood meets the user's requirements and why).
-- Raising notifications (via `DataAvailabilityNotifier`) if anything needed for the report is missing.
+Operations:
+- `+ getSubzonePolygons(): MapData`
+- `+ getCommuteOverlay(start: Coordinates, dest: Coordinates): RouteData`
 
-### `data_availability_notifier.py` — `DataAvailabilityNotifier`
-Responsible for:
-- Notifying the user when data for a specific neighbourhood or criterion is unavailable, by showing a `NotificationModalUI`.
+### `control/map_control.py` — `MapControl` («control»)
+Prepares map data (subzone polygons, commute overlay) for the map UI.
 
----
+Attributes:
+- `- subzoneRegistry: SubzoneRegistry`
+- `- commuteControl: CommuteControl`
+- `- mapAdapter: OneMapApiAdapter`
+
+Operations:
+- `+ getSubzonePolygons(): MapData`
+- `+ getCommuteOverlay(start: Coordinates, dest: Coordinates): RouteData`
+
+### `control/commute_control.py` — `CommuteControl` («control»)
+Calculates commute time and distance through the OneMap adapter.
+
+Attributes:
+- `- apiAdapter: OneMapApiAdapter`
+
+Operations:
+- `+ calculateTravelTime(origin: Coordinates, dest: Coordinates, mode: TransitMode): CommuteEstimate`
+
+### `control/neighborhood_details_control.py` — `NeighborhoodDetailsControl` («control»)
+Collects amenity, environment and pricing data into one fact sheet.
+
+Attributes:
+- `- amenityRetrieval: RetrievalControl`
+- `- envRetrieval: RetrievalControl`
+- `- priceRetrieval: RetrievalControl`
+
+Operations:
+- `+ getFullFactSheet(subzoneId: String): FactSheetData`
+
+### `control/retrieval_control.py` — `RetrievalControl` («control», abstract)
+Template-method base class for fetching and parsing data.gov.sg datasets.
+
+Attributes:
+- `# dataAdapter: DataGovSgAdapter`
+
+Operations:
+- `+ fetchData(datasetId: String): RawResponse`
+- `# parseResponse(data: RawResponse): Object`
+
+Template Method: subclasses override `parseResponse` only.
+
+### `control/amenity_retrieval_control.py` — `AmenityRetrievalControl` («control»)
+Retrieves and parses amenity data for a subzone. Extends `RetrievalControl`.
+
+Operations:
+- `# parseResponse(data: RawResponse): List<AmenityInfo>`
+- `+ fetchAmenitiesForSubzone(subzoneId: String): List<AmenityInfo>`
+
+### `control/environmental_retrieval_control.py` — `EnvironmentalRetrievalControl` («control»)
+Retrieves and parses environmental data for a subzone. Extends `RetrievalControl`.
+
+Operations:
+- `# parseResponse(data: RawResponse): List<AmenityInfo>`
+- `+ fetchEnvironmentForSubzone(subzoneId: String): List<AmenityInfo>`
+
+### `control/house_pricing_retrieval_control.py` — `HousePricingRetrievalControl` («control»)
+Retrieves and parses house pricing data for a subzone. Extends `RetrievalControl`.
+
+Operations:
+- `# parseResponse(data: RawResponse): List<AmenityInfo>`
+- `+ fetchPricingForSubzone(subzoneId: String): List<AmenityInfo>`
+
+### `control/report_control.py` — `ReportControl` («control»)
+Generates the PDF report and exports it to a file.
+
+Attributes:
+- `- lastGeneratedReport: PdfReport`
+
+Operations:
+- `+ generatePdfReport(recommendationSet: RecommendationSet): PdfReport`
+- `+ exportToFile(report: PdfReport, filePath: String): boolean`
+
+## `container/`
+
+### `container/profile_catalog.py` — `ProfileCatalog` («container»)
+Holds all saved preference profiles and persists them in the browser's IndexedDB.
+
+Attributes:
+- `- profiles: Map<String, PreferenceProfile>`
+
+Operations:
+- `+ addProfile(profile: PreferenceProfile): void`
+- `+ getProfile(id: String): PreferenceProfile`
+- `+ getAllProfiles(): List<PreferenceProfile>`
+- `+ deleteProfile(id: String): void`
+- `+ saveToIndexedDB(): void`
+- `+ loadFromIndexedDB(): void`
+
+### `container/subzone_registry.py` — `SubzoneRegistry` («container»)
+Holds all subzones loaded from the external datasets.
+
+Attributes:
+- `- subzones: Map<String, Subzone>`
+
+Operations:
+- `+ getSubzone(id: String): Subzone`
+- `+ getAllSubzones(): List<Subzone>`
+- `+ loadSubzones(data: List<Subzone>): void`
 
 ## `entity/`
 
-### `__init__.py`
-Marks `entity` as a Python package. Intentionally empty.
+### `entity/preference_profile.py` — `PreferenceProfile` («entity»)
+A user's saved preferences and the weight given to each criterion.
 
-### `preference_profile.py` — `PreferenceProfile`
-The user's preference profile. Responsible for:
-- Holding profile identity, budget range, selected flat types, workplace address, anchor coordinates, creation/update timestamps, active flag, and criterion weights.
-- Updating its own details and managing its `CriterionWeight`s.
+Attributes:
+- `- profileId: String`
+- `- profileName: String`
+- `- criteriaWeights: List<CriterionWeight>`
 
-### `criterion_weight.py` — `CriterionWeight`
-A single preference criterion and its importance. Responsible for:
-- Holding a criterion name and its weight value, with getters/setters.
+Operations:
+- `+ getWeightForCriterion(criterion: String): double`
+- `+ updateWeight(criterion: String, weight: double): void`
 
-### `subzone.py` — `Subzone`
-A neighbourhood subzone. Responsible for:
-- Holding the subzone code, name, boundary polygon, and computed suitability score, with getters/setters.
+### `entity/criterion_weight.py` — `CriterionWeight` («entity»)
+The importance a user assigns to one criterion.
 
-### `recommendation_set.py` — `RecommendationSet`
-The output of a ranking run. Responsible for:
-- Holding the profile id, generation time, and list of `RecommendationItem`s; adding items and sorting them by rank.
+Attributes:
+- `- criterionName: String`
+- `- weightValue: double`
 
-### `recommendation_item.py` — `RecommendationItem`
-One ranked result. Responsible for:
-- Holding the subzone id, rank, total score, and the per-criterion score breakdown.
+Operations:
+- `+ getCriterionName(): String`
+- `+ getWeightValue(): double`
 
-### `commute_estimate.py` — `CommuteEstimate`
-A commute result. Responsible for:
-- Holding duration (minutes), distance (km), transfer count, and travel mode, with getters.
+### `entity/subzone.py` — `Subzone` («entity»)
+A Singapore subzone with its boundary, amenities, commute estimates, pricing and environment data.
 
-### `amenity_info.py` — `AmenityInfo`
-A single amenity. Responsible for:
-- Holding the amenity name, category, and location (coordinates).
+Attributes:
+- `- subzoneId: String`
+- `- name: String`
+- `- boundariesGeoJson: String`
+- `- amenities: List<AmenityInfo>`
+- `- commuteEstimates: List<CommuteEstimate>`
+- `- pricing: HousePricing`
+- `- environment: EnvironmentInfo`
 
-### `house_pricing.py` — `HousePricing`
-Housing price data for a subzone. Responsible for:
-- Holding average price, median price per sqm, and price trend, with getters.
+Operations:
+- `+ getId(): String`
+- `+ addAmenity(amenity: AmenityInfo): void`
+- `+ setHousePricing(pricing: HousePricing): void`
 
-### `environment_info.py` — `EnvironmentInfo`
-Environment data for a subzone. Responsible for:
-- Holding the weather pattern and green coverage percentage, with getters.
+### `entity/amenity_info.py` — `AmenityInfo` («entity»)
+One amenity (school, hospital, park, mall...) located in a subzone.
 
-### `pdf_report.py` — `PdfReport`
-A generated PDF report. Responsible for:
-- Holding the report id, generation time, and file path, with getters.
+Attributes:
+- `- amenityId: String`
+- `- category: String`
+- `- name: String`
+- `- location: Coordinates`
 
-### `types.py` — Shared types
-Shared helper types used across layers. Responsible for:
-- Defining common data structures not modelled as full entities, e.g. `Coordinates`, `Polygon`, `ProfileDTO`, `ValidationResult`, and `NeighborhoodDetailDTO`.
+Operations:
+- `+ getCategory(): String`
+- `+ getName(): String`
 
----
+### `entity/house_pricing.py` — `HousePricing` («entity»)
+House pricing figures for a subzone.
+
+Attributes:
+- `- medianPrice: double`
+- `- propertyType: String`
+- `- pricePerSqFt: double`
+
+Operations:
+- `+ getMedianPrice(): double`
+
+### `entity/environment_info.py` — `EnvironmentInfo` («entity»)
+Environmental quality figures for a subzone.
+
+Attributes:
+- `- airQualityIndex: int`
+- `- greenSpacePercentage: double`
+- `- averageNoiseLevelDb: double`
+
+Operations:
+- `+ getGreenSpace(): double`
+
+### `entity/commute_estimate.py` — `CommuteEstimate` («entity»)
+Estimated commute from the workplace to a subzone.
+
+Attributes:
+- `- durationMinutes: int`
+- `- transitMode: String`
+- `- distanceKm: double`
+
+Operations:
+- `+ getDuration(): int`
+- `+ getMode(): String`
+
+### `entity/recommendation_set.py` — `RecommendationSet` («entity»)
+The set of ranked recommendations generated for a profile.
+
+Attributes:
+- `- setId: String`
+- `- generatedTimestamp: Date`
+- `- items: List<RecommendationItem>`
+
+Operations:
+- `+ addItem(item: RecommendationItem): void`
+- `+ getSortedItems(): List<RecommendationItem>`
+
+### `entity/recommendation_item.py` — `RecommendationItem` («entity»)
+One ranked subzone with its suitability score.
+
+Attributes:
+- `- rank: int`
+- `- totalScore: double`
+- `- targetSubzone: Subzone`
+
+Operations:
+- `+ getRank(): int`
+- `+ getScore(): double`
+- `+ getSubzone(): Subzone`
+
+### `entity/pdf_report.py` — `PdfReport` («entity»)
+A generated PDF report of the recommendations.
+
+Attributes:
+- `- reportId: String`
+- `- contentBytes: byte[]`
+- `- createdAt: Date`
+
+Operations:
+- `+ getFileStream(): InputStream`
+
+## `adapter/`
+
+### `adapter/one_map_api_adapter.py` — `OneMapApiAdapter` («adapter»)
+Adapter hiding the OneMap API behind a simple interface.
+
+Attributes:
+- `- baseUrl: String`
+
+Operations:
+- `+ fetchDataset(datasetId: String): String`
+
+### `adapter/data_gov_sg_adapter.py` — `DataGovSgAdapter` («adapter»)
+Adapter hiding the data.gov.sg API behind a simple interface; the API key stays private here.
+
+Attributes:
+- `- apiKey: String`
+- `- baseUrl: String`
+
+Operations:
+- `+ fetchRoute(start: Coordinates, end: Coordinates): String`
+- `+ fetchSubzonePolygons(): String`
 
 ## `strategy/`
 
-### `__init__.py`
-Marks `strategy` as a Python package. Intentionally empty.
+### `strategy/scoring_strategy.py` — `ScoringStrategy` («strategy», interface)
+Strategy interface for computing a subzone's suitability score.
 
-### `scoring_strategy.py` — `ScoringStrategy`
-The **Strategy** interface for scoring. Responsible for:
-- Declaring `computeSuitabilityScore(subzone, profile, commute)` so `RankingControl` can score without knowing the algorithm.
+Operations:
+- `+ calculateScore(subzone: Subzone, profile: PreferenceProfile): double`
 
-### `weighted_scoring_strategy.py` — `WeightedScoringStrategy`
-Concrete implementation of `ScoringStrategy`. Responsible for:
-- Computing the 0–100 suitability score by applying the user's criterion weights to the subzone data (prices, amenities, commute, environment).
-- The scoring algorithm can be swapped out (e.g., a different strategy) without modifying `RankingControl`.
+### `strategy/weighted_scoring_strategy.py` — `WeightedScoringStrategy` («strategy»)
+Scores a subzone as a weighted sum of criterion scores. Extends `ScoringStrategy`.
+
+Attributes:
+- `- weightsMap: Map<String, Double>`
+
+Operations:
+- `+ calculateScore(subzone: Subzone, profile: PreferenceProfile): double`
+
+## `entity/types.py`
+Placeholder declarations for the shared types listed above.

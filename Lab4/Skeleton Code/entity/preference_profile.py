@@ -3,35 +3,37 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from datetime import datetime
-    from sgpropfinder.entity.types import Coordinates
-    from sgpropfinder.entity.criterion_weight import CriterionWeight
-    from sgpropfinder.entity.types import ProfileDTO
+    from entity.criterion_weight import CriterionWeight
 
 
 class PreferenceProfile:
-    """«entity»"""
+    """«entity» A user's saved preferences and the weight given to each criterion."""
 
-    profileId: str
-    profileName: str
-    budgetMin: float
-    budgetMax: float
-    selectedFlatTypes: list[str]
-    workplaceAddress: str
-    anchorCoordinates: Coordinates
-    creationTime: datetime
-    lastUpdatedTime: datetime
-    isActive: bool
-    criteriaWeights: list[CriterionWeight]
+    profileId: str  # private
+    profileName: str  # private
+    criteriaWeights: list[CriterionWeight]  # private
 
-    def getProfileId(self) -> str:
+    def __init__(self, profileId: str, profileName: str, criteriaWeights: list[CriterionWeight]) -> None:
+        """Create a PreferenceProfile with its attributes (TODO: add validation if needed)."""
+        self.profileId = profileId
+        self.profileName = profileName
+        self.criteriaWeights = criteriaWeights
+
+    def getWeightForCriterion(self, criterion: str) -> float:
+        """Get weight for criterion (public).
+
+        Args:
+            criterion: str
+        Returns:
+            float
+        """
         raise NotImplementedError  # TODO
 
-    def updateDetails(self, data: ProfileDTO) -> None:
-        raise NotImplementedError  # TODO
+    def updateWeight(self, criterion: str, weight: float) -> None:
+        """Update weight (public).
 
-    def addCriterionWeight(self, weight: CriterionWeight) -> None:
-        raise NotImplementedError  # TODO
-
-    def getCriteriaWeights(self) -> list[CriterionWeight]:
+        Args:
+            criterion: str
+            weight: float
+        """
         raise NotImplementedError  # TODO

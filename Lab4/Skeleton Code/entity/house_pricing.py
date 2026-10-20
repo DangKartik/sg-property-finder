@@ -1,20 +1,23 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    pass
-
 
 class HousePricing:
-    """«entity»"""
+    """«entity» House pricing figures for a subzone."""
 
-    averagePrice: float
-    medianPricePerSqm: float
-    priceTrend: str
+    medianPrice: float  # private
+    propertyType: str  # private
+    pricePerSqFt: float  # private
 
-    def getAveragePrice(self) -> float:
-        raise NotImplementedError  # TODO
+    def __init__(self, medianPrice: float, propertyType: str, pricePerSqFt: float) -> None:
+        """Create a HousePricing with its attributes (TODO: add validation if needed)."""
+        self.medianPrice = medianPrice
+        self.propertyType = propertyType
+        self.pricePerSqFt = pricePerSqFt
 
-    def getMedianPricePerSqm(self) -> float:
+    def getMedianPrice(self) -> float:
+        """Get median price (public).
+
+        Returns:
+            float
+        """
         raise NotImplementedError  # TODO

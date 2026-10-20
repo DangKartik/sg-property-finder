@@ -4,17 +4,26 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from datetime import datetime
+    from typing import BinaryIO
 
 
 class PdfReport:
-    """«entity»"""
+    """«entity» A generated PDF report of the recommendations."""
 
-    reportId: str
-    generatedTime: datetime
-    filePath: str
+    reportId: str  # private
+    contentBytes: bytes  # private
+    createdAt: datetime  # private
 
-    def getReportId(self) -> str:
-        raise NotImplementedError  # TODO
+    def __init__(self, reportId: str, contentBytes: bytes, createdAt: datetime) -> None:
+        """Create a PdfReport with its attributes (TODO: add validation if needed)."""
+        self.reportId = reportId
+        self.contentBytes = contentBytes
+        self.createdAt = createdAt
 
-    def getFilePath(self) -> str:
+    def getFileStream(self) -> BinaryIO:
+        """Get file stream (public).
+
+        Returns:
+            BinaryIO
+        """
         raise NotImplementedError  # TODO

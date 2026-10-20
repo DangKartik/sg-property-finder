@@ -3,16 +3,22 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from sgpropfinder.entity.amenity_info import AmenityInfo
-    from sgpropfinder.entity.commute_estimate import CommuteEstimate
-    from sgpropfinder.entity.environment_info import EnvironmentInfo
-    from sgpropfinder.entity.house_pricing import HousePricing
+    from control.neighborhood_details_control import NeighborhoodDetailsControl
 
 
 class FactSheetUI:
-    """«boundary»"""
+    """«boundary» Fact sheet with amenities, pricing, environment and commute details of one subzone."""
 
-    activeSubzoneId: str
+    detailsControl: NeighborhoodDetailsControl  # private
 
-    def displayDetails(self, amenities: list[AmenityInfo], env: EnvironmentInfo, pricing: HousePricing, commute: CommuteEstimate) -> None:
+    def __init__(self, detailsControl: NeighborhoodDetailsControl) -> None:
+        """Create a FactSheetUI with its attributes (TODO: add validation if needed)."""
+        self.detailsControl = detailsControl
+
+    def displaySubzoneDetails(self, subzoneId: str) -> None:
+        """Display subzone details (public).
+
+        Args:
+            subzoneId: str
+        """
         raise NotImplementedError  # TODO

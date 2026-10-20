@@ -4,21 +4,34 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from sgpropfinder.entity.recommendation_item import RecommendationItem
+    from entity.recommendation_item import RecommendationItem
 
 
 class RecommendationSet:
-    """«entity»"""
+    """«entity» The set of ranked recommendations generated for a profile."""
 
-    profileId: str
-    generatedTime: datetime
-    items: list[RecommendationItem]
+    setId: str  # private
+    generatedTimestamp: datetime  # private
+    items: list[RecommendationItem]  # private
+
+    def __init__(self, setId: str, generatedTimestamp: datetime, items: list[RecommendationItem]) -> None:
+        """Create a RecommendationSet with its attributes (TODO: add validation if needed)."""
+        self.setId = setId
+        self.generatedTimestamp = generatedTimestamp
+        self.items = items
 
     def addItem(self, item: RecommendationItem) -> None:
+        """Add item (public).
+
+        Args:
+            item: RecommendationItem
+        """
         raise NotImplementedError  # TODO
 
-    def getItems(self) -> list[RecommendationItem]:
-        raise NotImplementedError  # TODO
+    def getSortedItems(self) -> list[RecommendationItem]:
+        """Get sorted items (public).
 
-    def sortByRank(self) -> None:
+        Returns:
+            list[RecommendationItem]
+        """
         raise NotImplementedError  # TODO
