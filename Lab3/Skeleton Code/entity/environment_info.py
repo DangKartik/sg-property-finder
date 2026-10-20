@@ -1,19 +1,23 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    pass
-
 
 class EnvironmentInfo:
-    """«entity»"""
+    """«entity» Environmental quality figures for a subzone."""
 
-    weatherPattern: str
-    greenCoveragePercent: float
+    airQualityIndex: int  # private
+    greenSpacePercentage: float  # private
+    averageNoiseLevelDb: float  # private
 
-    def getWeatherPattern(self) -> str:
-        raise NotImplementedError  # TODO
+    def __init__(self, airQualityIndex: int, greenSpacePercentage: float, averageNoiseLevelDb: float) -> None:
+        """Create a EnvironmentInfo with its attributes (TODO: add validation if needed)."""
+        self.airQualityIndex = airQualityIndex
+        self.greenSpacePercentage = greenSpacePercentage
+        self.averageNoiseLevelDb = averageNoiseLevelDb
 
-    def getGreenCoveragePercent(self) -> float:
+    def getGreenSpace(self) -> float:
+        """Get green space (public).
+
+        Returns:
+            float
+        """
         raise NotImplementedError  # TODO

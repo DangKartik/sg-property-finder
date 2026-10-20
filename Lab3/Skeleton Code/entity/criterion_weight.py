@@ -1,22 +1,29 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    pass
-
 
 class CriterionWeight:
-    """«entity»"""
+    """«entity» The importance a user assigns to one criterion."""
 
-    criterionName: str
-    weightValue: float
+    criterionName: str  # private
+    weightValue: float  # private
+
+    def __init__(self, criterionName: str, weightValue: float) -> None:
+        """Create a CriterionWeight with its attributes (TODO: add validation if needed)."""
+        self.criterionName = criterionName
+        self.weightValue = weightValue
 
     def getCriterionName(self) -> str:
+        """Get criterion name (public).
+
+        Returns:
+            str
+        """
         raise NotImplementedError  # TODO
 
     def getWeightValue(self) -> float:
-        raise NotImplementedError  # TODO
+        """Get weight value (public).
 
-    def setWeightValue(self, value: float) -> None:
+        Returns:
+            float
+        """
         raise NotImplementedError  # TODO

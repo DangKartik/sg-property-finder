@@ -1,19 +1,22 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from sgpropfinder.entity.types import Coordinates
-
 
 class OneMapApiAdapter:
-    """«adapter»"""
+    """«adapter» Adapter hiding the OneMap API behind a simple interface."""
 
-    apiKey: str
-    baseUrl: str
+    baseUrl: str  # private
 
-    def getRoutingData(self, origin: Coordinates, dest: Coordinates, mode: str) -> dict:
-        raise NotImplementedError  # TODO
+    def __init__(self, baseUrl: str) -> None:
+        """Create a OneMapApiAdapter with its attributes (TODO: add validation if needed)."""
+        self.baseUrl = baseUrl
 
-    def getBasemapTile(self, x: int, y: int, zoom: int) -> bytes:
+    def fetchDataset(self, datasetId: str) -> str:
+        """Fetch dataset (public).
+
+        Args:
+            datasetId: str
+        Returns:
+            str
+        Note: Diagram puts fetchDataset on the OneMap adapter (it reads like a data.gov.sg call).
+        """
         raise NotImplementedError  # TODO

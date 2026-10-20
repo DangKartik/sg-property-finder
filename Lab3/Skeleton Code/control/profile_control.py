@@ -3,22 +3,36 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from sgpropfinder.control.input_validation_control import InputValidationControl
-    from sgpropfinder.container.profile_catalog import ProfileCatalog
-    from sgpropfinder.entity.types import ProfileDTO
+    from container.profile_catalog import ProfileCatalog
+    from entity.types import ProfileForm
 
 
 class ProfileControl:
-    """«control»"""
+    """«control» Creates and updates preference profiles after validating the input."""
 
-    profileCatalog: ProfileCatalog
-    validator: InputValidationControl
+    profileCatalog: ProfileCatalog  # private
 
-    def createProfile(self, data: ProfileDTO) -> str:
+    def __init__(self, profileCatalog: ProfileCatalog) -> None:
+        """Create a ProfileControl with its attributes (TODO: add validation if needed)."""
+        self.profileCatalog = profileCatalog
+
+    def createProfile(self, profileData: ProfileForm) -> bool:
+        """Create profile (public).
+
+        Args:
+            profileData: ProfileForm
+        Returns:
+            bool
+        """
         raise NotImplementedError  # TODO
 
-    def updateProfile(self, profileId: str, data: ProfileDTO) -> bool:
-        raise NotImplementedError  # TODO
+    def updateProfile(self, id: str, profileData: ProfileForm) -> bool:
+        """Update profile (public).
 
-    def deleteProfile(self, profileId: str) -> bool:
+        Args:
+            id: str
+            profileData: ProfileForm
+        Returns:
+            bool
+        """
         raise NotImplementedError  # TODO

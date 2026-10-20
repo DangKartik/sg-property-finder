@@ -1,19 +1,24 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    pass
-
 
 class NotificationModalUI:
-    """«boundary»"""
+    """«boundary» Shows notifications and error messages to the user in a modal."""
 
-    modalTitle: str
-    modalMessage: str
+    currentMessage: str  # private
 
-    def showModal(self, title: str, message: str) -> None:
+    def __init__(self, currentMessage: str) -> None:
+        """Create a NotificationModalUI with its attributes (TODO: add validation if needed)."""
+        self.currentMessage = currentMessage
+
+    def showNotification(self, message: str, type: str) -> None:
+        """Show notification (public).
+
+        Args:
+            message: str
+            type: str
+        """
         raise NotImplementedError  # TODO
 
-    def closeModal(self) -> None:
+    def dismiss(self) -> None:
+        """Dismiss (public)."""
         raise NotImplementedError  # TODO

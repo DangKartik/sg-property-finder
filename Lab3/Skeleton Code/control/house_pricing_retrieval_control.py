@@ -1,18 +1,35 @@
 from __future__ import annotations
 
-from sgpropfinder.control.retrieval_control import RetrievalControl
+from control.retrieval_control import RetrievalControl
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from sgpropfinder.entity.house_pricing import HousePricing
-    from sgpropfinder.entity.types import RawResponse
+    from entity.amenity_info import AmenityInfo
+    from entity.types import RawResponse
 
 
 class HousePricingRetrievalControl(RetrievalControl):
-    """«control»"""
+    """«control» Retrieves and parses house pricing data for a subzone."""
 
-    def retrieveHousePricing(self, subzoneCode: str) -> HousePricing:
+    def parseResponse(self, data: RawResponse) -> list[AmenityInfo]:
+        """Parse response (protected).
+
+        Args:
+            data: RawResponse
+        Returns:
+            list[AmenityInfo]
+        Note: Diagram shows List<AmenityInfo> here; HousePricing is probably intended.
+        """
         raise NotImplementedError  # TODO
 
-    def parseResponse(self, data: RawResponse) -> HousePricing:
+    def fetchPricingForSubzone(self, subzoneId: str) -> list[AmenityInfo]:
+        """Fetch pricing for subzone (public).
+
+        Args:
+            subzoneId: str
+        Returns:
+            list[AmenityInfo]
+        Note: Diagram shows List<AmenityInfo> here; HousePricing is probably intended.
+        """
         raise NotImplementedError  # TODO

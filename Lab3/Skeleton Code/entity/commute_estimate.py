@@ -1,24 +1,31 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    pass
-
 
 class CommuteEstimate:
-    """«entity»"""
+    """«entity» Estimated commute from the workplace to a subzone."""
 
-    durationMinutes: int
-    distanceKm: float
-    transferCount: int
-    travelMode: str
+    durationMinutes: int  # private
+    transitMode: str  # private
+    distanceKm: float  # private
 
-    def getDurationMinutes(self) -> int:
+    def __init__(self, durationMinutes: int, transitMode: str, distanceKm: float) -> None:
+        """Create a CommuteEstimate with its attributes (TODO: add validation if needed)."""
+        self.durationMinutes = durationMinutes
+        self.transitMode = transitMode
+        self.distanceKm = distanceKm
+
+    def getDuration(self) -> int:
+        """Get duration (public).
+
+        Returns:
+            int
+        """
         raise NotImplementedError  # TODO
 
-    def getDistanceKm(self) -> float:
-        raise NotImplementedError  # TODO
+    def getMode(self) -> str:
+        """Get mode (public).
 
-    def getTransferCount(self) -> int:
+        Returns:
+            str
+        """
         raise NotImplementedError  # TODO

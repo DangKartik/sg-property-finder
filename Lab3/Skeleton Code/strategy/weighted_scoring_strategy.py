@@ -1,18 +1,30 @@
 from __future__ import annotations
 
-from sgpropfinder.strategy.scoring_strategy import ScoringStrategy
+from strategy.scoring_strategy import ScoringStrategy
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from sgpropfinder.entity.commute_estimate import CommuteEstimate
-    from sgpropfinder.entity.preference_profile import PreferenceProfile
-    from sgpropfinder.entity.subzone import Subzone
+    from entity.preference_profile import PreferenceProfile
+    from entity.subzone import Subzone
 
 
 class WeightedScoringStrategy(ScoringStrategy):
-    """«strategy»"""
+    """«strategy» Scores a subzone as a weighted sum of criterion scores."""
 
-    weightMap: dict[str, float]
+    weightsMap: dict[str, float]  # private
 
-    def computeSuitabilityScore(self, subzone: Subzone, profile: PreferenceProfile, commute: CommuteEstimate) -> float:
+    def __init__(self, weightsMap: dict[str, float]) -> None:
+        """Create a WeightedScoringStrategy with its attributes (TODO: add validation if needed)."""
+        self.weightsMap = weightsMap
+
+    def calculateScore(self, subzone: Subzone, profile: PreferenceProfile) -> float:
+        """Calculate score (public).
+
+        Args:
+            subzone: Subzone
+            profile: PreferenceProfile
+        Returns:
+            float
+        """
         raise NotImplementedError  # TODO
