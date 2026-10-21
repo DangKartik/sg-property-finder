@@ -4,14 +4,14 @@ NPM ?= npm
 .PHONY: help install dev backend frontend test build clean
 
 help:
-	@echo "SG Property Finder"
-	@echo "  make install  - install backend and frontend dependencies"
-	@echo "  make dev      - run FastAPI and Vite together (Ctrl+C stops both)"
-	@echo "  make backend  - run only FastAPI on port 8000"
-	@echo "  make frontend - run only Vite on port 5173"
-	@echo "  make test     - run backend unittest suite"
-	@echo "  make build    - type-check and build the frontend"
-	@echo "  make clean    - remove frontend dist and Python caches"
+	@echo SG Property Finder
+	@echo   make install  - install backend and frontend dependencies
+	@echo   make dev      - run FastAPI and Vite together (Ctrl+C stops both)
+	@echo   make backend  - run only FastAPI on port 8000
+	@echo   make frontend - run only Vite on port 5173
+	@echo   make test     - run backend unittest suite
+	@echo   make build    - type-check and build the frontend
+	@echo   make clean    - remove frontend dist and Python caches
 
 install:
 	$(PYTHON) -m pip install -r backend/requirements.txt

@@ -13,8 +13,13 @@ and PDF export.
 ```text
 revised-skeleton/
 ├── README.md
+├── Makefile
 ├── .env.example
 ├── .gitignore
+├── scripts/
+│   ├── clean.py
+│   ├── dev.py
+│   └── test_backend.py
 ├── docs/
 │   ├── ENVIRONMENT.md
 │   ├── OPEN_ISSUES.md
@@ -214,9 +219,35 @@ cp .env.example .env
 
 ## Run the application
 
+### One command (recommended)
+
+GNU Make is installed locally via winget (`ezwinports.make`).
+
+```powershell
+cd Lab4/revised-skeleton
+make install
+make dev
+```
+
+`make dev` starts FastAPI on port 8000 and Vite on port 5173, waits for both,
+and opens the browser. Press **Ctrl+C** to stop both.
+
+Other targets:
+
+```powershell
+make backend    # FastAPI only
+make frontend   # Vite only
+make test       # backend unittest suite
+make build      # frontend type-check + production build
+make clean
+make help
+```
+
+### Manual commands
+
 Terminal 1 — backend:
 
-```bash
+```powershell
 cd Lab4/revised-skeleton/backend
 python -m pip install -r requirements.txt
 python -m uvicorn main:app --reload --port 8000
@@ -224,7 +255,7 @@ python -m uvicorn main:app --reload --port 8000
 
 Terminal 2 — frontend:
 
-```bash
+```powershell
 cd Lab4/revised-skeleton/frontend
 npm install
 npm run dev
