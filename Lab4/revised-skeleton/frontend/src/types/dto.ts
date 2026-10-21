@@ -123,6 +123,7 @@ export interface AmenityInfoDTO {
 /** HDB resale pricing for one flat type. */
 export interface HousePricingDTO {
   averagePrice: number;
+  medianPrice: number | null;
   medianPricePerSqm: number;
   priceTrend: string;
   priceTrendPercent: number;
@@ -212,6 +213,7 @@ export interface RecommendationSetDTO {
   dataAsOf: string;
   items: RecommendationItemDTO[];
   warnings: DataAvailabilityWarningDTO[];
+  profileSnapshot: ProfileDTO | null;
 }
 
 /** Complete factsheet for one subzone. */
@@ -225,6 +227,7 @@ export interface NeighborhoodDetailDTO {
   warnings: DataAvailabilityWarningDTO[];
   generatedTime: string;
   indicators: SubzoneIndicatorsDTO | null;
+  pricingNote: string | null;
 }
 
 /** Side-by-side comparison result. */

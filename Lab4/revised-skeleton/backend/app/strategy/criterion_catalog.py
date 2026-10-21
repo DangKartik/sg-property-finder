@@ -1,63 +1,72 @@
-"""Criterion catalog module."""
+"""Frozen criterion definitions used by scoring."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum
 
+
 class CriterionDirection(str, Enum):
-    """Stereotype: Strategy. Strategy enum describing whether a criterion is minimised or maximised."""
-    MINIMIZE = 'MINIMIZE'
-    MAXIMIZE = 'MAXIMIZE'
+    """Stereotype: Strategy. Whether a criterion is minimised or maximised."""
+
+    MINIMIZE = "MINIMIZE"
+    MAXIMIZE = "MAXIMIZE"
+
 
 @dataclass(frozen=True)
 class CriterionDefinition:
-    """Stereotype: Strategy. Strategy value object defining a criterion's ID, unit, direction and buffer."""
+    """Stereotype: Strategy. Metadata and fixed normalisation domain for a criterion."""
+
     criterionId: str
     criterionName: str
     unit: str
     direction: CriterionDirection
     bufferM: int | None = None
     defaultWeight: float | None = None
+    minValue: float | None = None
+    maxValue: float | None = None
+
 
 class CriterionCatalog:
-    """Stereotype: Strategy. Strategy container holding the frozen criterion definitions used by scoring."""
+    """Stereotype: Strategy. Container for the criterion definitions."""
+
     definitions: dict[str, CriterionDefinition]
 
     def __init__(self, definitions: dict[str, CriterionDefinition]) -> None:
-        """Initialise the CriterionCatalog with its dependencies.
-
-        Args:
-            definitions: dict[str, CriterionDefinition]
-
-        Returns:
-            None.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Create the catalogue from criterion definitions."""
+        self.definitions = dict(definitions)
 
     def getCriterion(self, criterionId: str) -> CriterionDefinition | None:
-        """Return criterion.
-
-        Args:
-            criterionId: str
-
-        Returns:
-            CriterionDefinition | None.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return a criterion definition by ID."""
+        return self.definitions.get(criterionId)
 
     def getAllCriteria(self) -> list[CriterionDefinition]:
-        """Return all criteria.
+        """Return all definitions in stable order."""
+        return list(self.definitions.values())
 
-        Args:
-            None.
 
-        Returns:
-            list[CriterionDefinition].
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+def buildDefaultCriterionCatalog() -> CriterionCatalog:
+    """Return the frozen v1 criterion catalogue with absolute Singapore bounds."""
+    definitions = [
+        CriterionDefinition(
+            "PRICE", "Housing affordability", "SGD", CriterionDirection.MINIMIZE,
+            None, 0.20, 200_000.0, 1_500_000.0,
+        ),
+        CriterionDefinition(
+            "COMMUTE_TIME", "Commute duration", "minutes", CriterionDirection.MINIMIZE,
+            None, 0.20, 0.0, 90.0,
+        ),
+        CriterionDefinition(
+            "SCHOOL_PROXIMITY", "School access", "count", CriterionDirection.MAXIMIZE,
+            1000, 0.20, 0.0, 4.0,
+        ),
+        CriterionDefinition(
+            "GREEN_COVERAGE", "Green coverage", "percent", CriterionDirection.MAXIMIZE,
+            500, 0.20, 0.0, 100.0,
+        ),
+        CriterionDefinition(
+            "AMENITIES_DENSITY", "Amenity access", "count", CriterionDirection.MAXIMIZE,
+            None, 0.20, 0.0, 10.0,
+        ),
+    ]
+    return CriterionCatalog({definition.criterionId: definition for definition in definitions})

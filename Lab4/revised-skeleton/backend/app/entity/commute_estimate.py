@@ -1,13 +1,17 @@
-"""Commute estimate module."""
+"""Commute estimate entity."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass
 from datetime import datetime
+
 from app.entity.enums import TransitMode
+
 
 @dataclass
 class CommuteEstimate:
-    """Stereotype: Entity. Entity value object representing a commute duration, distance and transfer count."""
+    """Stereotype: Entity. Commute duration, distance, transfers and route."""
+
     durationMinutes: int
     distanceKm: float
     transferCount: int
@@ -16,40 +20,13 @@ class CommuteEstimate:
     routeGeometry: str | None = None
 
     def getDurationMinutes(self) -> int:
-        """Return duration minutes.
-
-        Args:
-            None.
-
-        Returns:
-            int.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return duration in minutes."""
+        return self.durationMinutes
 
     def getDistanceKm(self) -> float:
-        """Return distance km.
-
-        Args:
-            None.
-
-        Returns:
-            float.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return distance in kilometres."""
+        return self.distanceKm
 
     def getTransferCount(self) -> int:
-        """Return transfer count.
-
-        Args:
-            None.
-
-        Returns:
-            int.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the number of transfers."""
+        return self.transferCount

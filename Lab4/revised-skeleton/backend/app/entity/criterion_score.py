@@ -1,11 +1,14 @@
-"""Criterion score module."""
+"""Criterion score entity."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass
+
 
 @dataclass
 class CriterionScore:
-    """Stereotype: Entity. Entity value object explaining one criterion's contribution to a suitability score."""
+    """Stereotype: Entity. One criterion's contribution to a suitability score."""
+
     criterionId: str
     rawValue: float
     normalisedScore: float
@@ -15,92 +18,29 @@ class CriterionScore:
     source: str
 
     def getCriterionId(self) -> str:
-        """Return criterion id.
-
-        Args:
-            None.
-
-        Returns:
-            str.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the criterion identifier."""
+        return self.criterionId
 
     def getRawValue(self) -> float:
-        """Return raw value.
-
-        Args:
-            None.
-
-        Returns:
-            float.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the raw metric value."""
+        return self.rawValue
 
     def getNormalisedScore(self) -> float:
-        """Return normalised score.
-
-        Args:
-            None.
-
-        Returns:
-            float.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the 0-1 normalised score."""
+        return self.normalisedScore
 
     def getWeight(self) -> float:
-        """Return weight.
-
-        Args:
-            None.
-
-        Returns:
-            float.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the renormalised weight."""
+        return self.weight
 
     def getWeightedScore(self) -> float:
-        """Return weighted score.
-
-        Args:
-            None.
-
-        Returns:
-            float.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return normalisedScore * weight."""
+        return self.weightedScore
 
     def getIsMissing(self) -> bool:
-        """Return is missing.
-
-        Args:
-            None.
-
-        Returns:
-            bool.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return whether the criterion was missing."""
+        return self.isMissing
 
     def getSource(self) -> str:
-        """Return source.
-
-        Args:
-            None.
-
-        Returns:
-            str.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the source label."""
+        return self.source

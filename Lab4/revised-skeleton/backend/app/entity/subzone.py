@@ -1,16 +1,20 @@
-"""Subzone module."""
+"""Subzone entity."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
-    from shapely.geometry import Polygon
+    from app.core.geometry import Polygon
     from app.entity.subzone_indicators import SubzoneIndicators
     from app.entity.types import Coordinates
 
+
 @dataclass
 class Subzone:
-    """Stereotype: Entity. Entity representing one URA subzone, its HDB town, boundary and derived indicators."""
+    """Stereotype: Entity. A URA subzone and its derived indicators."""
+
     subzoneCode: str
     subzoneName: str
     planningAreaName: str
@@ -21,40 +25,13 @@ class Subzone:
     indicators: SubzoneIndicators | None = None
 
     def getSubzoneCode(self) -> str:
-        """Return subzone code.
-
-        Args:
-            None.
-
-        Returns:
-            str.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the subzone code."""
+        return self.subzoneCode
 
     def getSubzoneName(self) -> str:
-        """Return subzone name.
-
-        Args:
-            None.
-
-        Returns:
-            str.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the subzone name."""
+        return self.subzoneName
 
     def getTownName(self) -> str:
-        """Return town name.
-
-        Args:
-            None.
-
-        Returns:
-            str.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the HDB town join key."""
+        return self.townName

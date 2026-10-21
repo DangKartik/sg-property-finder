@@ -1,0 +1,23 @@
+{
+  "TAMPINES01": {
+    "greenCoveragePercent": 35.5,
+    "weatherPattern": "Partly Cloudy",
+    "pm25Baseline": 12.0,
+    "granularity": "REGION",
+    "asOf": "2025-12-01T00:00:00+08:00"
+  },
+  "BEDOK01": {
+    "greenCoveragePercent": 28.0,
+    "weatherPattern": "Afternoon Showers",
+    "pm25Baseline": 14.0,
+    "granularity": "REGION",
+    "asOf": "2025-12-01T00:00:00+08:00"
+  },
+  "JURONG01": {
+    "greenCoveragePercent": 41.0,
+    "weatherPattern": "Cloudy",
+    "pm25Baseline": 16.0,
+    "granularity": "REGION",
+    "asOf": "2025-12-01T00:00:00+08:00"
+  }
+}

@@ -1,12 +1,15 @@
-"""Subzone indicators module."""
+"""Precomputed subzone indicators."""
 
 from __future__ import annotations
-from dataclasses import dataclass
+
+from dataclasses import dataclass, field
 from datetime import datetime
+
 
 @dataclass
 class SubzoneIndicators:
-    """Stereotype: Entity. Entity value object holding precomputed numeric neighbourhood indicators."""
+    """Stereotype: Entity. Numeric features consumed by scoring."""
+
     nearestParkM: float | None = None
     parkCount500m: int = 0
     greenCoveragePercent500m: float | None = None
@@ -27,6 +30,8 @@ class SubzoneIndicators:
     medianPricePerSqm: float | None = None
     transactionCount12m: int = 0
     priceTrendPercent: float | None = None
+    medianPriceByFlatType: dict[str, float] = field(default_factory=dict)
+    transactionCountByFlatType: dict[str, int] = field(default_factory=dict)
     pm25Baseline: float | None = None
     pm25Live: float | None = None
     uvi: float | None = None

@@ -26,6 +26,10 @@ export declare class FactSheetUI {
 
   /**
    * Display the fact sheet sections.
+   *
+   * When any pricing entry has `isTownProxy=true`, show the tooltip:
+   * "Pricing data represents the median resale price for the overarching HDB Town."
+   *
    * @param amenities Nearby amenities.
    * @param env Environment information.
    * @param pricing Pricing keyed by flat type.

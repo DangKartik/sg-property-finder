@@ -1,49 +1,28 @@
-"""System startup control module."""
+"""Application startup control."""
 
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from app.container.subzone_registry import SubzoneRegistry
 
+
 class SystemStartupControl:
-    """Stereotype: Control. Control that initialises application data and the subzone registry."""
-    subzoneRegistry: SubzoneRegistry
+    """Stereotype: Control. Initialises application data and the subzone registry."""
 
     def __init__(self, subzoneRegistry: SubzoneRegistry) -> None:
-        """Initialise the SystemStartupControl with its dependencies.
-
-        Args:
-            subzoneRegistry: SubzoneRegistry
-
-        Returns:
-            None.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Store the registry that startup should prepare."""
+        self.subzoneRegistry = subzoneRegistry
 
     def initializeSystem(self) -> None:
-        """Load the subzone registry and prepare the data snapshot.
+        """Prepare the registry for requests.
 
-        Args:
-            None.
-
-        Returns:
-            None.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        Data loading is handled by `bootstrap.buildContext`; this method exists
+        as the explicit startup hook and is intentionally idempotent.
+        """
+        return None
 
     def main(self, args: list[str]) -> None:
-        """Run the optional data-loading CLI entry point.
-
-        Args:
-            args: list[str]
-
-        Returns:
-            None.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Run the optional CLI startup hook."""
+        self.initializeSystem()

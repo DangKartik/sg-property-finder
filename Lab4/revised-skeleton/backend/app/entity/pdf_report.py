@@ -1,12 +1,15 @@
-"""Pdf report module."""
+"""PDF report entity."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass
 from datetime import datetime
 
+
 @dataclass
 class PdfReport:
-    """Stereotype: Entity. Entity value object containing browser-safe PDF download metadata."""
+    """Stereotype: Entity. Browser-safe PDF download metadata."""
+
     reportId: str
     generatedTime: datetime
     downloadUrl: str
@@ -16,53 +19,17 @@ class PdfReport:
     sizeBytes: int
 
     def getReportId(self) -> str:
-        """Return report id.
-
-        Args:
-            None.
-
-        Returns:
-            str.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the report identifier."""
+        return self.reportId
 
     def getDownloadUrl(self) -> str:
-        """Return download url.
-
-        Args:
-            None.
-
-        Returns:
-            str.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the short-lived download URL."""
+        return self.downloadUrl
 
     def getFileName(self) -> str:
-        """Return file name.
-
-        Args:
-            None.
-
-        Returns:
-            str.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the download filename."""
+        return self.fileName
 
     def getExpiresAt(self) -> datetime:
-        """Return expires at.
-
-        Args:
-            None.
-
-        Returns:
-            datetime.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the URL expiry timestamp."""
+        return self.expiresAt

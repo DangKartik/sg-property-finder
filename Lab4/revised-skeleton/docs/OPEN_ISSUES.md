@@ -4,6 +4,30 @@ Issues found after applying the Part 1 fixes. Items under **Must resolve** affec
 correctness, reproducibility or the API contract and should be settled before
 business logic is written.
 
+## Resolved in Phase 2 backend
+
+- OPEN-01: school radius frozen at 1.0 km.
+- OPEN-02: town-level HDB pricing accepted and labelled with `isTownProxy`.
+- OPEN-03 / OPEN-04: deterministic regional baseline file supplied.
+- OPEN-05: fixed absolute domains replace candidate-relative min–max scoring.
+- OPEN-18: planning-area → HDB-town mapping populated.
+- OPEN-10: the factsheet endpoint accepts a share token or profile query.
+- OPEN-11: criteria, comparison, report-download and health/readiness endpoints are present.
+- OPEN-12: a temp-file `ReportStore` and secure download metadata are implemented.
+- OPEN-13: `RecommendationSet.profileSnapshot` preserves the ranking inputs.
+- OPEN-15: `CYCLING` is intentionally excluded from `TransitMode`.
+- OPEN-14: address confidence is computed with `SequenceMatcher`.
+- OPEN-20: comparisons are capped at four subzones.
+- OPEN-21: Shapely is used when installed, with a dependency-free polygon fallback.
+- OPEN-22: price-trend thresholds are implemented (`±2%`).
+- OPEN-23: profile creation requires online address validation.
+- OPEN-24: OneMap token caching and automatic five-minute refresh are implemented.
+- OneMap search, routing and address-match parsing are implemented.
+- data.gov.sg metadata, poll-download, real-time fetch and local fallbacks are implemented.
+- MCDA scoring, budget filtering, missing-data renormalisation and ranking are implemented.
+- Factsheet aggregation, PDF generation and shareable URLs are implemented.
+- FastAPI handlers and live route smoke tests are implemented.
+
 ## Must resolve before implementation
 
 ### OPEN-01 — School buffer radius conflicts
@@ -90,6 +114,13 @@ selected flat type has no data. Define whether the filter uses:
 - the minimum across all selected flat types (exclude if any missing);
 - a user-selected primary flat type.
 
+### OPEN-25 — Amenities dataset not supplied
+
+`backend/assets/data/amenities.json` is still missing. Without it, factsheets
+return an empty amenity list with a `MISSING_SOURCE_DATA` warning and the amenity
+criterion scores zero for every subzone. Supply school, healthcare, park, mall
+and MRT points using the schema in `backend/assets/data/README.md`.
+
 ### OPEN-09 — Commute precomputation and the 5-second SLA
 
 The proposed 332 × 4 business-district matrix is 1,328 OneMap calls, and the
@@ -172,7 +203,7 @@ criteria.
 
 ### OPEN-18 — HDB town mapping file is empty
 
-`backend/app/data/planning_area_to_hdb_town.json` is intentionally empty. Every
+`backend/assets/data/planning_area_to_hdb_town.json` is intentionally empty. Every
 planning area used by the app must be mapped, and planning areas without an HDB
 town must be handled explicitly. `Kallang` → `KALLANG/WHAMPOA` is a known
 non-identity mapping.

@@ -5,29 +5,32 @@ require a product decision and are also listed in `OPEN_ISSUES.md`.
 
 ## 1. Criterion catalogue
 
-| ID | Name | Unit | Direction | Radius / basis | Default weight |
-| --- | --- | --- | --- | --- | --- |
-| `PRICE` | Housing affordability | SGD (median) | MINIMIZE | Selected flat types, 12-month window | 0.20 |
-| `COMMUTE_TIME` | Commute duration | minutes | MINIMIZE | Workplace / CBD, fixed departure | 0.20 |
-| `SCHOOL_PROXIMITY` | School access | count | MAXIMIZE | 1.0 km (see OPEN-01) | 0.20 |
-| `GREEN_COVERAGE` | Green coverage | percent | MAXIMIZE | 500 m buffer | 0.20 |
-| `AMENITIES_DENSITY` | Amenity access | count | MAXIMIZE | Malls 1 km, polyclinics/hospitals 2 km, MRT/LRT 800 m | 0.20 |
+| ID | Name | Unit | Direction | Fixed domain | Radius / basis | Default weight |
+| --- | --- | --- | --- | --- | --- | --- |
+| `PRICE` | Housing affordability | SGD (median) | MINIMIZE | 200,000–1,500,000 | Selected flat types, 12-month window | 0.20 |
+| `COMMUTE_TIME` | Commute duration | minutes | MINIMIZE | 0–90 | Workplace / CBD, fixed departure | 0.20 |
+| `SCHOOL_PROXIMITY` | School access | count | MAXIMIZE | 0–4 | 1.0 km | 0.20 |
+| `GREEN_COVERAGE` | Green coverage | percent | MAXIMIZE | 0–100 | 500 m buffer | 0.20 |
+| `AMENITIES_DENSITY` | Amenity access | count | MAXIMIZE | 0–10 | Malls 1 km, polyclinics/hospitals 2 km, MRT/LRT 800 m | 0.20 |
 
 The default weights above are an assumption for the first version; the user can
 override every weight. `CriterionWeight.criterionId` must match this catalogue.
 
 ## 2. Normalisation and scoring
 
-After the hard budget filter, for each criterion and candidate subzone:
+After the hard budget filter, each raw value is normalised against its **fixed
+absolute domain** (not the candidate set), so scores remain comparable when the
+budget filter removes candidates:
 
 ```text
-Maximisation:  S = (X - Xmin) / (Xmax - Xmin)
-Minimisation:  S = (Xmax - X) / (Xmax - Xmin)
+Maximisation:  S = (clamp(X, min, max) - min) / (max - min)
+Minimisation:  S = (max - clamp(X, min, max)) / (max - min)
 ```
 
 - `S` is in `[0, 1]`.
-- If `Xmax == Xmin`, all candidates receive `S = 1.0` for that criterion (no
-  differentiation is possible).
+- Values outside the fixed domain are clamped.
+- If `max == min`, the criterion is misconfigured; the implementation returns
+  `S = 0.0` for safety.
 - Available weights are renormalised:
 
 ```text
@@ -72,18 +75,18 @@ Sort descending by `totalScore`, then ascending by:
 - If no price data exists for any selected flat type, the subzone is excluded
   and a `MISSING_SOURCE_DATA` warning is returned.
 
-**Data caveat:** the published HDB resale dataset is keyed by HDB town, not URA
-subzone. A subzone-level median requires a block-to-subzone mapping built from
-block geocoding; without that mapping, `isTownProxy` is always true. See
-`OPEN_ISSUES.md` OPEN-02.
+**Frozen data decision:** the published HDB resale dataset is keyed by HDB town,
+not URA subzone. The application accepts this limitation: without an optional
+`subzone_code` column, the town median is used and `isTownProxy` is `true`. The
+UI/PDF labels this as a **Town-Level Median Proxy**.
 
 ## 4. Static vs live environment data
 
 ### Score-impact data (static baselines)
 
-- Green coverage from park polygons, using a fixed 500 m buffer.
-- Long-term PM2.5 baseline by NEA region.
-- Fixed regional weather baseline (definition OPEN — see OPEN-04).
+- Green coverage baseline by planning region (500 m buffer metadata).
+- Long-term PM2.5 baseline by planning region.
+- Fixed regional weather pattern baseline.
 
 These values must be stored in the data snapshot and must not change between two
 identical ranking requests using the same snapshot.
@@ -173,9 +176,9 @@ All endpoints return the standard envelope:
 | `POST` | `/api/v1/address/search` | `{ "query": "..." }` | `AddressMatch[]` |
 | `POST` | `/api/v1/recommendations` | `ProfileDTO` | `RecommendationSet` |
 | `GET` | `/api/v1/subzones/{code}/factsheet` | profile context (OPEN-10) | `NeighborhoodDetailDTO` |
-| `POST` | `/api/v1/comparisons` | `ProfileDTO`, `subzoneCodes[]` | `ComparisonResult` |
-| `POST` | `/api/v1/reports/pdf` | `RecommendationSet`, `NeighborhoodDetailDTO[]` | `PdfReport` |
-| `GET` | `/api/v1/reports/{reportId}/download` | — | PDF bytes |
+| `POST` | `/api/v1/comparison` | `ProfileDTO`, `subzoneCodes[]` | `ComparisonResult` |
+| `POST` | `/api/v1/reports/pdf` | `ProfileDTO`, `subzoneCodes[]` | `PdfReport` |
+| `GET` | `/api/v1/reports/download/{reportId}` | - | PDF bytes |
 
 HTTP status mapping:
 

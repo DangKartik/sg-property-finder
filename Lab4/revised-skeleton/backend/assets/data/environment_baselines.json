@@ -1,0 +1,8 @@
+{
+  "DEFAULT": { "greenCoveragePercent": 42.5, "pm25Baseline": 14.2 },
+  "NORTH": { "greenCoveragePercent": 51.0, "pm25Baseline": 13.5 },
+  "NORTH-EAST": { "greenCoveragePercent": 44.0, "pm25Baseline": 14.0 },
+  "EAST": { "greenCoveragePercent": 38.5, "pm25Baseline": 15.1 },
+  "WEST": { "greenCoveragePercent": 48.0, "pm25Baseline": 15.8 },
+  "CENTRAL": { "greenCoveragePercent": 35.0, "pm25Baseline": 13.8 }
+}

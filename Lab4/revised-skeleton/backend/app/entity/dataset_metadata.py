@@ -1,65 +1,32 @@
-"""Dataset metadata module."""
+"""Dataset metadata entity."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass
 from datetime import datetime
 
+
 @dataclass
 class DatasetMetadata:
-    """Stereotype: Entity. Entity value object identifying a dataset snapshot, its source and freshness."""
+    """Stereotype: Entity. Dataset snapshot identity and freshness."""
+
     dataSnapshotId: str
     dataAsOf: datetime
     sourceUrl: str
     recordCount: int
 
     def getDataSnapshotId(self) -> str:
-        """Return data snapshot id.
-
-        Args:
-            None.
-
-        Returns:
-            str.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the snapshot identifier."""
+        return self.dataSnapshotId
 
     def getDataAsOf(self) -> datetime:
-        """Return data as of.
-
-        Args:
-            None.
-
-        Returns:
-            datetime.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the source timestamp."""
+        return self.dataAsOf
 
     def getSourceUrl(self) -> str:
-        """Return source url.
-
-        Args:
-            None.
-
-        Returns:
-            str.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the source URL."""
+        return self.sourceUrl
 
     def getRecordCount(self) -> int:
-        """Return record count.
-
-        Args:
-            None.
-
-        Returns:
-            int.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the record count."""
+        return self.recordCount

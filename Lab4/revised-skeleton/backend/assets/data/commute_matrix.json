@@ -1,0 +1,1661 @@
+{
+  "metadata": {
+    "destination": "RAFFLES_PLACE_CBD",
+    "generatedAt": "2026-10-21T09:35:10.379100+00:00",
+    "source": "OneMap public transport routing",
+    "departureWindow": "2026-10-22T08:30:00+08:00",
+    "mode": "PUBLIC_TRANSIT",
+    "coverage": "319/332",
+    "errors": [
+      {
+        "subzoneCode": "WISZ01",
+        "error": "OneMap request failed with HTTP 404"
+      },
+      {
+        "subzoneCode": "WISZ03",
+        "error": "OneMap request failed with HTTP 404"
+      },
+      {
+        "subzoneCode": "WISZ02",
+        "error": "OneMap request failed with HTTP 404"
+      },
+      {
+        "subzoneCode": "SISZ02",
+        "error": "OneMap request failed with HTTP 404"
+      },
+      {
+        "subzoneCode": "QTSZ15",
+        "error": "OneMap request failed with HTTP 404"
+      },
+      {
+        "subzoneCode": "THSZ02",
+        "error": "OneMap request failed with HTTP 404"
+      },
+      {
+        "subzoneCode": "CBSZ01",
+        "error": "OneMap request failed with HTTP 404"
+      },
+      {
+        "subzoneCode": "CCSZ01",
+        "error": "OneMap request failed with HTTP 404"
+      },
+      {
+        "subzoneCode": "CHSZ03",
+        "error": "OneMap request failed with HTTP 404"
+      },
+      {
+        "subzoneCode": "SLSZ03",
+        "error": "OneMap request failed with HTTP 404"
+      },
+      {
+        "subzoneCode": "SMSZ04",
+        "error": "OneMap request failed with HTTP 404"
+      },
+      {
+        "subzoneCode": "NESZ01",
+        "error": "OneMap request failed with HTTP 404"
+      },
+      {
+        "subzoneCode": "TSSZ06",
+        "error": "OneMap request failed with HTTP 404"
+      }
+    ]
+  },
+  "matrix": {
+    "OTSZ03": {
+      "durationMinutes": 17,
+      "distanceKm": 1.835,
+      "transferCount": 2
+    },
+    "DTSZ04": {
+      "durationMinutes": 7,
+      "distanceKm": 0.501,
+      "transferCount": 0
+    },
+    "DTSZ05": {
+      "durationMinutes": 2,
+      "distanceKm": 0.098,
+      "transferCount": 0
+    },
+    "BMSZ02": {
+      "durationMinutes": 23,
+      "distanceKm": 5.0,
+      "transferCount": 4
+    },
+    "BMSZ12": {
+      "durationMinutes": 28,
+      "distanceKm": 7.147,
+      "transferCount": 5
+    },
+    "DTSZ12": {
+      "durationMinutes": 18,
+      "distanceKm": 2.432,
+      "transferCount": 2
+    },
+    "BMSZ04": {
+      "durationMinutes": 13,
+      "distanceKm": 4.084,
+      "transferCount": 2
+    },
+    "BMSZ10": {
+      "durationMinutes": 22,
+      "distanceKm": 4.991,
+      "transferCount": 4
+    },
+    "OTSZ04": {
+      "durationMinutes": 9,
+      "distanceKm": 0.672,
+      "transferCount": 0
+    },
+    "MSSZ01": {
+      "durationMinutes": 26,
+      "distanceKm": 3.792,
+      "transferCount": 2
+    },
+    "DTSZ13": {
+      "durationMinutes": 14,
+      "distanceKm": 4.258,
+      "transferCount": 4
+    },
+    "MESZ01": {
+      "durationMinutes": 46,
+      "distanceKm": 7.989,
+      "transferCount": 4
+    },
+    "DTSZ06": {
+      "durationMinutes": 11,
+      "distanceKm": 0.909,
+      "transferCount": 0
+    },
+    "RVSZ05": {
+      "durationMinutes": 22,
+      "distanceKm": 3.959,
+      "transferCount": 2
+    },
+    "SRSZ01": {
+      "durationMinutes": 21,
+      "distanceKm": 2.934,
+      "transferCount": 2
+    },
+    "MUSZ02": {
+      "durationMinutes": 16,
+      "distanceKm": 2.271,
+      "transferCount": 2
+    },
+    "OTSZ01": {
+      "durationMinutes": 21,
+      "distanceKm": 2.664,
+      "transferCount": 2
+    },
+    "SRSZ03": {
+      "durationMinutes": 14,
+      "distanceKm": 1.625,
+      "transferCount": 2
+    },
+    "BMSZ08": {
+      "durationMinutes": 18,
+      "distanceKm": 4.794,
+      "transferCount": 4
+    },
+    "BMSZ03": {
+      "durationMinutes": 17,
+      "distanceKm": 5.368,
+      "transferCount": 2
+    },
+    "BMSZ09": {
+      "durationMinutes": 20,
+      "distanceKm": 3.251,
+      "transferCount": 2
+    },
+    "BMSZ07": {
+      "durationMinutes": 26,
+      "distanceKm": 6.067,
+      "transferCount": 4
+    },
+    "SRSZ02": {
+      "durationMinutes": 19,
+      "distanceKm": 2.169,
+      "transferCount": 2
+    },
+    "QTSZ13": {
+      "durationMinutes": 40,
+      "distanceKm": 11.953,
+      "transferCount": 6
+    },
+    "MPSZ05": {
+      "durationMinutes": 44,
+      "distanceKm": 11.616,
+      "transferCount": 4
+    },
+    "QTSZ07": {
+      "durationMinutes": 43,
+      "distanceKm": 9.396,
+      "transferCount": 4
+    },
+    "SISZ01": {
+      "durationMinutes": 58,
+      "distanceKm": 11.607,
+      "transferCount": 4
+    },
+    "BMSZ17": {
+      "durationMinutes": 11,
+      "distanceKm": 2.347,
+      "transferCount": 4
+    },
+    "DTSZ10": {
+      "durationMinutes": 13,
+      "distanceKm": 1.781,
+      "transferCount": 2
+    },
+    "SVSZ01": {
+      "durationMinutes": 14,
+      "distanceKm": 2.908,
+      "transferCount": 2
+    },
+    "BMSZ01": {
+      "durationMinutes": 21,
+      "distanceKm": 7.281,
+      "transferCount": 6
+    },
+    "DTSZ09": {
+      "durationMinutes": 7,
+      "distanceKm": 1.401,
+      "transferCount": 2
+    },
+    "BMSZ15": {
+      "durationMinutes": 22,
+      "distanceKm": 5.942,
+      "transferCount": 4
+    },
+    "BMSZ16": {
+      "durationMinutes": 18,
+      "distanceKm": 3.402,
+      "transferCount": 2
+    },
+    "DTSZ07": {
+      "durationMinutes": 10,
+      "distanceKm": 1.591,
+      "transferCount": 2
+    },
+    "DTSZ08": {
+      "durationMinutes": 9,
+      "distanceKm": 0.994,
+      "transferCount": 2
+    },
+    "BMSZ14": {
+      "durationMinutes": 26,
+      "distanceKm": 5.788,
+      "transferCount": 4
+    },
+    "BMSZ11": {
+      "durationMinutes": 22,
+      "distanceKm": 5.309,
+      "transferCount": 4
+    },
+    "BMSZ13": {
+      "durationMinutes": 33,
+      "distanceKm": 8.465,
+      "transferCount": 5
+    },
+    "QTSZ14": {
+      "durationMinutes": 32,
+      "distanceKm": 9.774,
+      "transferCount": 4
+    },
+    "DTSZ11": {
+      "durationMinutes": 4,
+      "distanceKm": 1.089,
+      "transferCount": 1
+    },
+    "BMSZ05": {
+      "durationMinutes": 19,
+      "distanceKm": 3.111,
+      "transferCount": 2
+    },
+    "RCSZ10": {
+      "durationMinutes": 12,
+      "distanceKm": 2.606,
+      "transferCount": 2
+    },
+    "DTSZ01": {
+      "durationMinutes": 10,
+      "distanceKm": 2.46,
+      "transferCount": 2
+    },
+    "RVSZ02": {
+      "durationMinutes": 17,
+      "distanceKm": 4.499,
+      "transferCount": 2
+    },
+    "MPSZ04": {
+      "durationMinutes": 42,
+      "distanceKm": 9.421,
+      "transferCount": 3
+    },
+    "RVSZ01": {
+      "durationMinutes": 24,
+      "distanceKm": 4.907,
+      "transferCount": 2
+    },
+    "QTSZ11": {
+      "durationMinutes": 36,
+      "distanceKm": 11.927,
+      "transferCount": 4
+    },
+    "QTSZ03": {
+      "durationMinutes": 24,
+      "distanceKm": 8.155,
+      "transferCount": 2
+    },
+    "QTSZ10": {
+      "durationMinutes": 34,
+      "distanceKm": 11.825,
+      "transferCount": 4
+    },
+    "NTSZ04": {
+      "durationMinutes": 24,
+      "distanceKm": 3.948,
+      "transferCount": 4
+    },
+    "TNSZ03": {
+      "durationMinutes": 35,
+      "distanceKm": 6.795,
+      "transferCount": 4
+    },
+    "NTSZ05": {
+      "durationMinutes": 22,
+      "distanceKm": 6.022,
+      "transferCount": 2
+    },
+    "PNSZ05": {
+      "durationMinutes": 74,
+      "distanceKm": 31.544,
+      "transferCount": 4
+    },
+    "CLSZ08": {
+      "durationMinutes": 37,
+      "distanceKm": 13.993,
+      "transferCount": 4
+    },
+    "BDSZ07": {
+      "durationMinutes": 41,
+      "distanceKm": 16.024,
+      "transferCount": 4
+    },
+    "CLSZ07": {
+      "durationMinutes": 40,
+      "distanceKm": 14.489,
+      "transferCount": 4
+    },
+    "NTSZ01": {
+      "durationMinutes": 27,
+      "distanceKm": 6.715,
+      "transferCount": 4
+    },
+    "KLSZ04": {
+      "durationMinutes": 17,
+      "distanceKm": 4.884,
+      "transferCount": 2
+    },
+    "JESZ11": {
+      "durationMinutes": 57,
+      "distanceKm": 21.161,
+      "transferCount": 4
+    },
+    "BMSZ06": {
+      "durationMinutes": 24,
+      "distanceKm": 5.821,
+      "transferCount": 2
+    },
+    "QTSZ12": {
+      "durationMinutes": 42,
+      "distanceKm": 12.321,
+      "transferCount": 4
+    },
+    "RCSZ06": {
+      "durationMinutes": 19,
+      "distanceKm": 3.669,
+      "transferCount": 4
+    },
+    "QTSZ04": {
+      "durationMinutes": 21,
+      "distanceKm": 7.957,
+      "transferCount": 2
+    },
+    "RCSZ03": {
+      "durationMinutes": 20,
+      "distanceKm": 4.19,
+      "transferCount": 2
+    },
+    "ORSZ02": {
+      "durationMinutes": 15,
+      "distanceKm": 4.362,
+      "transferCount": 2
+    },
+    "QTSZ08": {
+      "durationMinutes": 31,
+      "distanceKm": 10.173,
+      "transferCount": 4
+    },
+    "KLSZ05": {
+      "durationMinutes": 21,
+      "distanceKm": 5.958,
+      "transferCount": 4
+    },
+    "NTSZ06": {
+      "durationMinutes": 28,
+      "distanceKm": 3.687,
+      "transferCount": 2
+    },
+    "MPSZ02": {
+      "durationMinutes": 29,
+      "distanceKm": 9.042,
+      "transferCount": 6
+    },
+    "PNSZ04": {
+      "durationMinutes": 72,
+      "distanceKm": 27.144,
+      "transferCount": 4
+    },
+    "RCSZ02": {
+      "durationMinutes": 22,
+      "distanceKm": 4.294,
+      "transferCount": 2
+    },
+    "MUSZ03": {
+      "durationMinutes": 12,
+      "distanceKm": 1.733,
+      "transferCount": 2
+    },
+    "DTSZ03": {
+      "durationMinutes": 19,
+      "distanceKm": 3.581,
+      "transferCount": 2
+    },
+    "ORSZ03": {
+      "durationMinutes": 12,
+      "distanceKm": 3.302,
+      "transferCount": 2
+    },
+    "RCSZ09": {
+      "durationMinutes": 17,
+      "distanceKm": 2.947,
+      "transferCount": 2
+    },
+    "TNSZ02": {
+      "durationMinutes": 35,
+      "distanceKm": 5.556,
+      "transferCount": 5
+    },
+    "RCSZ05": {
+      "durationMinutes": 15,
+      "distanceKm": 2.959,
+      "transferCount": 4
+    },
+    "RCSZ08": {
+      "durationMinutes": 22,
+      "distanceKm": 3.209,
+      "transferCount": 2
+    },
+    "RCSZ07": {
+      "durationMinutes": 24,
+      "distanceKm": 3.079,
+      "transferCount": 4
+    },
+    "RCSZ04": {
+      "durationMinutes": 16,
+      "distanceKm": 2.856,
+      "transferCount": 2
+    },
+    "RVSZ04": {
+      "durationMinutes": 19,
+      "distanceKm": 3.748,
+      "transferCount": 2
+    },
+    "DTSZ02": {
+      "durationMinutes": 4,
+      "distanceKm": 1.24,
+      "transferCount": 2
+    },
+    "QTSZ05": {
+      "durationMinutes": 23,
+      "distanceKm": 7.28,
+      "transferCount": 4
+    },
+    "QTSZ06": {
+      "durationMinutes": 22,
+      "distanceKm": 6.975,
+      "transferCount": 2
+    },
+    "RVSZ03": {
+      "durationMinutes": 20,
+      "distanceKm": 4.502,
+      "transferCount": 4
+    },
+    "MUSZ01": {
+      "durationMinutes": 8,
+      "distanceKm": 2.36,
+      "transferCount": 2
+    },
+    "GLSZ02": {
+      "durationMinutes": 25,
+      "distanceKm": 7.973,
+      "transferCount": 4
+    },
+    "TPSZ07": {
+      "durationMinutes": 32,
+      "distanceKm": 9.918,
+      "transferCount": 4
+    },
+    "BDSZ04": {
+      "durationMinutes": 36,
+      "distanceKm": 13.103,
+      "transferCount": 4
+    },
+    "TPSZ02": {
+      "durationMinutes": 24,
+      "distanceKm": 8.28,
+      "transferCount": 2
+    },
+    "JESZ06": {
+      "durationMinutes": 30,
+      "distanceKm": 15.453,
+      "transferCount": 2
+    },
+    "GLSZ03": {
+      "durationMinutes": 33,
+      "distanceKm": 10.447,
+      "transferCount": 2
+    },
+    "BTSZ03": {
+      "durationMinutes": 53,
+      "distanceKm": 14.283,
+      "transferCount": 6
+    },
+    "TPSZ11": {
+      "durationMinutes": 32,
+      "distanceKm": 7.707,
+      "transferCount": 4
+    },
+    "TSSZ03": {
+      "durationMinutes": 67,
+      "distanceKm": 28.547,
+      "transferCount": 2
+    },
+    "TPSZ09": {
+      "durationMinutes": 26,
+      "distanceKm": 8.619,
+      "transferCount": 6
+    },
+    "TPSZ06": {
+      "durationMinutes": 32,
+      "distanceKm": 9.823,
+      "transferCount": 4
+    },
+    "TPSZ04": {
+      "durationMinutes": 29,
+      "distanceKm": 9.207,
+      "transferCount": 4
+    },
+    "JWSZ07": {
+      "durationMinutes": 52,
+      "distanceKm": 23.049,
+      "transferCount": 4
+    },
+    "JWSZ06": {
+      "durationMinutes": 52,
+      "distanceKm": 22.292,
+      "transferCount": 4
+    },
+    "RCSZ01": {
+      "durationMinutes": 23,
+      "distanceKm": 3.893,
+      "transferCount": 4
+    },
+    "NTSZ03": {
+      "durationMinutes": 14,
+      "distanceKm": 5.435,
+      "transferCount": 2
+    },
+    "JESZ10": {
+      "durationMinutes": 70,
+      "distanceKm": 20.36,
+      "transferCount": 5
+    },
+    "AMSZ01": {
+      "durationMinutes": 32,
+      "distanceKm": 12.878,
+      "transferCount": 2
+    },
+    "AMSZ06": {
+      "durationMinutes": 40,
+      "distanceKm": 16.779,
+      "transferCount": 4
+    },
+    "BLSZ03": {
+      "durationMinutes": 68,
+      "distanceKm": 25.561,
+      "transferCount": 4
+    },
+    "SGSZ02": {
+      "durationMinutes": 43,
+      "distanceKm": 15.22,
+      "transferCount": 4
+    },
+    "BLSZ04": {
+      "durationMinutes": 63,
+      "distanceKm": 25.683,
+      "transferCount": 4
+    },
+    "QTSZ01": {
+      "durationMinutes": 30,
+      "distanceKm": 9.588,
+      "transferCount": 2
+    },
+    "KLSZ06": {
+      "durationMinutes": 20,
+      "distanceKm": 4.122,
+      "transferCount": 2
+    },
+    "BDSZ05": {
+      "durationMinutes": 29,
+      "distanceKm": 10.52,
+      "transferCount": 4
+    },
+    "BTSZ07": {
+      "durationMinutes": 35,
+      "distanceKm": 10.521,
+      "transferCount": 4
+    },
+    "CLSZ04": {
+      "durationMinutes": 32,
+      "distanceKm": 12.528,
+      "transferCount": 4
+    },
+    "GLSZ05": {
+      "durationMinutes": 23,
+      "distanceKm": 8.864,
+      "transferCount": 4
+    },
+    "JESZ08": {
+      "durationMinutes": 68,
+      "distanceKm": 23.241,
+      "transferCount": 4
+    },
+    "JESZ09": {
+      "durationMinutes": 42,
+      "distanceKm": 15.662,
+      "transferCount": 5
+    },
+    "KLSZ02": {
+      "durationMinutes": 22,
+      "distanceKm": 5.577,
+      "transferCount": 4
+    },
+    "NTSZ02": {
+      "durationMinutes": 22,
+      "distanceKm": 5.058,
+      "transferCount": 4
+    },
+    "QTSZ09": {
+      "durationMinutes": 22,
+      "distanceKm": 10.31,
+      "transferCount": 2
+    },
+    "CLSZ09": {
+      "durationMinutes": 44,
+      "distanceKm": 14.473,
+      "transferCount": 4
+    },
+    "CLSZ06": {
+      "durationMinutes": 30,
+      "distanceKm": 12.304,
+      "transferCount": 2
+    },
+    "KLSZ07": {
+      "durationMinutes": 23,
+      "distanceKm": 4.661,
+      "transferCount": 4
+    },
+    "KLSZ03": {
+      "durationMinutes": 19,
+      "distanceKm": 4.978,
+      "transferCount": 2
+    },
+    "KLSZ08": {
+      "durationMinutes": 20,
+      "distanceKm": 4.501,
+      "transferCount": 4
+    },
+    "BTSZ08": {
+      "durationMinutes": 34,
+      "distanceKm": 11.668,
+      "transferCount": 4
+    },
+    "BTSZ04": {
+      "durationMinutes": 36,
+      "distanceKm": 10.496,
+      "transferCount": 5
+    },
+    "TNSZ01": {
+      "durationMinutes": 30,
+      "distanceKm": 6.021,
+      "transferCount": 4
+    },
+    "BDSZ08": {
+      "durationMinutes": 44,
+      "distanceKm": 17.461,
+      "transferCount": 4
+    },
+    "PNSZ02": {
+      "durationMinutes": 60,
+      "distanceKm": 27.232,
+      "transferCount": 4
+    },
+    "CLSZ05": {
+      "durationMinutes": 37,
+      "distanceKm": 13.728,
+      "transferCount": 4
+    },
+    "PNSZ03": {
+      "durationMinutes": 53,
+      "distanceKm": 25.974,
+      "transferCount": 3
+    },
+    "TNSZ04": {
+      "durationMinutes": 43,
+      "distanceKm": 7.459,
+      "transferCount": 4
+    },
+    "NVSZ02": {
+      "durationMinutes": 18,
+      "distanceKm": 6.086,
+      "transferCount": 4
+    },
+    "PNSZ01": {
+      "durationMinutes": 46,
+      "distanceKm": 23.974,
+      "transferCount": 4
+    },
+    "ORSZ01": {
+      "durationMinutes": 21,
+      "distanceKm": 4.953,
+      "transferCount": 4
+    },
+    "MPSZ03": {
+      "durationMinutes": 32,
+      "distanceKm": 10.144,
+      "transferCount": 6
+    },
+    "BLSZ02": {
+      "durationMinutes": 56,
+      "distanceKm": 23.391,
+      "transferCount": 4
+    },
+    "GLSZ01": {
+      "durationMinutes": 32,
+      "distanceKm": 7.68,
+      "transferCount": 4
+    },
+    "JESZ07": {
+      "durationMinutes": 44,
+      "distanceKm": 16.321,
+      "transferCount": 2
+    },
+    "BTSZ06": {
+      "durationMinutes": 37,
+      "distanceKm": 11.622,
+      "transferCount": 6
+    },
+    "BDSZ03": {
+      "durationMinutes": 29,
+      "distanceKm": 9.95,
+      "transferCount": 2
+    },
+    "BLSZ01": {
+      "durationMinutes": 49,
+      "distanceKm": 22.324,
+      "transferCount": 4
+    },
+    "NVSZ04": {
+      "durationMinutes": 36,
+      "distanceKm": 8.368,
+      "transferCount": 4
+    },
+    "CLSZ02": {
+      "durationMinutes": 42,
+      "distanceKm": 12.8,
+      "transferCount": 4
+    },
+    "BTSZ02": {
+      "durationMinutes": 52,
+      "distanceKm": 12.296,
+      "transferCount": 6
+    },
+    "BTSZ01": {
+      "durationMinutes": 43,
+      "distanceKm": 13.95,
+      "transferCount": 6
+    },
+    "NVSZ03": {
+      "durationMinutes": 34,
+      "distanceKm": 7.407,
+      "transferCount": 4
+    },
+    "TMSZ05": {
+      "durationMinutes": 50,
+      "distanceKm": 17.192,
+      "transferCount": 5
+    },
+    "CLSZ03": {
+      "durationMinutes": 39,
+      "distanceKm": 14.224,
+      "transferCount": 4
+    },
+    "BDSZ06": {
+      "durationMinutes": 36,
+      "distanceKm": 13.783,
+      "transferCount": 2
+    },
+    "HGSZ09": {
+      "durationMinutes": 47,
+      "distanceKm": 14.188,
+      "transferCount": 6
+    },
+    "BKSZ02": {
+      "durationMinutes": 59,
+      "distanceKm": 20.859,
+      "transferCount": 5
+    },
+    "PLSZ02": {
+      "durationMinutes": 63,
+      "distanceKm": 18.542,
+      "transferCount": 4
+    },
+    "AMSZ03": {
+      "durationMinutes": 30,
+      "distanceKm": 12.027,
+      "transferCount": 4
+    },
+    "HGSZ06": {
+      "durationMinutes": 42,
+      "distanceKm": 11.746,
+      "transferCount": 4
+    },
+    "SGSZ04": {
+      "durationMinutes": 47,
+      "distanceKm": 14.727,
+      "transferCount": 5
+    },
+    "PRSZ07": {
+      "durationMinutes": 59,
+      "distanceKm": 21.302,
+      "transferCount": 4
+    },
+    "HGSZ01": {
+      "durationMinutes": 35,
+      "distanceKm": 12.776,
+      "transferCount": 4
+    },
+    "BPSZ06": {
+      "durationMinutes": 54,
+      "distanceKm": 17.33,
+      "transferCount": 6
+    },
+    "AMSZ02": {
+      "durationMinutes": 38,
+      "distanceKm": 13.237,
+      "transferCount": 2
+    },
+    "TMSZ01": {
+      "durationMinutes": 50,
+      "distanceKm": 20.188,
+      "transferCount": 4
+    },
+    "PRSZ05": {
+      "durationMinutes": 47,
+      "distanceKm": 21.808,
+      "transferCount": 4
+    },
+    "AMSZ07": {
+      "durationMinutes": 49,
+      "distanceKm": 16.329,
+      "transferCount": 4
+    },
+    "BPSZ05": {
+      "durationMinutes": 52,
+      "distanceKm": 19.205,
+      "transferCount": 6
+    },
+    "TSSZ02": {
+      "durationMinutes": 62,
+      "distanceKm": 31.769,
+      "transferCount": 4
+    },
+    "KLSZ01": {
+      "durationMinutes": 24,
+      "distanceKm": 5.858,
+      "transferCount": 4
+    },
+    "NVSZ01": {
+      "durationMinutes": 26,
+      "distanceKm": 8.326,
+      "transferCount": 4
+    },
+    "CKSZ02": {
+      "durationMinutes": 55,
+      "distanceKm": 20.507,
+      "transferCount": 6
+    },
+    "BSSZ03": {
+      "durationMinutes": 31,
+      "distanceKm": 10.674,
+      "transferCount": 2
+    },
+    "TMSZ03": {
+      "durationMinutes": 47,
+      "distanceKm": 16.406,
+      "transferCount": 2
+    },
+    "SGSZ06": {
+      "durationMinutes": 35,
+      "distanceKm": 10.083,
+      "transferCount": 6
+    },
+    "BKSZ03": {
+      "durationMinutes": 53,
+      "distanceKm": 20.49,
+      "transferCount": 5
+    },
+    "SGSZ03": {
+      "durationMinutes": 45,
+      "distanceKm": 16.451,
+      "transferCount": 4
+    },
+    "JWSZ01": {
+      "durationMinutes": 58,
+      "distanceKm": 23.357,
+      "transferCount": 4
+    },
+    "BKSZ04": {
+      "durationMinutes": 43,
+      "distanceKm": 19.053,
+      "transferCount": 3
+    },
+    "BPSZ07": {
+      "durationMinutes": 56,
+      "distanceKm": 15.189,
+      "transferCount": 6
+    },
+    "HGSZ07": {
+      "durationMinutes": 36,
+      "distanceKm": 12.041,
+      "transferCount": 6
+    },
+    "TMSZ02": {
+      "durationMinutes": 43,
+      "distanceKm": 18.764,
+      "transferCount": 4
+    },
+    "PRSZ08": {
+      "durationMinutes": 47,
+      "distanceKm": 19.773,
+      "transferCount": 4
+    },
+    "NVSZ05": {
+      "durationMinutes": 48,
+      "distanceKm": 11.288,
+      "transferCount": 4
+    },
+    "CLSZ01": {
+      "durationMinutes": 44,
+      "distanceKm": 14.595,
+      "transferCount": 4
+    },
+    "BKSZ05": {
+      "durationMinutes": 50,
+      "distanceKm": 17.495,
+      "transferCount": 6
+    },
+    "TPSZ12": {
+      "durationMinutes": 35,
+      "distanceKm": 8.807,
+      "transferCount": 4
+    },
+    "BTSZ05": {
+      "durationMinutes": 39,
+      "distanceKm": 10.216,
+      "transferCount": 4
+    },
+    "JWSZ05": {
+      "durationMinutes": 50,
+      "distanceKm": 21.568,
+      "transferCount": 4
+    },
+    "TPSZ05": {
+      "durationMinutes": 32,
+      "distanceKm": 10.358,
+      "transferCount": 4
+    },
+    "TMSZ04": {
+      "durationMinutes": 36,
+      "distanceKm": 16.091,
+      "transferCount": 2
+    },
+    "JWSZ02": {
+      "durationMinutes": 47,
+      "distanceKm": 21.83,
+      "transferCount": 4
+    },
+    "JESZ03": {
+      "durationMinutes": 38,
+      "distanceKm": 15.924,
+      "transferCount": 2
+    },
+    "BKSZ06": {
+      "durationMinutes": 46,
+      "distanceKm": 18.725,
+      "transferCount": 5
+    },
+    "SGSZ07": {
+      "durationMinutes": 35,
+      "distanceKm": 10.397,
+      "transferCount": 6
+    },
+    "BKSZ08": {
+      "durationMinutes": 46,
+      "distanceKm": 16.183,
+      "transferCount": 4
+    },
+    "TSSZ01": {
+      "durationMinutes": 62,
+      "distanceKm": 28.481,
+      "transferCount": 4
+    },
+    "TPSZ03": {
+      "durationMinutes": 24,
+      "distanceKm": 9.404,
+      "transferCount": 4
+    },
+    "HGSZ08": {
+      "durationMinutes": 37,
+      "distanceKm": 10.989,
+      "transferCount": 4
+    },
+    "BKSZ07": {
+      "durationMinutes": 38,
+      "distanceKm": 17.613,
+      "transferCount": 3
+    },
+    "JESZ01": {
+      "durationMinutes": 44,
+      "distanceKm": 18.159,
+      "transferCount": 5
+    },
+    "TPSZ10": {
+      "durationMinutes": 30,
+      "distanceKm": 8.776,
+      "transferCount": 6
+    },
+    "JWSZ04": {
+      "durationMinutes": 48,
+      "distanceKm": 20.257,
+      "transferCount": 4
+    },
+    "TPSZ08": {
+      "durationMinutes": 28,
+      "distanceKm": 8.364,
+      "transferCount": 4
+    },
+    "TPSZ01": {
+      "durationMinutes": 27,
+      "distanceKm": 9.306,
+      "transferCount": 4
+    },
+    "BDSZ01": {
+      "durationMinutes": 34,
+      "distanceKm": 11.538,
+      "transferCount": 2
+    },
+    "JESZ04": {
+      "durationMinutes": 50,
+      "distanceKm": 17.96,
+      "transferCount": 2
+    },
+    "JESZ02": {
+      "durationMinutes": 40,
+      "distanceKm": 16.513,
+      "transferCount": 4
+    },
+    "BKSZ09": {
+      "durationMinutes": 43,
+      "distanceKm": 15.278,
+      "transferCount": 4
+    },
+    "JWSZ09": {
+      "durationMinutes": 41,
+      "distanceKm": 20.567,
+      "transferCount": 4
+    },
+    "BDSZ02": {
+      "durationMinutes": 44,
+      "distanceKm": 13.586,
+      "transferCount": 4
+    },
+    "YSSZ05": {
+      "durationMinutes": 55,
+      "distanceKm": 21.797,
+      "transferCount": 4
+    },
+    "MDSZ03": {
+      "durationMinutes": 49,
+      "distanceKm": 22.31,
+      "transferCount": 4
+    },
+    "PGSZ01": {
+      "durationMinutes": 52,
+      "distanceKm": 18.626,
+      "transferCount": 4
+    },
+    "YSSZ01": {
+      "durationMinutes": 45,
+      "distanceKm": 21.479,
+      "transferCount": 5
+    },
+    "PRSZ03": {
+      "durationMinutes": 43,
+      "distanceKm": 19.968,
+      "transferCount": 4
+    },
+    "BKSZ01": {
+      "durationMinutes": 60,
+      "distanceKm": 20.485,
+      "transferCount": 6
+    },
+    "PLSZ01": {
+      "durationMinutes": 58,
+      "distanceKm": 22.628,
+      "transferCount": 4
+    },
+    "HGSZ10": {
+      "durationMinutes": 64,
+      "distanceKm": 16.277,
+      "transferCount": 6
+    },
+    "CHSZ02": {
+      "durationMinutes": 56,
+      "distanceKm": 20.221,
+      "transferCount": 4
+    },
+    "HGSZ03": {
+      "durationMinutes": 42,
+      "distanceKm": 13.966,
+      "transferCount": 6
+    },
+    "QTSZ02": {
+      "durationMinutes": 24,
+      "distanceKm": 8.672,
+      "transferCount": 4
+    },
+    "HGSZ02": {
+      "durationMinutes": 40,
+      "distanceKm": 13.654,
+      "transferCount": 6
+    },
+    "BPSZ04": {
+      "durationMinutes": 52,
+      "distanceKm": 16.225,
+      "transferCount": 4
+    },
+    "PLSZ03": {
+      "durationMinutes": 67,
+      "distanceKm": 24.13,
+      "transferCount": 4
+    },
+    "HGSZ04": {
+      "durationMinutes": 39,
+      "distanceKm": 13.952,
+      "transferCount": 6
+    },
+    "SESZ01": {
+      "durationMinutes": 54,
+      "distanceKm": 15.119,
+      "transferCount": 6
+    },
+    "PRSZ02": {
+      "durationMinutes": 46,
+      "distanceKm": 20.825,
+      "transferCount": 4
+    },
+    "AMSZ09": {
+      "durationMinutes": 36,
+      "distanceKm": 14.6,
+      "transferCount": 4
+    },
+    "CHSZ01": {
+      "durationMinutes": 68,
+      "distanceKm": 24.591,
+      "transferCount": 4
+    },
+    "CKSZ04": {
+      "durationMinutes": 58,
+      "distanceKm": 23.007,
+      "transferCount": 3
+    },
+    "SESZ07": {
+      "durationMinutes": 49,
+      "distanceKm": 17.56,
+      "transferCount": 4
+    },
+    "SESZ03": {
+      "durationMinutes": 39,
+      "distanceKm": 15.077,
+      "transferCount": 4
+    },
+    "SESZ06": {
+      "durationMinutes": 50,
+      "distanceKm": 18.067,
+      "transferCount": 6
+    },
+    "SESZ04": {
+      "durationMinutes": 51,
+      "distanceKm": 16.461,
+      "transferCount": 6
+    },
+    "CKSZ06": {
+      "durationMinutes": 50,
+      "distanceKm": 23.787,
+      "transferCount": 3
+    },
+    "PRSZ01": {
+      "durationMinutes": 63,
+      "distanceKm": 22.613,
+      "transferCount": 4
+    },
+    "HGSZ05": {
+      "durationMinutes": 45,
+      "distanceKm": 15.421,
+      "transferCount": 6
+    },
+    "PGSZ04": {
+      "durationMinutes": 49,
+      "distanceKm": 18.613,
+      "transferCount": 6
+    },
+    "CKSZ01": {
+      "durationMinutes": 55,
+      "distanceKm": 23.496,
+      "transferCount": 5
+    },
+    "CKSZ03": {
+      "durationMinutes": 48,
+      "distanceKm": 22.334,
+      "transferCount": 3
+    },
+    "BPSZ03": {
+      "durationMinutes": 52,
+      "distanceKm": 20.615,
+      "transferCount": 6
+    },
+    "BPSZ01": {
+      "durationMinutes": 51,
+      "distanceKm": 19.479,
+      "transferCount": 6
+    },
+    "SGSZ01": {
+      "durationMinutes": 54,
+      "distanceKm": 18.227,
+      "transferCount": 4
+    },
+    "BPSZ02": {
+      "durationMinutes": 54,
+      "distanceKm": 19.759,
+      "transferCount": 6
+    },
+    "SESZ05": {
+      "durationMinutes": 42,
+      "distanceKm": 14.765,
+      "transferCount": 6
+    },
+    "AMSZ12": {
+      "durationMinutes": 55,
+      "distanceKm": 17.273,
+      "transferCount": 4
+    },
+    "AMSZ10": {
+      "durationMinutes": 36,
+      "distanceKm": 14.433,
+      "transferCount": 2
+    },
+    "PRSZ06": {
+      "durationMinutes": 57,
+      "distanceKm": 20.895,
+      "transferCount": 4
+    },
+    "AMSZ08": {
+      "durationMinutes": 52,
+      "distanceKm": 17.491,
+      "transferCount": 4
+    },
+    "PRSZ04": {
+      "durationMinutes": 55,
+      "distanceKm": 21.387,
+      "transferCount": 4
+    },
+    "CKSZ05": {
+      "durationMinutes": 48,
+      "distanceKm": 23.19,
+      "transferCount": 5
+    },
+    "JWSZ08": {
+      "durationMinutes": 51,
+      "distanceKm": 22.717,
+      "transferCount": 4
+    },
+    "AMSZ11": {
+      "durationMinutes": 42,
+      "distanceKm": 16.33,
+      "transferCount": 4
+    },
+    "SESZ02": {
+      "durationMinutes": 46,
+      "distanceKm": 17.081,
+      "transferCount": 6
+    },
+    "SGSZ05": {
+      "durationMinutes": 38,
+      "distanceKm": 11.991,
+      "transferCount": 4
+    },
+    "JWSZ03": {
+      "durationMinutes": 41,
+      "distanceKm": 19.273,
+      "transferCount": 4
+    },
+    "SLSZ01": {
+      "durationMinutes": 62,
+      "distanceKm": 20.968,
+      "transferCount": 5
+    },
+    "SLSZ04": {
+      "durationMinutes": 56,
+      "distanceKm": 17.538,
+      "transferCount": 6
+    },
+    "SKSZ04": {
+      "durationMinutes": 74,
+      "distanceKm": 27.867,
+      "transferCount": 5
+    },
+    "YSSZ08": {
+      "durationMinutes": 69,
+      "distanceKm": 22.039,
+      "transferCount": 4
+    },
+    "PGSZ07": {
+      "durationMinutes": 67,
+      "distanceKm": 19.708,
+      "transferCount": 4
+    },
+    "MDSZ01": {
+      "durationMinutes": 74,
+      "distanceKm": 27.813,
+      "transferCount": 5
+    },
+    "YSSZ04": {
+      "durationMinutes": 42,
+      "distanceKm": 19.631,
+      "transferCount": 4
+    },
+    "SKSZ05": {
+      "durationMinutes": 77,
+      "distanceKm": 29.478,
+      "transferCount": 5
+    },
+    "WDSZ07": {
+      "durationMinutes": 54,
+      "distanceKm": 28.062,
+      "transferCount": 4
+    },
+    "WDSZ03": {
+      "durationMinutes": 50,
+      "distanceKm": 25.899,
+      "transferCount": 2
+    },
+    "SBSZ03": {
+      "durationMinutes": 50,
+      "distanceKm": 23.777,
+      "transferCount": 2
+    },
+    "WDSZ08": {
+      "durationMinutes": 62,
+      "distanceKm": 27.229,
+      "transferCount": 4
+    },
+    "SBSZ01": {
+      "durationMinutes": 53,
+      "distanceKm": 25.242,
+      "transferCount": 4
+    },
+    "KLSZ09": {
+      "durationMinutes": 17,
+      "distanceKm": 3.454,
+      "transferCount": 4
+    },
+    "PGSZ03": {
+      "durationMinutes": 45,
+      "distanceKm": 16.283,
+      "transferCount": 6
+    },
+    "TSSZ04": {
+      "durationMinutes": 64,
+      "distanceKm": 28.759,
+      "transferCount": 2
+    },
+    "PGSZ05": {
+      "durationMinutes": 49,
+      "distanceKm": 18.043,
+      "transferCount": 6
+    },
+    "TSSZ05": {
+      "durationMinutes": 77,
+      "distanceKm": 35.041,
+      "transferCount": 4
+    },
+    "WCSZ02": {
+      "durationMinutes": 66,
+      "distanceKm": 24.306,
+      "transferCount": 4
+    },
+    "SKSZ03": {
+      "durationMinutes": 61,
+      "distanceKm": 21.904,
+      "transferCount": 6
+    },
+    "WCSZ03": {
+      "durationMinutes": 53,
+      "distanceKm": 23.072,
+      "transferCount": 4
+    },
+    "JESZ05": {
+      "durationMinutes": 42,
+      "distanceKm": 16.215,
+      "transferCount": 2
+    },
+    "THSZ06": {
+      "durationMinutes": 49,
+      "distanceKm": 20.12,
+      "transferCount": 4
+    },
+    "THSZ04": {
+      "durationMinutes": 52,
+      "distanceKm": 21.03,
+      "transferCount": 4
+    },
+    "THSZ01": {
+      "durationMinutes": 53,
+      "distanceKm": 21.987,
+      "transferCount": 5
+    },
+    "THSZ03": {
+      "durationMinutes": 58,
+      "distanceKm": 20.829,
+      "transferCount": 5
+    },
+    "THSZ05": {
+      "durationMinutes": 58,
+      "distanceKm": 21.06,
+      "transferCount": 5
+    },
+    "PLSZ04": {
+      "durationMinutes": 46,
+      "distanceKm": 13.661,
+      "transferCount": 4
+    },
+    "WDSZ09": {
+      "durationMinutes": 67,
+      "distanceKm": 31.913,
+      "transferCount": 4
+    },
+    "YSSZ06": {
+      "durationMinutes": 57,
+      "distanceKm": 22.484,
+      "transferCount": 6
+    },
+    "SBSZ06": {
+      "durationMinutes": 57,
+      "distanceKm": 26.346,
+      "transferCount": 4
+    },
+    "PGSZ06": {
+      "durationMinutes": 56,
+      "distanceKm": 18.98,
+      "transferCount": 6
+    },
+    "PGSZ02": {
+      "durationMinutes": 47,
+      "distanceKm": 16.986,
+      "transferCount": 4
+    },
+    "SBSZ07": {
+      "durationMinutes": 59,
+      "distanceKm": 24.565,
+      "transferCount": 4
+    },
+    "SBSZ08": {
+      "durationMinutes": 64,
+      "distanceKm": 27.721,
+      "transferCount": 5
+    },
+    "OTSZ02": {
+      "durationMinutes": 13,
+      "distanceKm": 2.68,
+      "transferCount": 2
+    },
+    "MPSZ01": {
+      "durationMinutes": 32,
+      "distanceKm": 8.001,
+      "transferCount": 4
+    },
+    "GLSZ04": {
+      "durationMinutes": 19,
+      "distanceKm": 6.32,
+      "transferCount": 2
+    },
+    "SKSZ02": {
+      "durationMinutes": 55,
+      "distanceKm": 27.961,
+      "transferCount": 3
+    },
+    "WDSZ04": {
+      "durationMinutes": 52,
+      "distanceKm": 25.372,
+      "transferCount": 4
+    },
+    "WDSZ05": {
+      "durationMinutes": 63,
+      "distanceKm": 30.605,
+      "transferCount": 4
+    },
+    "WCSZ01": {
+      "durationMinutes": 70,
+      "distanceKm": 26.139,
+      "transferCount": 4
+    },
+    "YSSZ03": {
+      "durationMinutes": 52,
+      "distanceKm": 22.355,
+      "transferCount": 4
+    },
+    "SLSZ02": {
+      "durationMinutes": 90,
+      "distanceKm": 27.246,
+      "transferCount": 5
+    },
+    "SBSZ05": {
+      "durationMinutes": 52,
+      "distanceKm": 24.321,
+      "transferCount": 4
+    },
+    "LKSZ01": {
+      "durationMinutes": 101,
+      "distanceKm": 38.593,
+      "transferCount": 4
+    },
+    "SMSZ01": {
+      "durationMinutes": 54,
+      "distanceKm": 22.482,
+      "transferCount": 4
+    },
+    "SBSZ09": {
+      "durationMinutes": 61,
+      "distanceKm": 28.149,
+      "transferCount": 4
+    },
+    "SBSZ04": {
+      "durationMinutes": 53,
+      "distanceKm": 25.01,
+      "transferCount": 4
+    },
+    "SMSZ02": {
+      "durationMinutes": 76,
+      "distanceKm": 26.624,
+      "transferCount": 5
+    },
+    "WDSZ01": {
+      "durationMinutes": 57,
+      "distanceKm": 27.895,
+      "transferCount": 2
+    },
+    "YSSZ09": {
+      "durationMinutes": 48,
+      "distanceKm": 20.89,
+      "transferCount": 2
+    },
+    "SMSZ03": {
+      "durationMinutes": 58,
+      "distanceKm": 22.885,
+      "transferCount": 4
+    },
+    "YSSZ02": {
+      "durationMinutes": 53,
+      "distanceKm": 22.348,
+      "transferCount": 4
+    },
+    "WDSZ06": {
+      "durationMinutes": 61,
+      "distanceKm": 30.038,
+      "transferCount": 4
+    },
+    "WDSZ02": {
+      "durationMinutes": 58,
+      "distanceKm": 28.502,
+      "transferCount": 4
+    },
+    "SKSZ01": {
+      "durationMinutes": 61,
+      "distanceKm": 31.552,
+      "transferCount": 4
+    },
+    "SBSZ02": {
+      "durationMinutes": 52,
+      "distanceKm": 22.557,
+      "transferCount": 4
+    },
+    "MDSZ02": {
+      "durationMinutes": 65,
+      "distanceKm": 27.417,
+      "transferCount": 4
+    },
+    "BSSZ01": {
+      "durationMinutes": 39,
+      "distanceKm": 14.264,
+      "transferCount": 4
+    },
+    "YSSZ07": {
+      "durationMinutes": 58,
+      "distanceKm": 21.677,
+      "transferCount": 4
+    },
+    "AMSZ05": {
+      "durationMinutes": 41,
+      "distanceKm": 13.801,
+      "transferCount": 4
+    },
+    "PLSZ05": {
+      "durationMinutes": 59,
+      "distanceKm": 19.153,
+      "transferCount": 5
+    },
+    "AMSZ04": {
+      "durationMinutes": 34,
+      "distanceKm": 12.038,
+      "transferCount": 4
+    },
+    "BSSZ02": {
+      "durationMinutes": 33,
+      "distanceKm": 10.74,
+      "transferCount": 2
+    }
+  }
+}

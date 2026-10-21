@@ -24,3 +24,4 @@ class NeighborhoodDetailDTO:
     warnings: list[DataAvailabilityWarning]
     generatedTime: datetime
     indicators: SubzoneIndicators | None = None
+    pricingNote: str | None = None

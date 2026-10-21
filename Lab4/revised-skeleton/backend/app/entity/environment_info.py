@@ -1,13 +1,17 @@
-"""Environment info module."""
+"""Environment information entity."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass
 from datetime import datetime
+
 from app.entity.enums import EnvironmentGranularity
+
 
 @dataclass
 class EnvironmentInfo:
-    """Stereotype: Entity. Entity value object representing static and live environmental conditions."""
+    """Stereotype: Entity. Static and live environmental information."""
+
     weatherPattern: str
     greenCoveragePercent: float
     pm25: float | None = None
@@ -17,66 +21,21 @@ class EnvironmentInfo:
     asOf: datetime | None = None
 
     def getWeatherPattern(self) -> str:
-        """Return weather pattern.
-
-        Args:
-            None.
-
-        Returns:
-            str.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the weather pattern label."""
+        return self.weatherPattern
 
     def getGreenCoveragePercent(self) -> float:
-        """Return green coverage percent.
-
-        Args:
-            None.
-
-        Returns:
-            float.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return green coverage percentage."""
+        return self.greenCoveragePercent
 
     def getPm25(self) -> float | None:
-        """Return pm25.
-
-        Args:
-            None.
-
-        Returns:
-            float | None.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the live PM2.5 value, when available."""
+        return self.pm25
 
     def getUvi(self) -> float | None:
-        """Return uvi.
-
-        Args:
-            None.
-
-        Returns:
-            float | None.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the live UVI value, when available."""
+        return self.uvi
 
     def getGranularity(self) -> EnvironmentGranularity:
-        """Return granularity.
-
-        Args:
-            None.
-
-        Returns:
-            EnvironmentGranularity.
-
-        Failure handling:
-            Not applicable at the skeleton level."""
-        ...
+        """Return the data granularity."""
+        return self.granularity

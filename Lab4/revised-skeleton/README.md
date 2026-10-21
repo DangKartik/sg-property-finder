@@ -1,11 +1,11 @@
-# Revised Skeleton — Backend + Frontend
+# Neighbourhood Recommender — Backend + Frontend
 
-Class-only skeleton for the neighbourhood recommender. This folder is separate from
-`Lab4/Skeleton Code`.
+Phase 1 skeleton plus Phase 2 backend implementation for the neighbourhood
+recommender. This folder is separate from `Lab4/Skeleton Code`.
 
-**No implementation:** Python method bodies are `...`; TypeScript classes are
-`declare class` (ambient declarations). Remove `...` / `declare` as each class is
-implemented.
+**Current state:** the backend controls, adapters, scoring, ranking, factsheet,
+PDF and REST endpoints are implemented and covered by 64 `unittest` tests. The
+frontend is still a TypeScript `declare class` skeleton.
 
 ## Structure
 
@@ -19,9 +19,25 @@ revised-skeleton/
 │   ├── OPEN_ISSUES.md
 │   └── SPECIFICATIONS.md
 ├── backend/
+│   ├── Dockerfile
+│   ├── main.py
+│   ├── requirements.txt
+│   ├── README.md
 │   ├── assets/data/README.md
+│   ├── assets/data/planning_area_to_hdb_town.json
+│   ├── tests/
+│   │   ├── fixtures/
+│   │   └── test_*.py
 │   └── app/
+│       ├── api/handlers.py
+│       ├── bootstrap.py
 │       ├── config.py
+│       ├── core/
+│       │   ├── cache.py
+│       │   ├── geometry.py
+│       │   ├── serialization.py
+│       │   └── time.py
+│       ├── services/profile_factory.py
 │       ├── adapter/
 │       │   ├── data_gov_sg_adapter.py
 │       │   ├── one_map_api_adapter.py
@@ -43,9 +59,6 @@ revised-skeleton/
 │       │   ├── report_control.py
 │       │   ├── retrieval_control.py
 │       │   └── system_startup_control.py
-│       ├── data/
-│       │   ├── planning_area_to_hdb_town.json
-│       │   └── README.md
 │       ├── entity/
 │       │   ├── address_match.py
 │       │   ├── amenity_info.py
@@ -168,7 +181,7 @@ revised-skeleton/
 11. **Pricing is keyed by flat type.** `NeighborhoodDetailDTO.pricing` is a map, matching `selectedFlatTypes`.
 12. **Reports use safe download metadata.** `PdfReport` returns `downloadUrl`/`expiresAt`, never a server file path.
 13. **Desktop-only methods are removed.** `launchUI()` is gone; the React app bootstraps itself. `main()` remains only as an optional data-loading CLI hook.
-14. **This is a class-only pass.** FastAPI route modules and the React/Vite entrypoint are intentionally absent; they are the next layer to add.
+14. **Phase 2 backend is implemented.** REST handlers, adapters, retrieval, scoring, ranking, factsheets, PDF reports and tests are present. The React/Vite entrypoint is the next layer.
 
 Method names keep the diagram's camelCase to make traceability easy. Convert to PEP 8 snake_case later if desired.
 
@@ -185,14 +198,27 @@ cd Lab4/revised-skeleton
 cp .env.example .env
 ```
 
-`.env` is ignored by Git. `backend/app/config.py` defines the `Settings` class
-header that Phase 2 will populate with dotenv/pydantic-settings. OneMap currently
-uses email/password token authentication; `ONEMAP_EMAIL` and
-`ONEMAP_PASSWORD` are therefore required in addition to the requested
-`ONEMAP_API_KEY` placeholder.
+`.env` is ignored by Git. `backend/app/config.py` loads it through
+`Settings.fromEnv()`. OneMap currently uses email/password token authentication;
+`ONEMAP_EMAIL` and `ONEMAP_PASSWORD` are therefore required in addition to the
+requested `ONEMAP_API_KEY` placeholder.
 
-## Phase 1 status
+## Implementation status
 
-Phase 1 is complete: ECB package layout, entity/enum refactor, docstrings/JSDoc,
-stateless controls, environment setup, and specification documents. No business
-logic has been implemented yet.
+- **Phase 1:** complete (ECB package layout, entity/enum refactor, docstrings,
+  stateless controls, environment setup, specifications).
+- **Phase 2:** backend implemented and unit-tested (adapters, retrieval engine,
+  commute service, MCDA scoring, factsheet aggregation, PDF/share URLs and REST
+  handlers).
+- **Frontend:** still a class/JSDoc skeleton; React components and Dexie wiring
+  are the next phase.
+- **Data assets:** URA subzones, HDB resale prices, town mapping, regional
+  environment baselines and the CBD commute matrix are populated.
+  `amenities.json` is still required for the amenity score; the app degrades
+  gracefully with a warning until it is supplied.
+
+Run the backend tests from `Lab4/revised-skeleton/backend`:
+
+```bash
+python -m unittest discover -s tests -v
+```
