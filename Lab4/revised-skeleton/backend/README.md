@@ -24,6 +24,12 @@ The suite includes live FastAPI route smoke tests when `fastapi`, `starlette`,
 
 ## Data assets
 
+`DatasetService` uses the API-first refresh path: local snapshots provide fast
+startup, and the service refreshes subzone/HDB data from data.gov.sg when the
+snapshots are older than 24 hours. `/api/v1/data/status` exposes source, snapshot,
+`dataAsOf`, record count and staleness for the frontend IndexedDB cache layer.
+`POST /api/v1/data/refresh` forces a live refresh.
+
 `bootstrap.buildContext()` looks for these files in `backend/assets/data/`:
 
 - `subzones.geojson`

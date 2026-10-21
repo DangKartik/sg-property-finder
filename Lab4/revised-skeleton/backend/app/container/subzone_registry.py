@@ -67,6 +67,15 @@ class SubzoneRegistry:
             ValueError: If the payload is not a FeatureCollection.
         """
         source = json.loads(Path(path).read_text(encoding="utf-8"))
+        return cls.fromGeoJsonPayload(source, townMapping)
+
+    @classmethod
+    def fromGeoJsonPayload(
+        cls,
+        source: dict[str, Any],
+        townMapping: TownMapping | None = None,
+    ) -> "SubzoneRegistry":
+        """Load subzones from an in-memory GeoJSON FeatureCollection."""
         if source.get("type") != "FeatureCollection":
             raise ValueError("Subzone data must be a GeoJSON FeatureCollection")
 

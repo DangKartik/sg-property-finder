@@ -4,7 +4,7 @@ Phase 1 skeleton plus Phase 2 backend implementation for the neighbourhood
 recommender. This folder is separate from `Lab4/Skeleton Code`.
 
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
-PDF and REST endpoints are implemented and covered by 64 `unittest` tests. The
+PDF and REST endpoints are implemented and covered by 68 `unittest` tests. The
 frontend is still a TypeScript `declare class` skeleton.
 
 ## Structure
@@ -214,8 +214,11 @@ requested `ONEMAP_API_KEY` placeholder.
   are the next phase.
 - **Data assets:** URA subzones, HDB resale prices, town mapping, regional
   environment baselines and the CBD commute matrix are populated.
-  `amenities.json` is still required for the amenity score; the app degrades
-  gracefully with a warning until it is supplied.
+  `DatasetService` refreshes subzone/HDB snapshots from data.gov.sg when older
+  than 24 hours; live PM2.5/UVI/forecast already come from real-time APIs.
+  `/api/v1/data/status` and cache headers provide the contract for the future
+  IndexedDB cache layer. `amenities.json` is still required for the amenity
+  score; the app degrades gracefully with a warning until it is supplied.
 
 Run the backend tests from `Lab4/revised-skeleton/backend`:
 

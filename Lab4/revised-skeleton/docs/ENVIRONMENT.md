@@ -24,6 +24,7 @@ committed.
 | `APP_ENV` | Yes | `development`, `test` or `production`. |
 | `APP_HOST` | Yes | Local bind address. |
 | `APP_PORT` | Yes | Local bind port. |
+| `DATA_MAX_AGE_HOURS` | No | Refresh subzone/HDB snapshots from data.gov.sg after this many hours. Default `24`. |
 
 ## OneMap authentication note
 

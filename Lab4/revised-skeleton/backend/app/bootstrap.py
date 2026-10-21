@@ -26,6 +26,7 @@ from app.control.neighborhood_details_control import NeighborhoodDetailsControl
 from app.control.ranking_control import RankingControl
 from app.control.report_control import ReportControl
 from app.entity.subzone_indicators import SubzoneIndicators
+from app.services.dataset_service import DatasetService
 from app.services.live_environment import LiveEnvironmentProvider
 from app.strategy.weighted_scoring_strategy import WeightedScoringStrategy
 
@@ -39,6 +40,7 @@ class AppContext:
     registry: SubzoneRegistry
     oneMapAdapter: Any
     dataGovAdapter: DataGovSgAdapter
+    datasetService: DatasetService
     notifier: DataAvailabilityNotifier
     validator: InputValidationControl
     pricingControl: HousePricingRetrievalControl
@@ -68,12 +70,6 @@ def buildContext(
 
     town_mapping_path = base_dir / "planning_area_to_hdb_town.json"
     town_mapping = TownMapping.fromFile(town_mapping_path) if town_mapping_path.exists() else TownMapping({})
-    subzone_path = base_dir / "subzones.geojson"
-    registry = (
-        SubzoneRegistry.fromGeoJson(subzone_path, town_mapping)
-        if subzone_path.exists()
-        else SubzoneRegistry()
-    )
 
     data_gov = DataGovSgAdapter(
         settings.DATA_GOV_SG_BASE_URL,
@@ -81,6 +77,16 @@ def buildContext(
         realtimeBaseUrl=settings.DATA_GOV_SG_REALTIME_BASE_URL,
         fallbackDir=base_dir,
     )
+    dataset_service = DatasetService(
+        data_gov,
+        base_dir,
+        maxAgeHours=settings.DATA_MAX_AGE_HOURS,
+    )
+    try:
+        subzone_payload = dataset_service.getSubzones()
+        registry = SubzoneRegistry.fromGeoJsonPayload(subzone_payload, town_mapping)
+    except Exception:
+        registry = SubzoneRegistry()
     notifier = DataAvailabilityNotifier()
     if oneMapAdapter is None:
         oneMapAdapter = OneMapApiAdapter(
@@ -94,6 +100,7 @@ def buildContext(
         notifier,
         dataPath=base_dir / "hdb_resale.csv",
         subzoneRegistry=registry,
+        datasetService=dataset_service,
     )
     amenities = AmenityRetrievalControl(
         data_gov,
@@ -119,8 +126,10 @@ def buildContext(
         matrixPath=base_dir / "commute_matrix.json",
     )
     scoring = WeightedScoringStrategy()
-    data_snapshot = data_gov.lastMetadata.dataSnapshotId if data_gov.lastMetadata else "LOCAL"
-    data_as_of = data_gov.lastMetadata.dataAsOf if data_gov.lastMetadata else datetime.now(timezone.utc)
+    dataset_status = dataset_service.status()
+    subzone_status = dataset_status.get("subzones") or {}
+    data_snapshot = subzone_status.get("dataSnapshotId", "LOCAL")
+    data_as_of = subzone_status.get("dataAsOf", datetime.now(timezone.utc))
     ranking = RankingControl(
         registry,
         scoring,
@@ -146,6 +155,7 @@ def buildContext(
         registry=registry,
         oneMapAdapter=oneMapAdapter,
         dataGovAdapter=data_gov,
+        datasetService=dataset_service,
         notifier=notifier,
         validator=InputValidationControl(oneMapAdapter),
         pricingControl=pricing,

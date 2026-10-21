@@ -22,6 +22,10 @@ business logic is written.
 - OPEN-22: price-trend thresholds are implemented (`±2%`).
 - OPEN-23: profile creation requires online address validation.
 - OPEN-24: OneMap token caching and automatic five-minute refresh are implemented.
+- Data freshness: `DatasetService` refreshes subzone/HDB snapshots from data.gov.sg
+  when older than 24 hours; live environment APIs are already used for display.
+- Frontend caching contract: `/api/v1/data/status` plus `X-Data-As-Of`, `ETag`,
+  `X-Data-Source` and `X-Data-Stale` headers are exposed for the future IndexedDB layer.
 - OneMap search, routing and address-match parsing are implemented.
 - data.gov.sg metadata, poll-download, real-time fetch and local fallbacks are implemented.
 - MCDA scoring, budget filtering, missing-data renormalisation and ranking are implemented.

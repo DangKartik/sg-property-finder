@@ -21,6 +21,7 @@ The suite uses local fixtures only; it never calls OneMap or data.gov.sg.
 | `test_report.py` | PDF bytes, secure metadata, export, share URL |
 | `test_api_handlers.py` | address, recommendations, factsheet, comparison, report, geometry, criteria |
 | `test_extras.py` | TTL cache, map payload/overlay, top-50 async commute, live environment, profile factory |
+| `test_dataset_service.py` | Live-first/snapshot selection, refresh, fallback and status |
 | `test_fastapi_endpoints.py` | Live FastAPI route registration and envelope responses |
 
 The FastAPI route layer in `main.py` requires `starlette` and `pydantic`; those are

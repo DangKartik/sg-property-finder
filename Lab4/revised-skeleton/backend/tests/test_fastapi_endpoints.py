@@ -51,6 +51,16 @@ class FastApiEndpointTests(unittest.TestCase):
         response = self.client.get("/api/v1/subzones/geometry")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()["data"]["features"]), 3)
+        self.assertIn("X-Data-As-Of", response.headers)
+        self.assertIn("ETag", response.headers)
+        self.assertIn("max-age", response.headers["Cache-Control"])
+
+    def test_data_status_for_frontend_cache(self) -> None:
+        response = self.client.get("/api/v1/data/status")
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()["success"])
+        self.assertEqual(response.json()["data"]["subzones"]["recordCount"], 3)
+        self.assertIn("dataAsOf", response.json()["data"]["subzones"])
 
     def test_address_recommendations_and_comparison(self) -> None:
         address = self.client.post("/api/v1/address/search", json={"query": "Raffles Place"})

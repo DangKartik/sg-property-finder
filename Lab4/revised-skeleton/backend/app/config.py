@@ -26,6 +26,7 @@ class Settings:
     APP_ENV: str
     APP_HOST: str
     APP_PORT: int
+    DATA_MAX_AGE_HOURS: int = 24
 
     @staticmethod
     def _loadEnvFile(path: Path) -> None:
@@ -75,6 +76,10 @@ class Settings:
             port = int(port_text)
         except ValueError as exc:
             raise ValueError("APP_PORT must be an integer") from exc
+        try:
+            max_age_hours = int(os.environ.get("DATA_MAX_AGE_HOURS", "24"))
+        except ValueError as exc:
+            raise ValueError("DATA_MAX_AGE_HOURS must be an integer") from exc
 
         return cls(
             ONEMAP_API_KEY=os.environ.get("ONEMAP_API_KEY") or None,
@@ -92,4 +97,5 @@ class Settings:
             APP_ENV=os.environ.get("APP_ENV", "development"),
             APP_HOST=os.environ.get("APP_HOST", "127.0.0.1"),
             APP_PORT=port,
+            DATA_MAX_AGE_HOURS=max_age_hours,
         )

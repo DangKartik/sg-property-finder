@@ -123,6 +123,20 @@ def criteria(context: AppContext) -> ApiEnvelope[Any]:
     return ok(context.scoringStrategy.criterionCatalog.getAllCriteria())
 
 
+def dataStatus(context: AppContext) -> ApiEnvelope[Any]:
+    """Return live/snapshot freshness metadata for the frontend cache layer."""
+    return ok(context.datasetService.status())
+
+
+def refreshData(context: AppContext) -> ApiEnvelope[Any]:
+    """Force a live data.gov.sg refresh and return the resulting statuses."""
+    try:
+        statuses = context.datasetService.refresh()
+    except Exception:
+        return fail("DATA_REFRESH_FAILED", "Unable to refresh data.gov.sg datasets.", {"retryable": True})
+    return ok(statuses)
+
+
 def reportPath(reportId: str, context: AppContext) -> Any:
     """Return a stored report path or None when expired/missing."""
     return context.reportStore.getPath(reportId)

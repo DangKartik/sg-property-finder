@@ -1,5 +1,10 @@
 # Data snapshots and fallbacks
 
+These files are **local snapshots and offline fallbacks**, not the only data
+source. `DatasetService` checks their age on startup and refreshes the subzone
+and HDB datasets from data.gov.sg when they are older than 24 hours. Live
+environment readings come from the data.gov.sg real-time APIs.
+
 `bootstrap.buildContext()` looks for these files in this directory:
 
 ```text

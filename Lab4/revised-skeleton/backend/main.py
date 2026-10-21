@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
+from contextlib import asynccontextmanager
 from typing import Any
 
 from app.api import handlers
@@ -37,7 +39,14 @@ def createApp(context: AppContext | None = None) -> Any:
         )
 
     context = context or buildContext()
-    app = FastAPI(title="SG Property Finder API", version="0.1.0")
+
+    @asynccontextmanager
+    async def lifespan(_: Any):
+        if context.settings.APP_ENV.lower() != "test":
+            asyncio.create_task(asyncio.to_thread(context.datasetService.refreshIfStale))
+        yield
+
+    app = FastAPI(title="SG Property Finder API", version="0.1.0", lifespan=lifespan)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -46,8 +55,22 @@ def createApp(context: AppContext | None = None) -> Any:
         allow_headers=["*"],
     )
 
-    def respond(envelope: Any) -> Any:
-        return JSONResponse(content=toJsonable(envelope))
+    def respond(envelope: Any, headers: dict[str, str] | None = None) -> Any:
+        return JSONResponse(content=toJsonable(envelope), headers=headers or {})
+
+    def dataHeaders(dataset: str = "subzones") -> dict[str, str]:
+        status = context.datasetService.status().get(dataset, {})
+        headers = {
+            "Cache-Control": "public, max-age=86400",
+            "X-Data-Source": str(status.get("source", "unknown")),
+        }
+        if status.get("dataAsOf"):
+            headers["X-Data-As-Of"] = str(toJsonable(status["dataAsOf"]))
+        if status.get("dataSnapshotId"):
+            headers["ETag"] = f'"{status["dataSnapshotId"]}"'
+        if status.get("isStale"):
+            headers["X-Data-Stale"] = "true"
+        return headers
 
     @app.get("/api/v1/health")
     def health() -> Any:
@@ -59,7 +82,15 @@ def createApp(context: AppContext | None = None) -> Any:
 
     @app.get("/api/v1/criteria")
     def criteria() -> Any:
-        return respond(handlers.criteria(context))
+        return respond(handlers.criteria(context), {"Cache-Control": "public, max-age=86400"})
+
+    @app.get("/api/v1/data/status")
+    def data_status() -> Any:
+        return respond(handlers.dataStatus(context), {"Cache-Control": "no-store"})
+
+    @app.post("/api/v1/data/refresh")
+    def data_refresh() -> Any:
+        return respond(handlers.refreshData(context), {"Cache-Control": "no-store"})
 
     @app.post("/api/v1/address/search")
     def address_search(body: dict[str, Any]) -> Any:
@@ -67,11 +98,11 @@ def createApp(context: AppContext | None = None) -> Any:
 
     @app.post("/api/v1/recommendations")
     def recommendations(body: dict[str, Any]) -> Any:
-        return respond(handlers.recommendations(body, context))
+        return respond(handlers.recommendations(body, context), {"Cache-Control": "no-store"})
 
     @app.get("/api/v1/subzones/geometry")
     def subzone_geometry() -> Any:
-        return respond(handlers.geometry(context))
+        return respond(handlers.geometry(context), dataHeaders("subzones"))
 
     @app.get("/api/v1/subzones/{code}/factsheet")
     def factsheet(
@@ -92,7 +123,11 @@ def createApp(context: AppContext | None = None) -> Any:
                 return respond(handlers.fail("INVALID_PROFILE", "Profile query is not valid JSON"))
         else:
             return respond(handlers.fail("PROFILE_REQUIRED", "A share link or profile query is required"))
-        return respond(handlers.factsheet(code, payload, context))
+        headers = {
+            **dataHeaders("hdb"),
+            "Cache-Control": "private, max-age=300",
+        }
+        return respond(handlers.factsheet(code, payload, context), headers)
 
     @app.post("/api/v1/comparison")
     def compare(body: dict[str, Any]) -> Any:

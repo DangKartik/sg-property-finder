@@ -172,7 +172,9 @@ All endpoints return the standard envelope:
 | --- | --- | --- | --- |
 | `GET` | `/api/v1/health` | — | service status |
 | `GET` | `/api/v1/ready` | — | data/cache readiness |
-| `GET` | `/api/v1/criteria` | — | `CriterionDefinition[]` |
+| `GET` | `/api/v1/criteria` | - | `CriterionDefinition[]` |
+| `GET` | `/api/v1/data/status` | - | dataset freshness metadata |
+| `POST` | `/api/v1/data/refresh` | - | force live data.gov.sg refresh |
 | `POST` | `/api/v1/address/search` | `{ "query": "..." }` | `AddressMatch[]` |
 | `POST` | `/api/v1/recommendations` | `ProfileDTO` | `RecommendationSet` |
 | `GET` | `/api/v1/subzones/{code}/factsheet` | profile context (OPEN-10) | `NeighborhoodDetailDTO` |

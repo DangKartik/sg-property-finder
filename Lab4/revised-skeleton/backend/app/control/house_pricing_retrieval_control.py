@@ -31,6 +31,7 @@ class HousePricingRetrievalControl(RetrievalControl):
         dataPath: Path | str | None = None,
         subzoneRegistry: SubzoneRegistry | None = None,
         asOf: date | datetime | str | None = None,
+        datasetService: Any | None = None,
     ) -> None:
         """Create the pricing control.
 
@@ -40,10 +41,12 @@ class HousePricingRetrievalControl(RetrievalControl):
             dataPath: Optional local CSV/JSON fallback with HDB rows.
             subzoneRegistry: Registry used to resolve a subzone's HDB town.
             asOf: Optional window end date; defaults to the latest month in data.
+            datasetService: Optional live/snapshot dataset service.
         """
         super().__init__(dataGovAdapter, notifier)
         self.dataPath = Path(dataPath) if dataPath else None
         self.subzoneRegistry = subzoneRegistry
+        self.datasetService = datasetService
         self._requestedAsOf = asOf
         self._rowsCache = TTLCache(maxsize=4, ttl=300)
         self._byTown: dict[tuple[str, str], list[dict[str, Any]]] = {}
@@ -51,7 +54,15 @@ class HousePricingRetrievalControl(RetrievalControl):
         self._resolvedAsOf: date | None = None
 
     def fetchData(self, resourceId: str) -> RawResponse:
-        """Fetch HDB rows from the local fallback or the adapter."""
+        """Fetch HDB rows from the live service, local fallback or adapter."""
+        if self.datasetService is not None:
+            rows = self.datasetService.getHdbRows()
+            return RawResponse(
+                statusCode=200,
+                body={"rows": rows},
+                headers={"Content-Type": "application/json"},
+                fetchedAt=datetime.now(timezone.utc),
+            )
         if self.dataPath and self.dataPath.exists():
             rows = self._readLocalRows(self.dataPath)
             return RawResponse(
