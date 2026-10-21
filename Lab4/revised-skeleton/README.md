@@ -12,12 +12,16 @@ implemented.
 ```text
 revised-skeleton/
 ├── README.md
+├── .env.example
+├── .gitignore
 ├── docs/
-│   ├── SPECIFICATIONS.md
-│   └── OPEN_ISSUES.md
+│   ├── ENVIRONMENT.md
+│   ├── OPEN_ISSUES.md
+│   └── SPECIFICATIONS.md
 ├── backend/
 │   ├── assets/data/README.md
 │   └── app/
+│       ├── config.py
 │       ├── adapter/
 │       │   ├── data_gov_sg_adapter.py
 │       │   └── one_map_api_adapter.py
@@ -48,7 +52,9 @@ revised-skeleton/
 │       │   ├── commute_estimate.py
 │       │   ├── criterion_score.py
 │       │   ├── criterion_weight.py
+│       │   ├── data_availability_warning.py
 │       │   ├── dataset_metadata.py
+│       │   ├── enums.py
 │       │   ├── environment_info.py
 │       │   ├── house_pricing.py
 │       │   ├── pdf_report.py
@@ -60,7 +66,6 @@ revised-skeleton/
 │       │   └── types.py
 │       ├── schemas/
 │       │   ├── api_envelope.py
-│       │   ├── data_availability_warning.py
 │       │   ├── neighborhood_detail_dto.py
 │       │   └── profile_dto.py
 │       └── strategy/
@@ -142,7 +147,7 @@ revised-skeleton/
 | `SubzoneIndicators` | `backend/app/entity/subzone_indicators.py` | Numeric features consumed by scoring. |
 | `ProfileDTO` | `backend/app/schemas/profile_dto.py` | Transport/input model. |
 | `NeighborhoodDetailDTO` | `backend/app/schemas/neighborhood_detail_dto.py` | Fact-sheet response with pricing per flat type. |
-| `DataAvailabilityWarning` | `backend/app/schemas/data_availability_warning.py` | Missing/stale/valid-zero reporting. |
+| `DataAvailabilityWarning` | `backend/app/entity/data_availability_warning.py` | Missing/stale/valid-zero reporting. |
 | Frontend DTOs | `frontend/src/types/dto.ts` | API payloads, envelopes and enums. |
 | API contracts | `frontend/src/api/contracts.ts` | Cross-tier calls replacing direct object associations. |
 
@@ -169,3 +174,23 @@ Method names keep the diagram's camelCase to make traceability easy. Convert to 
 
 - `docs/SPECIFICATIONS.md` — frozen scoring, budget, environment, geography, commute, snapshot and API rules.
 - `docs/OPEN_ISSUES.md` — contradictions and data limitations that still need a decision before implementation.
+- `docs/ENVIRONMENT.md` — `.env` setup and variable reference.
+
+## Environment setup
+
+```bash
+cd Lab4/revised-skeleton
+cp .env.example .env
+```
+
+`.env` is ignored by Git. `backend/app/config.py` defines the `Settings` class
+header that Phase 2 will populate with dotenv/pydantic-settings. OneMap currently
+uses email/password token authentication; `ONEMAP_EMAIL` and
+`ONEMAP_PASSWORD` are therefore required in addition to the requested
+`ONEMAP_API_KEY` placeholder.
+
+## Phase 1 status
+
+Phase 1 is complete: ECB package layout, entity/enum refactor, docstrings/JSDoc,
+stateless controls, environment setup, and specification documents. No business
+logic has been implemented yet.

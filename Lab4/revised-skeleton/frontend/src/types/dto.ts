@@ -1,54 +1,76 @@
+/**
+ * Stereotype: Entity/DTO.
+ * Browser-facing transport types mirroring the backend response schemas.
+ * All timestamps are ISO-8601 strings; all coordinates are WGS84.
+ */
+
+/** WGS84 latitude/longitude pair. */
 export interface CoordinatesDTO {
   latitude: number;
   longitude: number;
 }
 
+/** A confirmed OneMap address match. */
 export interface AddressMatchDTO {
   formattedAddress: string;
   postalCode: string;
   coordinates: CoordinatesDTO;
+  /** Null when OneMap does not provide a confidence value. */
   confidenceScore: number | null;
 }
 
+/** Commute modes supported by the routing adapter. */
 export type TransitModeDTO = "PUBLIC_TRANSIT" | "DRIVING" | "WALKING";
 
+/** Spatial level at which environment data is reported. */
 export type EnvironmentGranularityDTO = "NATIONAL" | "REGION" | "SUBZONE";
 
+/** Severity of a data-availability warning. */
 export type WarningSeverityDTO = "INFO" | "WARNING" | "ERROR";
 
+/** Machine-readable reason for a data warning. */
 export type DataAvailabilityCodeDTO =
   | "MISSING_SOURCE_DATA"
   | "VALID_ZERO"
   | "STALE_CACHE"
   | "PARTIAL_DATA";
 
+/** Whether a criterion is minimised or maximised. */
 export type CriterionDirectionDTO = "MINIMIZE" | "MAXIMIZE";
 
+/** Frozen criterion metadata used by the form and scoring engine. */
 export interface CriterionDefinitionDTO {
   criterionId: string;
   criterionName: string;
   unit: string;
   direction: CriterionDirectionDTO;
+  /** Buffer radius in metres, or null when not spatial. */
   bufferM: number | null;
+  /** Default weight in [0, 1], or null when no product default is set. */
   defaultWeight: number | null;
 }
 
+/** User-assigned weight for one criterion. */
 export interface CriterionWeightDTO {
   criterionId: string;
   weightValue: number;
 }
 
+/** Per-criterion explanation of a suitability score. */
 export interface CriterionScoreDTO {
   criterionId: string;
-  criterionName: string;
   rawValue: number;
+  /** Normalised score in [0, 1]. */
   normalisedScore: number;
+  /** Renormalised weight in [0, 1]. */
   weight: number;
+  /** normalisedScore × weight. */
   weightedScore: number;
   isMissing: boolean;
   source: string;
 }
 
+/** Preference profile submitted to the backend. */
 export interface ProfileDTO {
   profileId: string | null;
   profileName: string;
@@ -65,16 +87,19 @@ export interface ProfileDTO {
   lastUpdatedTime: string | null;
 }
 
+/** One field-level validation error. */
 export interface ValidationErrorDTO {
   field: string;
   message: string;
 }
 
+/** Result of validating a profile. */
 export interface ValidationResultDTO {
   isValid: boolean;
   errors: ValidationErrorDTO[];
 }
 
+/** Missing, stale, partial or valid-zero data notice. */
 export interface DataAvailabilityWarningDTO {
   subzoneCode: string | null;
   datasetCode: string;
@@ -87,6 +112,7 @@ export interface DataAvailabilityWarningDTO {
   asOf: string | null;
 }
 
+/** Amenity and its distance from the subzone anchor. */
 export interface AmenityInfoDTO {
   amenityName: string;
   category: string;
@@ -94,6 +120,7 @@ export interface AmenityInfoDTO {
   distanceKm: number | null;
 }
 
+/** HDB resale pricing for one flat type. */
 export interface HousePricingDTO {
   averagePrice: number;
   medianPricePerSqm: number;
@@ -106,6 +133,7 @@ export interface HousePricingDTO {
   asOf: string | null;
 }
 
+/** Static and live environmental information. */
 export interface EnvironmentInfoDTO {
   weatherPattern: string;
   greenCoveragePercent: number;
@@ -116,6 +144,7 @@ export interface EnvironmentInfoDTO {
   asOf: string | null;
 }
 
+/** Commute duration, distance, transfers and optional route geometry. */
 export interface CommuteEstimateDTO {
   durationMinutes: number;
   distanceKm: number;
@@ -125,6 +154,7 @@ export interface CommuteEstimateDTO {
   routeGeometry: string | null;
 }
 
+/** Subzone geometry and metadata. */
 export interface SubzoneDTO {
   subzoneCode: string;
   subzoneName: string;
@@ -136,6 +166,7 @@ export interface SubzoneDTO {
   indicators: SubzoneIndicatorsDTO | null;
 }
 
+/** Precomputed numeric features used by scoring. */
 export interface SubzoneIndicatorsDTO {
   nearestParkM: number | null;
   parkCount500m: number;
@@ -164,6 +195,7 @@ export interface SubzoneIndicatorsDTO {
   dataAsOf: string | null;
 }
 
+/** One ranked subzone with its score explanation. */
 export interface RecommendationItemDTO {
   subzoneId: string;
   subzoneName: string;
@@ -172,6 +204,7 @@ export interface RecommendationItemDTO {
   criterionScores: CriterionScoreDTO[];
 }
 
+/** Ranked recommendations for one profile snapshot. */
 export interface RecommendationSetDTO {
   profileId: string;
   generatedTime: string;
@@ -181,6 +214,7 @@ export interface RecommendationSetDTO {
   warnings: DataAvailabilityWarningDTO[];
 }
 
+/** Complete factsheet for one subzone. */
 export interface NeighborhoodDetailDTO {
   subzoneCode: string;
   subzoneName: string;
@@ -193,6 +227,7 @@ export interface NeighborhoodDetailDTO {
   indicators: SubzoneIndicatorsDTO | null;
 }
 
+/** Side-by-side comparison result. */
 export interface ComparisonResultDTO {
   profileId: string;
   generatedTime: string;
@@ -202,12 +237,14 @@ export interface ComparisonResultDTO {
   summary: string;
 }
 
+/** Leaflet-ready map payload. */
 export interface MapDataDTO {
   geojson: unknown;
   scores: Record<string, number>;
   center: CoordinatesDTO;
 }
 
+/** Route overlay payload. */
 export interface RouteDataDTO {
   geometry: string;
   distanceKm: number;
@@ -215,6 +252,7 @@ export interface RouteDataDTO {
   mode: TransitModeDTO;
 }
 
+/** Browser-safe PDF report metadata. */
 export interface PdfReportDTO {
   reportId: string;
   generatedTime: string;
@@ -225,12 +263,14 @@ export interface PdfReportDTO {
   sizeBytes: number;
 }
 
+/** Standard API error. */
 export interface ApiErrorDTO {
   code: string;
   message: string;
   details: Record<string, unknown> | null;
 }
 
+/** Standard API response envelope. */
 export interface ApiEnvelope<T> {
   success: boolean;
   data: T | null;

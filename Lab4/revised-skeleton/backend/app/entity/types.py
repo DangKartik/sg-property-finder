@@ -1,88 +1,97 @@
-from __future__ import annotations
+"""Types module."""
 
+from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
-from enum import Enum
 from typing import TYPE_CHECKING, Any, Generic, TypeAlias, TypeVar
-
 if TYPE_CHECKING:
-    from app.schemas.data_availability_warning import DataAvailabilityWarning
-
+    from app.entity.data_availability_warning import DataAvailabilityWarning
+    from app.entity.enums import TransitMode
 JSON: TypeAlias = dict[str, Any]
-T = TypeVar("T")
-
+T = TypeVar('T')
 
 @dataclass
 class Coordinates:
+    """Stereotype: Entity. Entity value object representing a WGS84 latitude/longitude pair."""
     latitude: float
     longitude: float
 
-    def toOneMapString(self) -> str: ...
-    def toGeoJSON(self) -> tuple[float, float]: ...
+    def toOneMapString(self) -> str:
+        """Return the `lat,lng` string expected by OneMap.
 
+        Args:
+            None.
 
-class TransitMode(str, Enum):
-    PUBLIC_TRANSIT = "PUBLIC_TRANSIT"
-    DRIVING = "DRIVING"
-    WALKING = "WALKING"
+        Returns:
+            str.
 
+        Failure handling:
+            Not applicable at the skeleton level."""
+        ...
 
-class EnvironmentGranularity(str, Enum):
-    NATIONAL = "NATIONAL"
-    REGION = "REGION"
-    SUBZONE = "SUBZONE"
+    def toGeoJSON(self) -> tuple[float, float]:
+        """Return the `(lng, lat)` pair expected by GeoJSON.
 
+        Args:
+            None.
 
-class WarningSeverity(str, Enum):
-    INFO = "INFO"
-    WARNING = "WARNING"
-    ERROR = "ERROR"
+        Returns:
+            tuple[float, float].
 
-
-class DataAvailabilityCode(str, Enum):
-    MISSING_SOURCE_DATA = "MISSING_SOURCE_DATA"
-    VALID_ZERO = "VALID_ZERO"
-    STALE_CACHE = "STALE_CACHE"
-    PARTIAL_DATA = "PARTIAL_DATA"
-
+        Failure handling:
+            Not applicable at the skeleton level."""
+        ...
 
 @dataclass
 class ValidationError:
+    """Stereotype: Entity. Entity value object describing one invalid profile field."""
     field: str
     message: str
 
-
 @dataclass
 class ValidationResult:
+    """Stereotype: Entity. Entity value object containing the outcome of profile validation."""
     isValid: bool
     errors: list[ValidationError]
 
-    def addError(self, field: str, message: str) -> None: ...
+    def addError(self, field: str, message: str) -> None:
+        """Append a field-level validation error.
 
+        Args:
+            field: str
+            message: str
+
+        Returns:
+            None.
+
+        Failure handling:
+            Not applicable at the skeleton level."""
+        ...
 
 @dataclass
 class RetrievalResult(Generic[T]):
+    """Stereotype: Entity. Entity value object carrying request-scoped retrieved data and warnings."""
     data: T
     warnings: list[DataAvailabilityWarning]
 
-
 @dataclass
 class MapData:
+    """Stereotype: Entity. Entity value object carrying Leaflet-ready GeoJSON, scores and map center."""
     geojson: JSON
     scores: dict[str, float]
     center: Coordinates
 
-
 @dataclass
 class RouteData:
+    """Stereotype: Entity. Entity value object carrying route geometry and summary values."""
     geometry: str
     distanceKm: float
     durationMinutes: int
     mode: TransitMode
 
-
 @dataclass
 class RawResponse:
+    """Stereotype: Entity. Entity value object wrapping an unparsed external API response."""
     statusCode: int
     body: JSON
     headers: dict[str, str]

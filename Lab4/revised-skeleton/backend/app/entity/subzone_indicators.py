@@ -1,11 +1,12 @@
-from __future__ import annotations
+"""Subzone indicators module."""
 
+from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 
-
 @dataclass
 class SubzoneIndicators:
+    """Stereotype: Entity. Entity value object holding precomputed numeric neighbourhood indicators."""
     nearestParkM: float | None = None
     parkCount500m: int = 0
     greenCoveragePercent500m: float | None = None
