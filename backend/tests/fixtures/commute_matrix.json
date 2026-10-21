@@ -1,0 +1,7 @@
+{
+  "subzones": {
+    "TAMPINES01": {"CBD": {"durationMinutes": 35, "distanceKm": 14.2, "transferCount": 1}},
+    "BEDOK01": {"CBD": {"durationMinutes": 28, "distanceKm": 11.8, "transferCount": 1}},
+    "JURONG01": {"CBD": {"durationMinutes": 45, "distanceKm": 19.5, "transferCount": 2}}
+  }
+}

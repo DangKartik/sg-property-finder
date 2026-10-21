@@ -1,0 +1,17 @@
+[
+  {"name": "Tampines Primary School", "category": "Primary School", "latitude": 1.351, "longitude": 103.941},
+  {"name": "Tampines Secondary School", "category": "Secondary School", "latitude": 1.349, "longitude": 103.939},
+  {"name": "Tampines Polyclinic", "category": "Polyclinic", "latitude": 1.352, "longitude": 103.943},
+  {"name": "Changi General Hospital", "category": "Hospital", "latitude": 1.335, "longitude": 103.945},
+  {"name": "Tampines Park", "category": "Park", "latitude": 1.3505, "longitude": 103.9405},
+  {"name": "Tampines Mall", "category": "Shopping Mall", "latitude": 1.353, "longitude": 103.945},
+  {"name": "Tampines MRT", "category": "MRT", "latitude": 1.3535, "longitude": 103.9455},
+  {"name": "Bedok North Primary School", "category": "Primary School", "latitude": 1.321, "longitude": 103.931},
+  {"name": "Bedok Town Park", "category": "Park", "latitude": 1.320, "longitude": 103.930},
+  {"name": "Bedok Mall", "category": "Shopping Mall", "latitude": 1.319, "longitude": 103.929},
+  {"name": "Bedok MRT", "category": "MRT", "latitude": 1.3185, "longitude": 103.9285},
+  {"name": "Jurong West Primary School", "category": "Primary School", "latitude": 1.341, "longitude": 103.701},
+  {"name": "Jurong Central Park", "category": "Park", "latitude": 1.340, "longitude": 103.700},
+  {"name": "Jurong Point", "category": "Shopping Mall", "latitude": 1.339, "longitude": 103.699},
+  {"name": "Jurong West MRT", "category": "MRT", "latitude": 1.342, "longitude": 103.701}
+]

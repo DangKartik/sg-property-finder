@@ -1,0 +1,258 @@
+# Open Issues
+
+Issues found after applying the Part 1 fixes. Items under **Must resolve** affect
+correctness, reproducibility or the API contract and should be settled before
+business logic is written.
+
+## Resolved in Phase 2 backend
+
+- OPEN-01: school radius frozen at 1.0 km.
+- OPEN-02: town-level HDB pricing accepted and labelled with `isTownProxy`.
+- OPEN-03 / OPEN-04: deterministic regional baseline file supplied.
+- OPEN-05: fixed absolute domains replace candidate-relative min–max scoring.
+- OPEN-18: planning-area → HDB-town mapping populated.
+- OPEN-10: the factsheet endpoint accepts a share token or profile query.
+- OPEN-11: criteria, comparison, report-download and health/readiness endpoints are present.
+- OPEN-12: a temp-file `ReportStore` and secure download metadata are implemented.
+- OPEN-13: `RecommendationSet.profileSnapshot` preserves the ranking inputs.
+- OPEN-15: `CYCLING` is intentionally excluded from `TransitMode`.
+- OPEN-14: address confidence is computed with `SequenceMatcher`.
+- OPEN-20: comparisons are capped at four subzones.
+- OPEN-21: Shapely is used when installed, with a dependency-free polygon fallback.
+- OPEN-22: price-trend thresholds are implemented (`±2%`).
+- OPEN-23: profile creation requires online address validation.
+- OPEN-24: OneMap token caching and automatic five-minute refresh are implemented.
+- Data freshness: `DatasetService` refreshes subzone/HDB snapshots from data.gov.sg
+  when older than 24 hours; live environment APIs are already used for display.
+- Frontend caching contract: `/api/v1/data/status` plus `X-Data-As-Of`, `ETag`,
+  `X-Data-Source` and `X-Data-Stale` headers are exposed for the future IndexedDB layer.
+- OneMap search, routing and address-match parsing are implemented.
+- data.gov.sg metadata, poll-download, real-time fetch and local fallbacks are implemented.
+- MCDA scoring, budget filtering, missing-data renormalisation and ranking are implemented.
+- Factsheet aggregation, PDF generation and shareable URLs are implemented.
+- FastAPI handlers and live route smoke tests are implemented.
+
+## Must resolve before implementation
+
+### OPEN-01 — School buffer radius conflicts
+
+The criterion catalogue says schools within **1.5 km**; the geography section says
+**1.0 km**. The frozen specification currently uses **1.0 km** and
+`SubzoneIndicators.primarySchoolCount1km` / `secondarySchoolCount1km`.
+
+**Action:** confirm 1.0 km, or change both indicator fields and the scoring rule
+to 1.5 km.
+
+### OPEN-02 — HDB prices are not available at subzone level
+
+The HDB resale dataset is keyed by **HDB town**, flat type and month. The
+specification asks for a subzone median, a minimum of 5 transactions, and a
+town-proxy fallback. Without a block-to-subzone mapping, there is no subzone
+transaction count; every subzone in a town inherits the same town median and
+`isTownProxy` should always be true.
+
+**Options:**
+
+1. Treat the recommendation unit as the HDB town for pricing and label it as a
+   proxy (simplest, defensible).
+2. Build a block-to-subzone mapping by geocoding every HDB block (accurate but
+   expensive).
+3. Use town-level prices and remove the subzone-transaction threshold.
+
+**Action:** choose an option before implementing `HousePricingRetrievalControl`.
+
+### OPEN-03 — “10-year green coverage” is not a ready dataset
+
+There is no 10-year time series of NParks green coverage in the selected
+datasets. `Parks@SG` is point data and was last updated in June 2024; NParks
+Parks and Nature Reserves provides current polygons only. You can compute
+current coverage, but not a historical 10-year baseline without archived
+snapshots.
+
+**Action:** define the baseline as current managed-park coverage within 500 m,
+or source and store archived snapshots. Do not label current coverage as a
+10-year average.
+
+### OPEN-04 — “Fixed regional weather baseline” has no defined source
+
+The 24-hour forecast is a live 5-region forecast; UVI is national; PM2.5 is live
+or historical by 5 regions. A fixed weather baseline needs a defined historical
+period and dataset.
+
+**Action:** specify the dataset, period (e.g. 2016–2025 monthly normals), and
+region mapping. Otherwise remove weather from scoring and keep it display-only.
+
+### OPEN-05 — Min–max normalisation is candidate-set relative
+
+`S = (X - Xmin) / (Xmax - Xmin)` changes when the budget filter adds or removes
+subzones. The same subzone can score differently for the same profile if the
+candidate set changes. This conflicts with the “consistent results” NFR and makes
+scores hard to compare across profiles.
+
+**Options:**
+
+1. Keep min–max (simple, but document that scores are relative to the filtered
+   candidate set).
+2. Use fixed domain thresholds per criterion (comparable across runs, requires
+   calibration).
+
+**Action:** choose before coding `WeightedScoringStrategy`.
+
+### OPEN-06 — Normalised score scale
+
+The guide says `normalisedScore` may be 0–1 or 0–100. The frozen spec uses
+0–1 internally, with `totalScore = 100 * sum(weightedScore)`. Confirm this is the
+intended UI/PDF scale.
+
+### OPEN-07 — Default criterion weights
+
+The guide does not define defaults. The spec assumes equal weights (0.20 each).
+Confirm, or provide product defaults.
+
+### OPEN-08 — Budget filter with multiple flat types
+
+“Minimum median flat price across selected flat types” is ambiguous when one
+selected flat type has no data. Define whether the filter uses:
+
+- the minimum across available flat types;
+- the minimum across all selected flat types (exclude if any missing);
+- a user-selected primary flat type.
+
+### OPEN-25 — Amenities dataset not supplied
+
+`backend/assets/data/amenities.json` is still missing. Without it, factsheets
+return an empty amenity list with a `MISSING_SOURCE_DATA` warning and the amenity
+criterion scores zero for every subzone. Supply school, healthcare, park, mall
+and MRT points using the schema in `backend/assets/data/README.md`.
+
+### OPEN-09 — Commute precomputation and the 5-second SLA
+
+The proposed 332 × 4 business-district matrix is 1,328 OneMap calls, and the
+7-day TTL must include the departure date/time because PT results are
+time-dependent. A top-50 shortlist by straight-line distance can exclude a
+far-but-affordable subzone when commute has a high weight.
+
+**Action:** define the cache key (`workplace geohash + mode + departure date +
+time window`), pre-warm strategy, shortlist size, and the fallback when OneMap
+returns 429. Consider whether the 5-second ranking SLA applies to a cold cache.
+
+### OPEN-10 — Factsheet endpoint lacks profile context
+
+`GET /api/v1/subzones/{code}/factsheet` cannot receive the full `ProfileDTO`
+needed for selected flat types, workplace, commute mode and departure time.
+Either:
+
+- change to `POST /api/v1/subzones/{code}/factsheet` with a `ProfileDTO` body; or
+- define query parameters for flat types, workplace coordinates and commute
+  settings.
+
+**Action:** freeze the request shape before implementing the route.
+
+### OPEN-11 — Endpoints missing from the original list
+
+The original core list omitted:
+
+- `GET /api/v1/criteria` — needed to render slider labels/units/directions;
+- `POST /api/v1/comparisons` — needed for FR12;
+- `GET /api/v1/reports/{reportId}/download` — needed by `downloadUrl`;
+- `GET /api/v1/health` and `/api/v1/ready` — needed for reliability checks.
+
+These are now in `SPECIFICATIONS.md`; confirm they are in scope.
+
+### OPEN-12 — PDF storage, cleanup and multi-worker behaviour
+
+`downloadUrl` expires in 15 minutes, but the spec does not say whether the PDF is
+streamed, stored on disk, or held in memory. Local files break with multiple
+workers and need cleanup.
+
+**Action:** choose streamed bytes or a shared temp store with a cleanup job;
+define what happens when a user downloads after expiry.
+
+### OPEN-13 — RecommendationSet has no profile snapshot
+
+`RecommendationSet` stores `profileId`, `dataSnapshotId` and the score rows, but
+not the budget, selected flat types, workplace or weights. If the profile is
+edited later, the PDF cannot reproduce the original ranking.
+
+**Action:** add a `profileSnapshot: ProfileDTO` (or at least the input hash and
+relevant fields) to `RecommendationSet`.
+
+## Resolve during implementation
+
+### OPEN-14 — OneMap confidence score
+
+OneMap Search does not document a confidence score for address matches.
+`AddressMatch.confidenceScore` is therefore nullable; either compute a heuristic
+or display it as unavailable.
+
+### OPEN-15 — Cycling commute is not in the frozen TransitMode
+
+The frozen enum contains `PUBLIC_TRANSIT`, `DRIVING` and `WALKING`. OneMap also
+supports `cycle`, and the app scores cycling paths. Decide whether cycle is a
+commute mode; if yes, add `CYCLING`.
+
+### OPEN-16 — Missing values in required entity fields
+
+`EnvironmentInfo.greenCoveragePercent` and most `HousePricing` fields are
+non-optional. If the source has no data, the entity cannot represent “unknown”
+without a sentinel. Either make these fields optional or guarantee a
+`DataAvailabilityWarning` plus a documented fallback value.
+
+### OPEN-17 — Amenities density formula
+
+The criterion combines malls within 1 km, polyclinics/hospitals within 2 km and
+MRT/LRT within 800 m. Those counts have different scales and radii. Define
+whether `AMENITIES_DENSITY` is a raw sum, a weighted composite, or separate
+criteria.
+
+### OPEN-18 — HDB town mapping file is empty
+
+`backend/assets/data/planning_area_to_hdb_town.json` is intentionally empty. Every
+planning area used by the app must be mapped, and planning areas without an HDB
+town must be handled explicitly. `Kallang` → `KALLANG/WHAMPOA` is a known
+non-identity mapping.
+
+### OPEN-19 — `isTownProxy` semantics
+
+If HDB prices remain town-level, `isTownProxy` should probably default to `true`
+for every subzone. Define whether the flag means “town-level proxy” or
+“insufficient subzone sample”.
+
+### OPEN-20 — Comparison response size
+
+`ComparisonResult.details` duplicates full factsheets. Cap comparison to a small
+number of subzones (e.g. 4) and return `400` beyond the cap.
+
+### OPEN-21 — Polygon serialisation boundary
+
+`Subzone.boundaryPolygon` is a Shapely `Polygon`; `MapData.geojson` is JSON.
+Define the mapper/serialiser boundary so Shapely objects never reach FastAPI’s
+JSON encoder.
+
+### OPEN-22 — Price-trend thresholds
+
+`HousePricing.priceTrend` is a descriptive string and `priceTrendPercent` is
+numeric. Define the thresholds for “Rising”, “Stable” and “Falling” and the
+period over which the change is measured.
+
+### OPEN-23 — Offline profile creation
+
+Profiles live in Dexie, but `ProfileControl` validates through the backend. If
+the backend is unavailable, decide whether profile creation is blocked or
+allowed with client-side validation only.
+
+### OPEN-24 — OneMap token refresh concurrency
+
+The adapter caches a 3-day token. Concurrent requests must not all call
+`getToken` at once. Use a lock/single-flight refresh in implementation.
+
+## Assumptions already frozen
+
+- Subzone anchor uses `representative_point()`.
+- CBD anchor is `1.2830, 103.8513`.
+- Default departure is next weekday 08:30 SGT.
+- Rule-based 0–100 score with one-decimal rounding.
+- Tie-break: commute duration, then median price per sqm, then subzone code.
+- Live PM2.5/UVI/forecast are display-only and do not affect ranking.
+- HDB prices use a 12-month rolling window.
+- Report download links expire after 15 minutes.

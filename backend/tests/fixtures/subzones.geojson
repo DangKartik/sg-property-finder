@@ -1,0 +1,44 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "SUBZONE_C": "TAMPINES01",
+        "SUBZONE_N": "Tampines East",
+        "PLN_AREA_N": "TAMPINES",
+        "REGION_N": "EAST"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[103.935, 1.345], [103.945, 1.345], [103.945, 1.355], [103.935, 1.355], [103.935, 1.345]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "SUBZONE_C": "BEDOK01",
+        "SUBZONE_N": "Bedok North",
+        "PLN_AREA_N": "BEDOK",
+        "REGION_N": "EAST"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[103.925, 1.315], [103.935, 1.315], [103.935, 1.325], [103.925, 1.325], [103.925, 1.315]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "SUBZONE_C": "JURONG01",
+        "SUBZONE_N": "Jurong West Central",
+        "PLN_AREA_N": "JURONG WEST",
+        "REGION_N": "WEST"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[103.695, 1.335], [103.705, 1.335], [103.705, 1.345], [103.695, 1.345], [103.695, 1.335]]]
+      }
+    }
+  ]
+}
