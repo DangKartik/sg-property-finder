@@ -1,35 +1,117 @@
-import type { RankingApi } from "../api/contracts";
+import { useState } from "react";
 import type { ProfileDTO } from "../types/dto";
 
-/**
- * Stereotype: Boundary.
- * Dropdown for selecting a saved preference profile and triggering a ranking.
- */
-export declare class ProfileSelectorUI {
-  /** Ranking API used when a profile is selected. */
-  rankingApi: RankingApi;
+export interface ProfileSelectorUIProps {
+  profiles: ProfileDTO[];
+  activeProfileId: string | null;
+  busy?: boolean;
+  onSelect: (profileId: string) => void;
+  onCreate: () => void;
+  onDelete: (profileId: string) => Promise<void> | void;
+}
 
-  /** Display labels for the saved profiles. */
-  profileDropdownList: string[];
+/** Saved-plan dropdown with active badge and delete confirmation. */
+export function ProfileSelectorUI({
+  profiles,
+  activeProfileId,
+  busy = false,
+  onSelect,
+  onCreate,
+  onDelete,
+}: ProfileSelectorUIProps) {
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  const deleteDisabled = profiles.length <= 1;
+  const profileToDelete = profiles.find((profile) => profile.profileId === confirmId);
 
-  /**
-   * Create the selector with its ranking dependency.
-   * @param rankingApi Ranking API.
-   */
-  constructor(rankingApi: RankingApi);
+  return (
+    <section className="panel plan-selector">
+      <div className="panel-heading">
+        <div>
+          <p className="eyebrow">Preference plans</p>
+          <h2>Saved plans</h2>
+        </div>
+        <button className="button small primary" onClick={onCreate} disabled={busy}>
+          + New plan
+        </button>
+      </div>
 
-  /**
-   * Render the dropdown from saved profiles.
-   * @param profiles Profiles loaded from Dexie.
-   * @returns Nothing.
-   */
-  renderDropdown(profiles: ProfileDTO[]): void;
+      {profiles.length === 0 ? (
+        <p className="muted">No saved plans yet. Create one to get recommendations.</p>
+      ) : (
+        <div className="plan-row">
+          <label className="sr-only" htmlFor="profile-select">
+            Select a preference plan
+          </label>
+          <select
+            id="profile-select"
+            value={activeProfileId ?? ""}
+            onChange={(event) => onSelect(event.target.value)}
+            disabled={busy}
+          >
+            <option value="" disabled>
+              Select a plan
+            </option>
+            {profiles.map((profile) => (
+              <option key={profile.profileId} value={profile.profileId ?? ""}>
+                {profile.profileName}
+              </option>
+            ))}
+          </select>
+          {activeProfileId && <span className="badge active">Active</span>}
+          <button
+            className="button small danger-ghost"
+            disabled={deleteDisabled || busy || !activeProfileId}
+            title={
+              deleteDisabled
+                ? "Keep at least one saved plan. Create another plan before deleting this one."
+                : "Delete the selected plan"
+            }
+            onClick={() => activeProfileId && setConfirmId(activeProfileId)}
+          >
+            Delete
+          </button>
+        </div>
+      )}
 
-  /**
-   * Handle a profile selection and start ranking.
-   * @param profileId Selected profile identifier.
-   * @returns Nothing.
-   * @throws When the ranking request fails.
-   */
-  onProfileSelected(profileId: string): void;
+      {deleteDisabled && profiles.length === 1 && (
+        <p className="hint">At least one plan must remain. Create another plan to enable deletion.</p>
+      )}
+
+      {profileToDelete && (
+        <div className="modal-backdrop" role="presentation" onMouseDown={() => setConfirmId(null)}>
+          <section
+            className="modal compact-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-plan-title"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <header className="modal-header">
+              <h2 id="delete-plan-title">Delete “{profileToDelete.profileName}”?</h2>
+              <button className="icon-button" onClick={() => setConfirmId(null)} aria-label="Cancel delete">
+                ×
+              </button>
+            </header>
+            <p>This removes the plan from this browser's IndexedDB. It cannot be undone.</p>
+            <footer className="modal-footer">
+              <button className="button" onClick={() => setConfirmId(null)}>
+                Cancel
+              </button>
+              <button
+                className="button danger"
+                onClick={async () => {
+                  if (confirmId) {
+                    await onDelete(confirmId);
+                    setConfirmId(null);
+                  }
+                }}
+              >
+                Delete plan
+              </button>
+            </footer>
+          </section>
+        </div>
+      )}
+    </section>
+  );
 }

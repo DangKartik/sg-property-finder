@@ -37,6 +37,29 @@ class ApiHandlerTests(unittest.TestCase):
         self.assertTrue(result.success)
         self.assertEqual(len(result.data), 1)
 
+    def test_validate_profile(self) -> None:
+        valid = handlers.validateProfile(profilePayload(), self.context)
+        self.assertTrue(valid.success)
+        self.assertTrue(valid.data["isValid"])
+
+        invalid_payload = profilePayload()
+        invalid_payload["selectedFlatTypes"] = []
+        invalid = handlers.validateProfile(invalid_payload, self.context)
+        self.assertTrue(invalid.success)
+        self.assertFalse(invalid.data["isValid"])
+
+    def test_commute_overlay(self) -> None:
+        result = handlers.commuteOverlay(
+            {
+                "origin": {"latitude": 1.283, "longitude": 103.8513},
+                "destination": {"latitude": 1.35, "longitude": 103.94},
+                "mode": "PUBLIC_TRANSIT",
+            },
+            self.context,
+        )
+        self.assertTrue(result.success, result.error)
+        self.assertEqual(result.data["durationMinutes"], 20)
+
     def test_recommendations(self) -> None:
         result = handlers.recommendations(profilePayload(), self.context)
         self.assertTrue(result.success, result.error)

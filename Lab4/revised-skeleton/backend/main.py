@@ -96,9 +96,17 @@ def createApp(context: AppContext | None = None) -> Any:
     def address_search(body: dict[str, Any]) -> Any:
         return respond(handlers.searchAddress(str(body.get("query", "")), context))
 
+    @app.post("/api/v1/profiles/validate")
+    def validate_profile(body: dict[str, Any]) -> Any:
+        return respond(handlers.validateProfile(body, context), {"Cache-Control": "no-store"})
+
     @app.post("/api/v1/recommendations")
     def recommendations(body: dict[str, Any]) -> Any:
         return respond(handlers.recommendations(body, context), {"Cache-Control": "no-store"})
+
+    @app.post("/api/v1/commute/overlay")
+    def commute_overlay(body: dict[str, Any]) -> Any:
+        return respond(handlers.commuteOverlay(body, context), {"Cache-Control": "no-store"})
 
     @app.get("/api/v1/subzones/geometry")
     def subzone_geometry() -> Any:

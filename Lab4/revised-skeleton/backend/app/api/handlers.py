@@ -7,8 +7,12 @@ import json
 from typing import Any
 from urllib.parse import unquote
 
+from datetime import datetime, timezone
+
 from app.bootstrap import AppContext
 from app.core.serialization import toJsonable
+from app.entity.enums import TransitMode
+from app.entity.types import Coordinates
 from app.schemas.api_envelope import ApiEnvelope, ApiError
 from app.services.profile_factory import preferenceProfileFromDto, profileDtoFromDict
 
@@ -39,6 +43,16 @@ def searchAddress(query: str, context: AppContext) -> ApiEnvelope[Any]:
     if not matches:
         return fail("ADDRESS_NOT_FOUND", "Address not Found. Enter a valid postal code or building name.")
     return ok(matches)
+
+
+def validateProfile(profilePayload: dict[str, Any], context: AppContext) -> ApiEnvelope[Any]:
+    """Validate a profile without persisting or ranking it."""
+    try:
+        dto = profileDtoFromDict(profilePayload)
+    except ValueError as exc:
+        return fail("INVALID_PROFILE", str(exc))
+    validation = context.validator.validateProfileData(dto)
+    return ok(validation)
 
 
 def recommendations(profilePayload: dict[str, Any], context: AppContext) -> ApiEnvelope[Any]:
@@ -87,6 +101,32 @@ def comparison(
     except Exception:
         return fail("COMPARISON_FAILED", "Unable to compare the selected subzones.", {"retryable": True})
     return ok(result, result.details[0].warnings if result.details else [])
+
+
+def commuteOverlay(payload: dict[str, Any], context: AppContext) -> ApiEnvelope[Any]:
+    """Return a transit/driving/walking route overlay."""
+    try:
+        origin_data = payload["origin"]
+        destination_data = payload["destination"]
+        origin = Coordinates(float(origin_data["latitude"]), float(origin_data["longitude"]))
+        destination = Coordinates(
+            float(destination_data["latitude"]), float(destination_data["longitude"])
+        )
+        mode = TransitMode(str(payload.get("mode", TransitMode.PUBLIC_TRANSIT.value)))
+        departure_text = payload.get("departureTime")
+        departure = (
+            datetime.fromisoformat(str(departure_text).replace("Z", "+00:00"))
+            if departure_text
+            else None
+        )
+        if departure is not None and departure.tzinfo is None:
+            departure = departure.replace(tzinfo=timezone.utc)
+        route = context.mapControl.getCommuteOverlay(origin, destination, mode, departure)
+        return ok(route)
+    except (KeyError, TypeError, ValueError) as exc:
+        return fail("INVALID_ROUTE_REQUEST", f"Invalid route request: {exc}")
+    except Exception:
+        return fail("ROUTE_FAILED", "Unable to retrieve a route overlay.", {"retryable": True})
 
 
 def generateReport(

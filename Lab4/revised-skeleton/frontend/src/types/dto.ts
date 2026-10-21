@@ -266,6 +266,25 @@ export interface PdfReportDTO {
   sizeBytes: number;
 }
 
+/** PDF generation response, including the shareable scenario URL. */
+export interface ReportResponseDTO {
+  report: PdfReportDTO;
+  shareUrl: string;
+}
+
+/** Freshness metadata for one backend dataset. */
+export interface DatasetStatusDTO {
+  datasetId: string;
+  dataSnapshotId: string;
+  dataAsOf: string;
+  source: string;
+  isStale: boolean;
+  recordCount: number;
+  lastError: string | null;
+}
+
+export type DataStatusMapDTO = Record<string, DatasetStatusDTO>;
+
 /** Standard API error. */
 export interface ApiErrorDTO {
   code: string;

@@ -4,8 +4,9 @@ Phase 1 skeleton plus Phase 2 backend implementation for the neighbourhood
 recommender. This folder is separate from `Lab4/Skeleton Code`.
 
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
-PDF and REST endpoints are implemented and covered by 68 `unittest` tests. The
-frontend is still a TypeScript `declare class` skeleton.
+PDF and REST endpoints are implemented and covered by 70 `unittest` tests. The
+React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison
+and PDF export.
 
 ## Structure
 
@@ -87,8 +88,17 @@ revised-skeleton/
 │           ├── scoring_strategy.py
 │           └── weighted_scoring_strategy.py
 └── frontend/
+    ├── index.html
+    ├── package.json
+    ├── tsconfig.json
+    ├── vite.config.ts
     └── src/
-        ├── api/contracts.ts
+        ├── App.tsx
+        ├── main.tsx
+        ├── styles.css
+        ├── api/
+        │   ├── client.ts
+        │   └── contracts.ts
         ├── boundary/
         │   ├── ComparisonUI.tsx
         │   ├── ExportReportUI.tsx
@@ -100,7 +110,11 @@ revised-skeleton/
         │   └── ResultsListUI.tsx
         ├── container/ProfileCatalog.ts
         ├── control/ProfileControl.ts
-        └── types/dto.ts
+        ├── types/dto.ts
+        └── utils/
+            ├── format.ts
+            ├── polyline.ts
+            └── weights.ts
 ```
 
 ## Where the diagram classes live
@@ -198,6 +212,41 @@ cd Lab4/revised-skeleton
 cp .env.example .env
 ```
 
+## Run the application
+
+Terminal 1 — backend:
+
+```bash
+cd Lab4/revised-skeleton/backend
+python -m pip install -r requirements.txt
+python -m uvicorn main:app --reload --port 8000
+```
+
+Terminal 2 — frontend:
+
+```bash
+cd Lab4/revised-skeleton/frontend
+npm install
+npm run dev
+```
+
+Open **http://localhost:5173**. Vite proxies `/api` to `http://127.0.0.1:8000`.
+Verify the backend at **http://127.0.0.1:8000/api/v1/health**.
+
+Run backend tests with:
+
+```bash
+cd Lab4/revised-skeleton/backend
+python -m unittest discover -s tests -v
+```
+
+Build the frontend with:
+
+```bash
+cd Lab4/revised-skeleton/frontend
+npm run build
+```
+
 `.env` is ignored by Git. `backend/app/config.py` loads it through
 `Settings.fromEnv()`. OneMap currently uses email/password token authentication;
 `ONEMAP_EMAIL` and `ONEMAP_PASSWORD` are therefore required in addition to the
@@ -210,8 +259,8 @@ requested `ONEMAP_API_KEY` placeholder.
 - **Phase 2:** backend implemented and unit-tested (adapters, retrieval engine,
   commute service, MCDA scoring, factsheet aggregation, PDF/share URLs and REST
   handlers).
-- **Frontend:** still a class/JSDoc skeleton; React components and Dexie wiring
-  are the next phase.
+- **Frontend:** implemented (React 18 + TypeScript + Vite, Leaflet/React-Leaflet,
+  Dexie/IndexedDB, responsive UI, comparison matrix and PDF export).
 - **Data assets:** URA subzones, HDB resale prices, town mapping, regional
   environment baselines and the CBD commute matrix are populated.
   `DatasetService` refreshes subzone/HDB snapshots from data.gov.sg when older

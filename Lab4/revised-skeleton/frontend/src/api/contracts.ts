@@ -6,11 +6,12 @@ import type {
   CriterionDefinitionDTO,
   MapDataDTO,
   NeighborhoodDetailDTO,
-  PdfReportDTO,
   ProfileDTO,
   RecommendationSetDTO,
+  ReportResponseDTO,
   RouteDataDTO,
   ValidationResultDTO,
+  DataStatusMapDTO,
 } from "../types/dto";
 
 /**
@@ -129,16 +130,21 @@ export interface NeighborhoodDetailsApi {
  */
 export interface ReportApi {
   /**
-   * Generate a PDF report.
-   * @param recommendations Recommendation set to include.
-   * @param details Factsheets for selected subzones.
-   * @returns Envelope containing secure download metadata.
+   * Generate a PDF report for a profile and selected subzones.
+   * @param profile Profile providing the report context.
+   * @param subzoneCodes Subzones to include.
+   * @returns Envelope containing secure download metadata and a share URL.
    * @throws When report generation fails.
    */
   generatePdfReport(
-    recommendations: RecommendationSetDTO,
-    details: NeighborhoodDetailDTO[],
-  ): Promise<ApiEnvelope<PdfReportDTO>>;
+    profile: ProfileDTO,
+    subzoneCodes: string[],
+  ): Promise<ApiEnvelope<ReportResponseDTO>>;
+}
+
+/** Freshness/status API for the future IndexedDB cache layer. */
+export interface DataStatusApi {
+  getStatus(): Promise<ApiEnvelope<DataStatusMapDTO>>;
 }
 
 /**

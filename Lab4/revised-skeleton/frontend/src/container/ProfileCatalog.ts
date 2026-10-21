@@ -1,43 +1,69 @@
+import Dexie, { type Table } from "dexie";
 import type { ProfileDTO } from "../types/dto";
+
+class ProfileDatabase extends Dexie {
+  profiles!: Table<ProfileDTO, string>;
+
+  constructor() {
+    super("sgpropfinder");
+    this.version(1).stores({
+      profiles: "profileId, profileName, lastUpdatedTime",
+    });
+  }
+}
 
 /**
  * Stereotype: Container.
- * Dexie/IndexedDB-backed repository for local preference profiles.
- *
- * The browser is the source of truth for profiles; the backend is stateless.
+ * Dexie/IndexedDB repository for local preference profiles.
  */
-export declare class ProfileCatalog {
-  /** In-memory view of the profiles currently loaded from IndexedDB. */
-  profiles: Map<string, ProfileDTO>;
+export class ProfileCatalog {
+  profiles = new Map<string, ProfileDTO>();
+  private readonly db = new ProfileDatabase();
 
-  /**
-   * Persist a new profile.
-   * @param profile Profile to save.
-   * @returns Resolves when the write completes.
-   * @throws When the IndexedDB transaction fails.
-   */
-  addProfile(profile: ProfileDTO): Promise<void>;
+  async saveToLocalStorage(profile: ProfileDTO): Promise<string> {
+    const profileId = profile.profileId ?? makeId();
+    const record: ProfileDTO = {
+      ...profile,
+      profileId,
+      lastUpdatedTime: new Date().toISOString(),
+      creationTime: profile.creationTime ?? new Date().toISOString(),
+    };
+    await this.db.profiles.put(record);
+    this.profiles.set(profileId, record);
+    return profileId;
+  }
 
-  /**
-   * Load one profile.
-   * @param profileId Profile identifier.
-   * @returns The profile, or `undefined` when it does not exist.
-   * @throws When the IndexedDB read fails.
-   */
-  getProfile(profileId: string): Promise<ProfileDTO | undefined>;
+  async loadFromLocalStorage(): Promise<ProfileDTO[]> {
+    const profiles = await this.db.profiles.toArray();
+    this.profiles = new Map(profiles.map((profile) => [profile.profileId as string, profile]));
+    return profiles.sort((a, b) => (a.creationTime ?? "").localeCompare(b.creationTime ?? ""));
+  }
 
-  /**
-   * Load all saved profiles.
-   * @returns All profiles in the local store.
-   * @throws When the IndexedDB read fails.
-   */
-  getAllProfiles(): Promise<ProfileDTO[]>;
+  async deleteProfile(profileId: string): Promise<boolean> {
+    await this.db.profiles.delete(profileId);
+    return this.profiles.delete(profileId);
+  }
 
-  /**
-   * Delete a profile.
-   * @param profileId Profile identifier.
-   * @returns `true` when a profile was deleted, otherwise `false`.
-   * @throws When the IndexedDB transaction fails.
-   */
-  removeProfile(profileId: string): Promise<boolean>;
+  async addProfile(profile: ProfileDTO): Promise<void> {
+    await this.saveToLocalStorage(profile);
+  }
+
+  async getProfile(profileId: string): Promise<ProfileDTO | undefined> {
+    return this.profiles.get(profileId) ?? (await this.db.profiles.get(profileId));
+  }
+
+  async getAllProfiles(): Promise<ProfileDTO[]> {
+    return this.loadFromLocalStorage();
+  }
+
+  async removeProfile(profileId: string): Promise<boolean> {
+    return this.deleteProfile(profileId);
+  }
+}
+
+function makeId(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return `profile-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }

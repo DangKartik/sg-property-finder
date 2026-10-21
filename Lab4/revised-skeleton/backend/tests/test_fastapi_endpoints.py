@@ -67,6 +67,21 @@ class FastApiEndpointTests(unittest.TestCase):
         self.assertEqual(address.status_code, 200)
         self.assertTrue(address.json()["success"])
 
+        validation = self.client.post("/api/v1/profiles/validate", json=profilePayload())
+        self.assertEqual(validation.status_code, 200)
+        self.assertTrue(validation.json()["data"]["isValid"])
+
+        overlay = self.client.post(
+            "/api/v1/commute/overlay",
+            json={
+                "origin": {"latitude": 1.283, "longitude": 103.8513},
+                "destination": {"latitude": 1.35, "longitude": 103.94},
+                "mode": "PUBLIC_TRANSIT",
+            },
+        )
+        self.assertEqual(overlay.status_code, 200)
+        self.assertTrue(overlay.json()["success"])
+
         recommendations = self.client.post("/api/v1/recommendations", json=profilePayload())
         self.assertEqual(recommendations.status_code, 200)
         self.assertTrue(recommendations.json()["success"])
