@@ -24,7 +24,8 @@ revised-skeleton/
 │       ├── config.py
 │       ├── adapter/
 │       │   ├── data_gov_sg_adapter.py
-│       │   └── one_map_api_adapter.py
+│       │   ├── one_map_api_adapter.py
+│       │   └── one_map_token_manager.py
 │       ├── container/
 │       │   ├── subzone_registry.py
 │       │   └── town_mapping.py
@@ -142,6 +143,7 @@ revised-skeleton/
 | `CriterionCatalog` / `CriterionDefinition` | `backend/app/strategy/criterion_catalog.py` | Frozen criterion metadata for sliders and scoring. |
 | `AddressMatch` | `backend/app/entity/address_match.py` | Address confirmation for workplace search. |
 | `DatasetMetadata` | `backend/app/entity/dataset_metadata.py` | Snapshot/version metadata and fallback manifest. |
+| `OneMapTokenManager` | `backend/app/adapter/one_map_token_manager.py` | Caches the OneMap token and refreshes it automatically before expiry. |
 | `RetrievalResult<T>` | `backend/app/entity/types.py` | Request-scoped data + warnings. |
 | `ApiEnvelope<T>` / `ApiError` | `backend/app/schemas/api_envelope.py` | Standard API response envelope. |
 | `SubzoneIndicators` | `backend/app/entity/subzone_indicators.py` | Numeric features consumed by scoring. |

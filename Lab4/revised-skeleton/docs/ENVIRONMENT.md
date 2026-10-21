@@ -29,8 +29,13 @@ committed.
 
 The current OneMap API uses `POST /api/auth/post/getToken` with an email and
 password to obtain a 3-day access token. `ONEMAP_API_KEY` is retained because it
-was requested, but the adapter should use `ONEMAP_EMAIL` and `ONEMAP_PASSWORD`
-unless a key-based gateway is added.
+was requested, but the adapter uses `ONEMAP_EMAIL` and `ONEMAP_PASSWORD` unless
+a key-based gateway is added.
+
+`OneMapTokenManager` caches the token in memory and refreshes it automatically
+five minutes before expiry. `OneMapApiAdapter.getAccessToken()` is the entry
+point for authorized requests. If OneMap returns HTTP 401, call
+`invalidateToken()` and retry once.
 
 ## Production
 
