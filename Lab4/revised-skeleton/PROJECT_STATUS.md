@@ -5,7 +5,7 @@
 **Application folder:** `Lab4/revised-skeleton/`  
 **Current branch:** `main`  
 **Last commit:** `fdf5871` (amenities snapshot and pipeline)  
-**Working tree:** P0 correctness fixes added (commute modes, share import, estimated fallback); not yet committed
+**Working tree:** P0 correctness fixes and the top-20 ranking cap added; not yet committed
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -89,7 +89,7 @@ make dev
 ```powershell
 make backend    # FastAPI only
 make frontend   # Vite only
-make test       # backend unittest suite (78 tests)
+make test       # backend unittest suite (79 tests)
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
 make help
@@ -275,6 +275,8 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 - `RecommendationItem` contains 0–100 total score and `CriterionScore` rows.
 - Tie-break: shortest commute, then median $/sqm, then subzone code.
 - `RecommendationSet` preserves `dataSnapshotId`, `dataAsOf`, warnings and `profileSnapshot`.
+- Ranking output is capped at the **top 20** items; the remaining scored
+  subzones are discarded and their warnings are omitted.
 - `ComparisonControl` caps comparisons at four subzones.
 
 #### Factsheets, reports and endpoints
@@ -354,7 +356,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 
 ### 4.4 Testing and verification
 
-- **78 backend tests pass** via `make test`.
+- **79 backend tests pass** via `make test`.
 - Frontend `npm run build` passes (`tsc --noEmit` + Vite production build).
 - Live FastAPI server verified:
   - health true,
@@ -543,6 +545,7 @@ Supporting scripts:
 | Data refresh | `DATA_MAX_AGE_HOURS=24`; local snapshots + live refresh |
 | Commute matrix | `PUBLIC_TRANSIT` only; driving/walking use live OneMap |
 | Missing commute entry | Straight-line estimate + `ESTIMATED_COMMUTE_FALLBACK` |
+| Ranking result size | Top 20 items; remaining results discarded |
 | Comparison size | 2–4 subzones |
 | PDF generation | WeasyPrint when native libs available; ReportLab fallback |
 | Persistence | Profiles in browser IndexedDB; no server database |
@@ -591,7 +594,7 @@ Supporting scripts:
 | `backend/app/control/report_control.py` | PDF/share URL generation |
 | `backend/app/api/handlers.py` | Transport-agnostic REST handlers |
 | `scripts/build_amenities.py` | data.gov.sg + OneMap amenity snapshot builder |
-| `backend/tests/` | 78 unit/integration tests |
+| `backend/tests/` | 79 unit/integration tests |
 
 ### Frontend
 
@@ -649,7 +652,7 @@ Supporting scripts:
 
 | Check | Result |
 | --- | --- |
-| `make test` | **78 tests OK** |
+| `make test` | **79 tests OK** |
 | `make build` / `npm run build` | **Passed** |
 | Live Uvicorn health/ready | **Passed**, 332 subzones |
 | Browser main flow | **Passed** |
@@ -662,5 +665,6 @@ Supporting scripts:
 | Commute mode gating | **Passed**, driving/walking no longer read the PT matrix |
 | Missing matrix fallback | **Passed**, 13 warnings attached; subzones remain ranked |
 | Share decode + import | **Passed**, endpoint returns profile/codes; frontend build succeeds |
+| Ranking result cap | **Passed**, response returns exactly the top 20 items |
 | ReportLab PDF | **Passed** |
 | WeasyPrint rendering on bare Windows | **Not available**; fallback used |

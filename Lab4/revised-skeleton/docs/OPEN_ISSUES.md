@@ -31,6 +31,8 @@ business logic is written.
   strategy reweights the remaining criteria instead.
 - `POST /api/v1/share/decode` and the frontend `?share=` import flow are
   implemented (Dexie persistence, active plan, ranking and map highlights).
+- Ranking output is capped at the top 20 items; discarded subzones are not
+  returned and their warnings are filtered out.
 - Data freshness: `DatasetService` refreshes subzone/HDB snapshots from data.gov.sg
   when older than 24 hours; live environment APIs are already used for display.
 - Frontend caching contract: `/api/v1/data/status` plus `X-Data-As-Of`, `ETag`,

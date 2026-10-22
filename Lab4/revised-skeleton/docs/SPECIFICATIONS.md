@@ -64,6 +64,9 @@ Sort descending by `totalScore`, then ascending by:
 2. median price per square metre;
 3. `subzoneCode` (deterministic final tie-break).
 
+`RecommendationSet.items` is capped at the **top 20** after sorting; results
+outside the top 20 are discarded and their warnings are omitted.
+
 ## 3. Budget semantics
 
 - `budgetMax` is a hard filter.

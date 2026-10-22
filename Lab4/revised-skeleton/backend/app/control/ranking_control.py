@@ -20,6 +20,9 @@ if TYPE_CHECKING:
     from app.strategy.scoring_strategy import ScoringStrategy
 
 
+MAX_RECOMMENDATION_ITEMS = 20
+
+
 class RankingControl:
     """Stereotype: Control. Coordinates scoring and ranking for one profile."""
 
@@ -61,7 +64,8 @@ class RankingControl:
         CBD uses the precomputed matrix (with an estimated fallback for missing
         entries); driving/walking and custom workplaces use live OneMap routing.
         Subzones without a commute estimate are scored with that criterion
-        treated as missing and reweighted.
+        treated as missing and reweighted. Only the top 20 ranked items are
+        returned; warnings for discarded subzones are filtered out.
         """
         from app.entity.recommendation_set import RecommendationSet
 
@@ -80,12 +84,19 @@ class RankingControl:
         # handled by the scoring strategy as a missing criterion and reweighted,
         # rather than silently dropping the subzone from the ranking.
         candidates = subzones
-        items = self.scoringStrategy.scoreCandidates(
+        all_items = self.scoringStrategy.scoreCandidates(
             candidates,
             profile,
             commute_result.data,
             warnings,
         )
+        items = all_items[:MAX_RECOMMENDATION_ITEMS]
+        retained_codes = {item.subzoneId for item in items}
+        warnings = [
+            warning
+            for warning in warnings
+            if warning.subzoneCode is None or warning.subzoneCode in retained_codes
+        ]
         result = RecommendationSet(
             profileId=profile.getProfileId(),
             generatedTime=datetime.now(timezone.utc),

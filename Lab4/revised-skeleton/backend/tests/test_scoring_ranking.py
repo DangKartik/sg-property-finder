@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
 from datetime import datetime, timezone
 
 from app.control.commute_control import CommuteControl
@@ -10,6 +11,7 @@ from app.control.data_availability_notifier import DataAvailabilityNotifier
 from app.control.ranking_control import RankingControl
 from app.entity.commute_estimate import CommuteEstimate
 from app.entity.enums import TransitMode
+from app.entity.recommendation_item import RecommendationItem
 from app.entity.types import Coordinates, RetrievalResult
 from app.strategy.weighted_scoring_strategy import WeightedScoringStrategy
 from tests.support import FIXTURES, FakeOneMap, attach_indicators, load_registry, make_profile
@@ -129,6 +131,48 @@ class RankingTests(unittest.TestCase):
         self.assertEqual(result.profileSnapshot["profileId"], "profile-1")
         scores = [item.totalScore for item in result.items]
         self.assertEqual(scores, sorted(scores, reverse=True))
+
+    def test_ranking_is_capped_at_twenty_items(self) -> None:
+        registry = load_registry()
+        base = registry.getSubzone("TAMPINES01")
+        for index in range(25):
+            registry.registerSubzone(
+                replace(
+                    base,
+                    subzoneCode=f"TOP{index:02d}",
+                    subzoneName=f"Top {index}",
+                )
+            )
+
+        class StubScoring:
+            def scoreCandidates(self, subzones, profile, commutes, warnings):
+                return [
+                    RecommendationItem(
+                        subzoneId=f"TOP{index:02d}",
+                        subzoneName=f"Top {index}",
+                        rank=index + 1,
+                        totalScore=100 - index,
+                    )
+                    for index in range(25)
+                ]
+
+        class StubCommute:
+            def retrieveCommutesSync(
+                self, origin, subzones, mode, departureTime=None, topK=50
+            ):
+                return RetrievalResult({}, [])
+
+        control = RankingControl(
+            registry,
+            StubScoring(),
+            StubCommute(),
+            DataAvailabilityNotifier(),
+        )
+        result = control.generateRankedRecommendations(make_profile())
+        self.assertEqual(len(result.items), 20)
+        self.assertEqual(result.items[0].subzoneId, "TOP00")
+        self.assertEqual(result.items[-1].subzoneId, "TOP19")
+        self.assertEqual([item.rank for item in result.items], list(range(1, 21)))
 
     def test_subzones_without_commute_estimates_remain_in_ranking(self) -> None:
         class PartialCommute:
