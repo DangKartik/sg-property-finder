@@ -22,6 +22,7 @@ import type {
   RouteDataDTO,
 } from "./types/dto";
 import { formatDate } from "./utils/format";
+import { nearbyAmenities } from "./utils/amenities";
 
 const profileCatalog = new ProfileCatalog();
 const profileControl = new ProfileControl(profileCatalog, api);
@@ -73,6 +74,14 @@ export default function App() {
   const routeDestination = useMemo(
     () => (mapData && selectedSubzoneId ? featureCenter(mapData, selectedSubzoneId) : null),
     [mapData, selectedSubzoneId],
+  );
+
+  const focusedAmenities = useMemo(
+    () =>
+      selectedSubzoneId && mapData
+        ? nearbyAmenities(amenities, featureCenter(mapData, selectedSubzoneId))
+        : [],
+    [amenities, mapData, selectedSubzoneId],
   );
 
   const refreshProfiles = useCallback(async () => {
@@ -444,7 +453,7 @@ export default function App() {
               )}
               {amenities.length > 0 && (
                 <p className="muted">
-                  Amenities: {amenities.length.toLocaleString("en-SG")} map points
+                  Amenities: {amenities.length.toLocaleString("en-SG")} points available
                 </p>
               )}
               {subzoneStatus?.isStale && (
@@ -475,7 +484,7 @@ export default function App() {
               scores={scores}
               selectedSubzoneId={selectedSubzoneId}
               highlightedSubzoneIds={sharedSubzoneIds}
-              amenities={amenities}
+              amenities={focusedAmenities}
               route={route}
               routeOrigin={activeProfile?.anchorCoordinates ?? null}
               routeDestination={routeDestination}

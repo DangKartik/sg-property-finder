@@ -1,5 +1,6 @@
 import Dexie, { type Table } from "dexie";
 import type { ProfileDTO } from "../types/dto";
+import { normalizeProfileWeights } from "../utils/weights";
 
 class ProfileDatabase extends Dexie {
   profiles!: Table<ProfileDTO, string>;
@@ -22,19 +23,28 @@ export class ProfileCatalog {
 
   async saveToLocalStorage(profile: ProfileDTO): Promise<string> {
     const profileId = profile.profileId ?? makeId();
-    const record: ProfileDTO = {
+    const record = normalizeProfileWeights({
       ...profile,
       profileId,
       lastUpdatedTime: new Date().toISOString(),
       creationTime: profile.creationTime ?? new Date().toISOString(),
-    };
+    });
     await this.db.profiles.put(record);
     this.profiles.set(profileId, record);
     return profileId;
   }
 
   async loadFromLocalStorage(): Promise<ProfileDTO[]> {
-    const profiles = await this.db.profiles.toArray();
+    const stored = await this.db.profiles.toArray();
+    const profiles = stored.map(normalizeProfileWeights);
+    const migrated = profiles.filter(
+      (profile, index) =>
+        JSON.stringify(profile.criteriaWeights) !==
+        JSON.stringify(stored[index].criteriaWeights),
+    );
+    if (migrated.length > 0) {
+      await this.db.profiles.bulkPut(migrated);
+    }
     this.profiles = new Map(profiles.map((profile) => [profile.profileId as string, profile]));
     return profiles.sort((a, b) => (a.creationTime ?? "").localeCompare(b.creationTime ?? ""));
   }

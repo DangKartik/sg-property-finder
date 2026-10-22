@@ -38,7 +38,7 @@ export interface NeighborhoodMapUIProps {
 
 const SINGAPORE_CENTER: [number, number] = [1.3521, 103.8198];
 
-/** OneMap-backed Leaflet map with a subzone choropleth and route overlay. */
+/** OneMap-backed map with a subzone choropleth, route overlay and selected-subzone amenities. */
 export function NeighborhoodMapUI({
   mapData,
   scores,
@@ -50,13 +50,12 @@ export function NeighborhoodMapUI({
   routeDestination,
   onSelect,
 }: NeighborhoodMapUIProps) {
-  const [showAmenities, setShowAmenities] = useState(true);
   const [visibleGroups, setVisibleGroups] = useState<string[]>(
     ALL_AMENITY_GROUP_IDS,
   );
   const visibleAmenities = useMemo(
-    () => filterAmenities(amenities, showAmenities, visibleGroups),
-    [amenities, showAmenities, visibleGroups],
+    () => filterAmenities(amenities, true, visibleGroups),
+    [amenities, visibleGroups],
   );
 
   function toggleGroup(groupId: string) {
@@ -135,22 +134,13 @@ export function NeighborhoodMapUI({
       </MapContainer>
       {amenities.length > 0 && (
         <details className="amenity-controls">
-          <summary>Amenity layers</summary>
-          <label className="amenity-toggle">
-            <input
-              type="checkbox"
-              checked={showAmenities}
-              onChange={(event) => setShowAmenities(event.target.checked)}
-            />
-            Show amenity points
-          </label>
+          <summary>Nearby amenities</summary>
           <div className="amenity-group-list">
             {AMENITY_GROUPS.map((group) => (
               <label className="amenity-toggle" key={group.id}>
                 <input
                   type="checkbox"
                   checked={visibleGroups.includes(group.id)}
-                  disabled={!showAmenities}
                   onChange={() => toggleGroup(group.id)}
                 />
                 <span

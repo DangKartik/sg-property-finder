@@ -57,7 +57,7 @@ class InputValidationControl:
             for definition in buildDefaultCriterionCatalog().getAllCriteria()
         }
         if not data.criteriaWeights:
-            result.addError("criteriaWeights", "Set at least one criterion weight.")
+            result.addError("criteriaWeights", "Rate at least one criterion.")
         else:
             for weight in data.criteriaWeights:
                 if weight.getCriterionId() not in valid_criteria:
@@ -65,17 +65,12 @@ class InputValidationControl:
                         "criteriaWeights",
                         f"Unknown criterion: {weight.getCriterionId()}.",
                     )
-                if weight.getWeightValue() < 0:
+                value = weight.getWeightValue()
+                if value < 1.0 or value > 10.0:
                     result.addError(
                         "criteriaWeights",
-                        f"Weight for {weight.getCriterionId()} cannot be negative.",
+                        f"Importance for {weight.getCriterionId()} must be between 1 and 10.",
                     )
-            total = sum(weight.getWeightValue() for weight in data.criteriaWeights)
-            if abs(total - 100.0) > 0.05:
-                result.addError(
-                    "criteriaWeights",
-                    "Criteria weights must total 100%.",
-                )
 
         if not isinstance(data.preferredCommuteMode, TransitMode):
             result.addError("preferredCommuteMode", "Select a valid commute mode.")

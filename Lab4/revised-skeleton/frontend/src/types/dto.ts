@@ -47,7 +47,7 @@ export interface CriterionDefinitionDTO {
   direction: CriterionDirectionDTO;
   /** Buffer radius in metres, or null when not spatial. */
   bufferM: number | null;
-  /** Default weight in [0, 1], or null when no product default is set. */
+  /** Default importance rating in [1, 10], or null when no default is set. */
   defaultWeight: number | null;
 }
 

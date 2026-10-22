@@ -37,6 +37,28 @@ class ScoringTests(unittest.TestCase):
         self.assertTrue(all(0 <= item.totalScore <= 100 for item in items))
         self.assertEqual([item.rank for item in items], [1, 2, 3])
 
+    def test_relative_weights_are_normalised_from_one_to_ten_ratings(self) -> None:
+        profile = make_profile(
+            weights={
+                "PRICE": 1,
+                "COMMUTE_TIME": 2,
+                "SCHOOL_PROXIMITY": 3,
+                "GREEN_COVERAGE": 4,
+                "AMENITIES_DENSITY": 10,
+            }
+        )
+        items = self.strategy.scoreCandidates(
+            self.registry.getAllSubzones(), profile, self.commutes
+        )
+        weights = {
+            score.criterionId: score.weight
+            for score in items[0].criterionScores
+            if not score.isMissing
+        }
+        self.assertAlmostEqual(sum(weights.values()), 1.0, places=3)
+        self.assertAlmostEqual(weights["AMENITIES_DENSITY"], 0.5, places=3)
+        self.assertAlmostEqual(weights["PRICE"], 0.05, places=3)
+
     def test_budget_filter_removes_expensive_subzones(self) -> None:
         profile = make_profile(budgetMax=450000)
         items = self.strategy.scoreCandidates(
@@ -100,7 +122,7 @@ class ScoringTests(unittest.TestCase):
             subzone.indicators.secondarySchoolCount1km = 0
             subzone.indicators.greenCoveragePercent500m = 30.0
             subzone.indicators.mallCount1km = 1
-        profile = make_profile(weights={"PRICE": 100})
+        profile = make_profile(weights={"PRICE": 10})
         commutes = {
             "TAMPINES01": CommuteEstimate(20, 10, 1, TransitMode.PUBLIC_TRANSIT),
             "BEDOK01": CommuteEstimate(40, 20, 1, TransitMode.PUBLIC_TRANSIT),

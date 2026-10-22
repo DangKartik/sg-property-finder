@@ -4,10 +4,10 @@ Phase 1 skeleton plus Phase 2 backend implementation for the neighbourhood
 recommender. This folder is separate from `Lab4/Skeleton Code`.
 
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
-PDF and REST endpoints are implemented and covered by 81 `unittest` tests. The
+PDF and REST endpoints are implemented and covered by 83 `unittest` tests. The
 React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison,
 PDF export (ReportLab), share-link import, IndexedDB API caching, data-refresh
-controls and amenity map layers, with 15 Vitest tests.
+controls and selection-driven amenity markers, with 21 Vitest tests.
 
 ## Structure
 
@@ -311,7 +311,7 @@ run instructions, known gaps and recommended next steps.
   commute service, MCDA scoring, factsheet aggregation, PDF/share URLs and REST
   handlers).
 - **Frontend:** implemented (React 18 + TypeScript + Vite, Leaflet/React-Leaflet,
-  Dexie/IndexedDB profiles and API cache, amenity map layers, responsive UI,
+  Dexie/IndexedDB profiles and API cache, selection-driven amenity markers, responsive UI,
   comparison matrix, share-link import and PDF export).
 - **Data assets:** URA subzones, HDB resale prices, town mapping, regional
   environment baselines, the CBD commute matrix and a 1,172-point amenities

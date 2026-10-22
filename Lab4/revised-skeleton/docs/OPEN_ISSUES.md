@@ -38,6 +38,9 @@ business logic is written.
   implemented.
 - Mall coverage was expanded from 66 to 143 points using LTA Carpark Rates
   names and a named major-mall supplement.
+- Criterion importance now uses 1–10 user ratings; `WeightedScoringStrategy`
+  relative-normalises them to weights summing to 1.0 before missing-data
+  reweighting.
 - PDF rendering is ReportLab-only; WeasyPrint and its native dependencies were
   removed from the code, requirements and Dockerfile.
 - The frontend Data panel now exposes a refresh button that calls
@@ -125,10 +128,11 @@ The guide says `normalisedScore` may be 0–1 or 0–100. The frozen spec uses
 0–1 internally, with `totalScore = 100 * sum(weightedScore)`. Confirm this is the
 intended UI/PDF scale.
 
-### OPEN-07 — Default criterion weights
+### OPEN-07 — Default criterion importance — resolved
 
-The guide does not define defaults. The spec assumes equal weights (0.20 each).
-Confirm, or provide product defaults.
+The UI now uses a **1–10 importance rating** per criterion, with a default of
+**5** (neutral). Ratings do not need to sum to 100; the scoring strategy
+relative-normalises them to weights that sum to 1.0.
 
 ### OPEN-08 — Budget filter with multiple flat types
 

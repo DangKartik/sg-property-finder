@@ -61,9 +61,25 @@ class WeightedScoringStrategy(ScoringStrategy):
         """
         warning_list = warnings if warnings is not None else []
         eligible = [subzone for subzone in subzones if self._budgetEligible(subzone, profile)]
+        criteria = self.criterionCatalog.getAllCriteria()
+
+        # Relative weight normalisation: user ratings are 1–10, but the MCDA
+        # engine works with weights that sum to 1.0. Missing-data reweighting
+        # below then renormalises again over the available criteria.
+        raw_weights = {
+            definition.criterionId: max(
+                0.0, profile.getWeightForCriterion(definition.criterionId)
+            )
+            for definition in criteria
+        }
+        total_rating = sum(raw_weights.values())
+        normalized_weights = {
+            criterion_id: (rating / total_rating if total_rating > 0 else 0.0)
+            for criterion_id, rating in raw_weights.items()
+        }
 
         raw_by_criterion: dict[str, dict[str, tuple[float, str]]] = {}
-        for definition in self.criterionCatalog.getAllCriteria():
+        for definition in criteria:
             values: dict[str, tuple[float, str]] = {}
             for subzone in eligible:
                 commute = commutes.get(subzone.subzoneCode)
@@ -79,8 +95,8 @@ class WeightedScoringStrategy(ScoringStrategy):
             available_weight = 0.0
             raw_rows: list[tuple[str, float, str, float, bool]] = []
 
-            for definition in self.criterionCatalog.getAllCriteria():
-                weight = max(0.0, profile.getWeightForCriterion(definition.criterionId))
+            for definition in criteria:
+                weight = normalized_weights[definition.criterionId]
                 values = raw_by_criterion[definition.criterionId]
                 raw = values.get(subzone.subzoneCode)
                 if raw is None:

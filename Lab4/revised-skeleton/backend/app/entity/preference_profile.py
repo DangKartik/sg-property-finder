@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class PreferenceProfile:
-    """Stereotype: Entity. A saved preference profile and its criterion weights."""
+    """Stereotype: Entity. A saved preference profile and its 1–10 criterion ratings."""
 
     profileId: str
     profileName: str
@@ -62,7 +62,7 @@ class PreferenceProfile:
         return list(self.criteriaWeights)
 
     def getWeightForCriterion(self, criterionId: str) -> float:
-        """Return the weight for a criterion, or 0.0 when not configured."""
+        """Return the 1–10 importance rating for a criterion, or 0.0 if absent."""
         for weight in self.criteriaWeights:
             if weight.getCriterionId() == criterionId:
                 return weight.getWeightValue()

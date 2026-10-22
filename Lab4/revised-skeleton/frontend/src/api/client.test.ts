@@ -29,7 +29,7 @@ describe("api client IndexedDB cache", () => {
               unit: "SGD",
               direction: "MINIMIZE",
               bufferM: null,
-              defaultWeight: 0.2,
+              defaultWeight: 5.0,
             },
           ],
           warnings: [],

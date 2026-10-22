@@ -132,11 +132,11 @@ def make_profile(
     """Create a profile with balanced default weights."""
     now = datetime.now(timezone.utc)
     weights = weights or {
-        "PRICE": 20,
-        "COMMUTE_TIME": 20,
-        "SCHOOL_PROXIMITY": 20,
-        "GREEN_COVERAGE": 20,
-        "AMENITIES_DENSITY": 20,
+        "PRICE": 2,
+        "COMMUTE_TIME": 2,
+        "SCHOOL_PROXIMITY": 2,
+        "GREEN_COVERAGE": 2,
+        "AMENITIES_DENSITY": 2,
     }
     return PreferenceProfile(
         profileId="profile-1",
@@ -168,11 +168,11 @@ def profilePayload() -> dict[str, Any]:
         "workplaceAddress": "Raffles Place",
         "anchorCoordinates": {"latitude": 1.2830, "longitude": 103.8513},
         "criteriaWeights": [
-            {"criterionId": "PRICE", "weightValue": 20},
-            {"criterionId": "COMMUTE_TIME", "weightValue": 20},
-            {"criterionId": "SCHOOL_PROXIMITY", "weightValue": 20},
-            {"criterionId": "GREEN_COVERAGE", "weightValue": 20},
-            {"criterionId": "AMENITIES_DENSITY", "weightValue": 20},
+            {"criterionId": "PRICE", "weightValue": 2},
+            {"criterionId": "COMMUTE_TIME", "weightValue": 2},
+            {"criterionId": "SCHOOL_PROXIMITY", "weightValue": 2},
+            {"criterionId": "GREEN_COVERAGE", "weightValue": 2},
+            {"criterionId": "AMENITIES_DENSITY", "weightValue": 2},
         ],
         "preferredCommuteMode": "PUBLIC_TRANSIT",
         "isActive": True,

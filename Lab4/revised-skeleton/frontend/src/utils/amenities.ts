@@ -41,6 +41,38 @@ export const AMENITY_GROUPS: AmenityGroup[] = [
 ];
 
 export const ALL_AMENITY_GROUP_IDS = AMENITY_GROUPS.map((group) => group.id);
+export const AMENITY_FOCUS_RADIUS_KM = 2.0;
+
+/** Great-circle distance between two coordinates in kilometres. */
+export function distanceKm(
+  origin: { latitude: number; longitude: number },
+  destination: { latitude: number; longitude: number },
+): number {
+  const earthRadiusKm = 6371.0088;
+  const toRadians = (value: number) => (value * Math.PI) / 180;
+  const dLat = toRadians(destination.latitude - origin.latitude);
+  const dLon = toRadians(destination.longitude - origin.longitude);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRadians(origin.latitude)) *
+      Math.cos(toRadians(destination.latitude)) *
+      Math.sin(dLon / 2) ** 2;
+  return 2 * earthRadiusKm * Math.asin(Math.min(1, Math.sqrt(a)));
+}
+
+/** Return amenities within the focus radius of a selected subzone anchor. */
+export function nearbyAmenities(
+  amenities: AmenityPointDTO[],
+  center: { latitude: number; longitude: number } | null,
+  radiusKm = AMENITY_FOCUS_RADIUS_KM,
+): AmenityPointDTO[] {
+  if (!center) {
+    return [];
+  }
+  return amenities.filter(
+    (amenity) => distanceKm(center, amenity) <= radiusKm,
+  );
+}
 
 /** Filter amenity points by the master toggle and active category groups. */
 export function filterAmenities(

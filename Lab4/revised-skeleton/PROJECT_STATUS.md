@@ -4,8 +4,8 @@
 - **Repository:** `2006-SCMB-D2`
 - **Application folder:** `Lab4/revised-skeleton/`
 - **Current branch:** `main`
-- **Last commit:** `54d627e` (IndexedDB cache and frontend tests)
-- **Working tree:** ReportLab-only PDFs and the data-refresh UI are added; not yet committed
+- **Last commit:** `af953b5` (data refresh UI and ReportLab-only PDFs)
+- **Working tree:** 1–10 relative importance ratings and selection-driven amenity markers are added; not yet committed
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -19,7 +19,7 @@ This document is intended as the handover/context file for a new conversation or
 - selected HDB flat types,
 - a workplace/CBD anchor,
 - a preferred commute mode,
-- importance weights for affordability, commute, schools, greenery and amenities.
+- 1–10 importance ratings for affordability, commute, schools, greenery and amenities.
 
 The backend ranks URA subzones with a deterministic 0–100 suitability score. The frontend lets the user inspect the ranked list, explore a choropleth map, open neighbourhood factsheets, compare two to four subzones, and export a PDF report with a shareable scenario URL.
 
@@ -89,8 +89,8 @@ make dev
 ```powershell
 make backend    # FastAPI only
 make frontend   # Vite only
-make test       # backend unittest suite (81 tests)
-make test-frontend # frontend Vitest suite (15 tests)
+make test       # backend unittest suite (83 tests)
+make test-frontend # frontend Vitest suite (21 tests)
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
 make help
@@ -157,9 +157,9 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 | Makefile / one-command local run | **Completed** |
 | Real amenities dataset | **Completed** — 1,172 points (143 malls); `make amenities` rebuilds it |
 | Amenity dataset pipeline | **Completed** (`scripts/build_amenities.py`) |
-| Amenity map layers | **Completed** (toggleable category layers) |
+| Amenity map layers | **Completed** (markers shown only for selected subzone) |
 | API-response caching in IndexedDB | **Completed** (`ApiCache`, ETag/TTL/stale fallback) |
-| Frontend tests | **Completed** (15 Vitest tests) |
+| Frontend tests | **Completed** (21 Vitest tests) |
 | PDF generation | **Completed** (ReportLab only) |
 | Production deployment/CI | **Not completed** |
 
@@ -275,6 +275,8 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - schools: 0–4,
   - green coverage: 0–100%,
   - amenities: 0–10.
+- User importance ratings are 1–10 and are relative-normalised to weights that
+  sum to 1.0 before scoring.
 - Missing data: exclude criterion, reweight available criteria to 1.0, attach warning.
 - `RecommendationItem` contains 0–100 total score and `CriterionScore` rows.
 - Tie-break: shortest commute, then median $/sqm, then subzone code.
@@ -340,15 +342,16 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - flat-type checkboxes,
   - address search with selectable `AddressMatch` results,
   - commute mode,
-  - auto-rescaling criteria sliders that always total 100%.
+  - 1–10 importance sliders per criterion; ratings are normalised by the backend.
 - Saved-plan selector with active badge, disabled delete with tooltip when only one plan exists, and delete confirmation.
 - Map:
   - OneMap tiles,
   - subzone choropleth,
   - card-to-polygon and polygon-to-card synchronization,
   - transit/driving route overlay,
-  - toggleable amenity point layers (schools, healthcare, parks, MRT/LRT, malls)
-    with category colours, counts and tooltips.
+  - amenity markers appear only after a subzone is selected, showing nearby
+    schools, healthcare, parks, MRT/LRT and malls within 2 km with category
+    colours, counts and tooltips.
 - Results:
   - top-20 ranked cards,
   - comparison checkboxes,
@@ -379,8 +382,8 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 
 ### 4.4 Testing and verification
 
-- **81 backend tests pass** via `make test`.
-- **15 frontend Vitest tests pass** via `npm test`.
+- **83 backend tests pass** via `make test`.
+- **21 frontend Vitest tests pass** via `npm test`.
 - Frontend tests cover format/polyline helpers, amenity filtering/colours,
   `ApiCache` persistence/pruning, client cache reuse/stale fallback and top-20
   result rendering.
@@ -400,9 +403,9 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - comparison,
   - PDF modal,
   - plan persistence after reload,
-  - weight auto-rescaling (40% + four × 15% = 100%),
+  - 1–10 importance ratings normalised to weights summing to 1.0,
   - share-link import and shared-subzone highlighting,
-  - amenity layer toggle (1,172 points; parks can be hidden),
+  - amenity markers hidden until a subzone is selected, then nearby points only,
   - IndexedDB cache reuse on reload (only `/data/status` refetched).
 - OneMap live checks:
   - token endpoint,
@@ -461,17 +464,18 @@ Supporting scripts:
   overlays. Expired entries are
   used with a `STALE_CACHE` warning if the backend is unreachable.
 - **Amenity map layers:** `GET /api/v1/amenities` returns all 1,172 points.
-  `NeighborhoodMapUI` renders toggleable schools, healthcare, parks, MRT/LRT and
-  mall layers with category colours, counts and tooltips.
+  `NeighborhoodMapUI` hides them until a subzone is selected, then shows only
+  amenities within 2 km of that subzone with category colours, counts and
+  tooltips.
 - **Mall coverage:** the amenity builder adds LTA Carpark Rates major-mall names
   and a named supplement, taking the snapshot from 66 to 143 malls.
 - **Comparison outside top 20:** `RankingControl.generateRankedRecommendations`
   accepts an optional `limit`; the comparison endpoint passes `limit=None` so
   subzones outside the displayed top 20 still receive score items.
-- **Frontend tests:** Vitest/jsdom/Testing Library with 15 tests covering format
-  helpers, polyline decoding, amenity filtering/colours, `ApiCache`, client cache
-  reuse/stale fallback, refresh cache invalidation and top-20 `ResultsListUI`
-  rendering.
+- **Frontend tests:** Vitest/jsdom/Testing Library with 21 tests covering format
+  helpers, polyline decoding, weight migration, nearby amenity filtering/colours,
+  `ApiCache`, client cache reuse/stale fallback, refresh cache invalidation and
+  top-20 `ResultsListUI` rendering.
 - **Data refresh UI:** the Data panel exposes a refresh button that calls
   `POST /api/v1/data/refresh`, clears `ApiCache`, updates the status display and
   reruns the active ranking.
@@ -542,8 +546,9 @@ Supporting scripts:
 
 10. **Frontend unit testing — resolved 22 October 2026.**
     - Vitest + jsdom + Testing Library are configured.
-    - 15 tests cover format/polyline helpers, `ApiCache`, client cache
-      reuse/stale fallback and `ResultsListUI` rendering.
+    - 21 tests cover format/polyline helpers, weight migration, nearby amenity
+      filtering, `ApiCache`, client cache reuse/stale fallback and
+      `ResultsListUI` rendering.
     - `npm run build` remains the production build check.
 
 ### 5.4 Phase 5 not completed
@@ -598,7 +603,8 @@ Supporting scripts:
 | HDB price geography | HDB town-level median proxy, labelled `isTownProxy` |
 | School radius | 1.0 km |
 | Environment scoring | Deterministic regional baselines; live PM2.5/UVI/weather display-only |
-| Normalisation | Fixed absolute domains, not candidate-relative min–max |
+| Normalisation | Fixed absolute domains, not candidate-relative min-max |
+| Criterion importance | 1–10 ratings, relative-normalised to weights summing to 1.0 |
 | Cycling commute | Excluded |
 | Address confidence | `SequenceMatcher` ratio between query and formatted address |
 | Profile creation | Online validation required |
@@ -610,7 +616,7 @@ Supporting scripts:
 | PDF generation | ReportLab Platypus only |
 | Persistence | Profiles in browser IndexedDB; no server database |
 | API caching | IndexedDB (`ApiCache`), TTL + ETag revalidation + stale fallback |
-| Map amenities | Toggleable school/healthcare/park/MRT/mall layers |
+| Map amenities | Hidden until a subzone is selected; nearby points only |
 
 ---
 
@@ -629,11 +635,11 @@ Supporting scripts:
 - **Frontend API base:** Vite proxy `/api` → `http://127.0.0.1:8000`; set `VITE_API_BASE_URL` for non-proxied deployments.
 - **Share links:** `POST /api/v1/share/decode` decodes `?share=`. The frontend imports the profile into Dexie, activates it, reruns ranking and highlights the shared subzones. The `share` query parameter is removed after import.
 - **API cache:** `ApiCache` uses the separate IndexedDB database `sgpropfinder-api-cache`. Clear it from DevTools if you need to force fresh criteria/geometry/amenities after changing data outside the normal TTL.
-- **Amenity layers:** all five categories are visible by default; the map's “Amenity layers” panel can hide categories or all points.
+- **Amenity layers:** markers are hidden until a subzone is selected. The “Nearby amenities” panel then shows amenities within 2 km and can hide categories.
 - **OneMap tiles** use `https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png`.
 - **PDF generation**: `ReportControl` uses ReportLab Platypus directly; WeasyPrint is no longer imported or installed.
 - **Data payloads can be large:** `/api/v1/subzones/geometry` returns the full 332-subzone FeatureCollection.
-- **No commit was made for the current update.** ReportLab-only PDFs and the data-refresh UI are in the working tree; the cache/map/test/mall changes were committed in `54d627e`.
+- **No commit was made for the current update.** The 1–10 importance-rating and selection-driven amenity-marker changes are in the working tree; ReportLab-only PDFs and the data-refresh UI were committed in `af953b5`.
 
 ---
 
@@ -658,17 +664,17 @@ Supporting scripts:
 | `backend/app/control/report_control.py` | PDF/share URL generation |
 | `backend/app/api/handlers.py` | Transport-agnostic REST handlers |
 | `scripts/build_amenities.py` | data.gov.sg + OneMap amenity snapshot builder |
-| `backend/tests/` | 81 unit/integration tests |
+| `backend/tests/` | 83 unit/integration tests |
 
 ### Frontend
 
 | File | Purpose |
 | --- | --- |
 | `frontend/src/App.tsx` | Application state/orchestration |
-| `frontend/src/boundary/ProfileFormUI.tsx` | Plan form, weights, address search |
+| `frontend/src/boundary/ProfileFormUI.tsx` | Plan form, 1–10 importance ratings, address search |
 | `frontend/src/boundary/ProfileSelectorUI.tsx` | Saved plans/delete guard |
 | `frontend/src/boundary/ResultsListUI.tsx` | Ranked cards/comparison selection |
-| `frontend/src/boundary/NeighborhoodMapUI.tsx` | Leaflet choropleth, route and amenity layers |
+| `frontend/src/boundary/NeighborhoodMapUI.tsx` | Leaflet choropleth, route and selected-subzone amenity markers |
 | `frontend/src/boundary/FactSheetUI.tsx` | Factsheet modal |
 | `frontend/src/boundary/ComparisonUI.tsx` | Side-by-side matrix |
 | `frontend/src/boundary/ExportReportUI.tsx` | PDF/share modal |
@@ -713,13 +719,13 @@ Supporting scripts:
 
 | Check | Result |
 | --- | --- |
-| `make test` | **81 tests OK** |
-| `npm test` | **15 frontend tests OK** |
+| `make test` | **83 tests OK** |
+| `npm test` | **21 frontend tests OK** |
 | `make build` / `npm run build` | **Passed** |
 | Live Uvicorn health/ready | **Passed**, 332 subzones |
 | Browser main flow | **Passed** |
 | Dexie reload persistence | **Passed** |
-| Weight auto-rescale | **Passed** (40 + 4×15 = 100) |
+| Weight normalisation | **Passed** (1–10 ratings normalised to 1.0) |
 | OneMap address search/routing | **Passed** |
 | data.gov.sg live refresh | **Passed**, 332 subzones + 243,176 HDB rows in ~5.2s |
 | Amenities snapshot | **Passed**, 1,172 points generated; sample counts nonzero |
@@ -732,6 +738,6 @@ Supporting scripts:
 | API cache | **Passed**, repeated GETs use IndexedDB; stale fallback works |
 | Data refresh UI | **Passed**, calls `/data/refresh`, clears cache and reranks |
 | ReportLab-only PDF | **Passed**, no WeasyPrint import/requirement |
-| Amenity map layers | **Passed**, 1,172 points available with category toggles |
+| Amenity map layers | **Passed**, markers hidden until selection; nearby points only |
 | Mall coverage | **Passed**, 143 mall points including major-mall supplements |
 | ReportLab PDF | **Passed** (only renderer) |

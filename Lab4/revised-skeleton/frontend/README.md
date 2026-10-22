@@ -33,16 +33,20 @@ different origin, set `VITE_API_BASE_URL` to the backend origin when building.
 
 - Dexie/IndexedDB `ProfileCatalog` with `saveToLocalStorage()`,
   `loadFromLocalStorage()` and `deleteProfile()`.
+- Dexie/IndexedDB `ApiCache` with TTLs, ETag revalidation and stale fallback.
 - Profile form with budget sliders, flat-type checkboxes, address verification
-  and auto-rescaling criterion weight sliders.
+  and 1–10 criterion importance sliders (backend relative normalisation).
 - Saved-plan selector with active badge and guarded delete confirmation.
-- OneMap/Leaflet basemap, URA subzone choropleth, card-to-polygon highlighting
-  and transit/driving route overlays.
+- OneMap/Leaflet basemap, URA subzone choropleth, card-to-polygon highlighting,
+  transit/driving route overlays and selection-driven nearby amenity markers.
 - Ranked recommendation sidebar with comparison selection.
 - Factsheet modal with multi-flat-type pricing, town-proxy note, amenities,
   environment and data warnings.
 - Comparison matrix with a two-subzone guard.
-- PDF export with binary download and shareable scenario URL.
+- PDF export (ReportLab) with binary download and shareable scenario URL.
+- Data panel refresh button that refreshes snapshots, clears the API cache and
+  reruns the active ranking.
+- Vitest/jsdom/Testing Library suite with 21 tests.
 - Reusable notification modal for validation and API errors.
 - Profile plans persist in IndexedDB through Dexie. The backend exposes
   `X-Data-As-Of`/`ETag`/`/api/v1/data/status` for adding API-response caching to

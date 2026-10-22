@@ -35,19 +35,32 @@ class ValidationTests(unittest.TestCase):
             [error.message for error in result.errors],
         )
 
-    def test_weight_total_above_hundred_is_rejected(self) -> None:
+    def test_weight_above_ten_is_rejected(self) -> None:
         payload = profilePayload()
-        payload["criteriaWeights"][-1]["weightValue"] = 20.1
+        payload["criteriaWeights"][-1]["weightValue"] = 11
         result = InputValidationControl().validateProfileData(profileDtoFromDict(payload))
         self.assertFalse(result.isValid)
-        self.assertIn("Criteria weights must total 100%.", [error.message for error in result.errors])
+        self.assertIn(
+            "Importance for AMENITIES_DENSITY must be between 1 and 10.",
+            [error.message for error in result.errors],
+        )
 
-    def test_weight_total_at_boundary_is_accepted(self) -> None:
+    def test_weight_below_one_is_rejected(self) -> None:
         payload = profilePayload()
-        payload["criteriaWeights"][-1]["weightValue"] = 20.1
-        payload["criteriaWeights"][0]["weightValue"] = 19.9
+        payload["criteriaWeights"][-1]["weightValue"] = 0
         result = InputValidationControl().validateProfileData(profileDtoFromDict(payload))
-        self.assertTrue(result.isValid)
+        self.assertFalse(result.isValid)
+        self.assertIn(
+            "Importance for AMENITIES_DENSITY must be between 1 and 10.",
+            [error.message for error in result.errors],
+        )
+
+    def test_ratings_do_not_need_to_sum_to_100(self) -> None:
+        payload = profilePayload()
+        for index, rating in enumerate([1, 2, 3, 4, 5]):
+            payload["criteriaWeights"][index]["weightValue"] = rating
+        result = InputValidationControl().validateProfileData(profileDtoFromDict(payload))
+        self.assertTrue(result.isValid, [error.message for error in result.errors])
 
     def test_valid_profile_is_accepted(self) -> None:
         result = InputValidationControl(FakeOneMap()).validateProfileData(

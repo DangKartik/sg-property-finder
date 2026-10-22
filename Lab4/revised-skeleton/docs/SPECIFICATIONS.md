@@ -5,16 +5,18 @@ require a product decision and are also listed in `OPEN_ISSUES.md`.
 
 ## 1. Criterion catalogue
 
-| ID | Name | Unit | Direction | Fixed domain | Radius / basis | Default weight |
+| ID | Name | Unit | Direction | Fixed domain | Radius / basis | Default importance |
 | --- | --- | --- | --- | --- | --- | --- |
-| `PRICE` | Housing affordability | SGD (median) | MINIMIZE | 200,000–1,500,000 | Selected flat types, 12-month window | 0.20 |
-| `COMMUTE_TIME` | Commute duration | minutes | MINIMIZE | 0–90 | Workplace / CBD, fixed departure | 0.20 |
-| `SCHOOL_PROXIMITY` | School access | count | MAXIMIZE | 0–4 | 1.0 km | 0.20 |
-| `GREEN_COVERAGE` | Green coverage | percent | MAXIMIZE | 0–100 | 500 m buffer | 0.20 |
-| `AMENITIES_DENSITY` | Amenity access | count | MAXIMIZE | 0–10 | Malls 1 km, polyclinics/hospitals 2 km, MRT/LRT 800 m | 0.20 |
+| `PRICE` | Housing affordability | SGD (median) | MINIMIZE | 200,000–1,500,000 | Selected flat types, 12-month window | 5 |
+| `COMMUTE_TIME` | Commute duration | minutes | MINIMIZE | 0–90 | Workplace / CBD, fixed departure | 5 |
+| `SCHOOL_PROXIMITY` | School access | count | MAXIMIZE | 0–4 | 1.0 km | 5 |
+| `GREEN_COVERAGE` | Green coverage | percent | MAXIMIZE | 0–100 | 500 m buffer | 5 |
+| `AMENITIES_DENSITY` | Amenity access | count | MAXIMIZE | 0–10 | Malls 1 km, polyclinics/hospitals 2 km, MRT/LRT 800 m | 5 |
 
-The default weights above are an assumption for the first version; the user can
-override every weight. `CriterionWeight.criterionId` must match this catalogue.
+The default importance above is an assumption for the first version. The user
+rates every criterion from **1 (not important) to 10 (very important)**;
+ratings do not need to sum to 100. `CriterionWeight.criterionId` must match this
+catalogue.
 
 ## 2. Normalisation and scoring
 
@@ -31,11 +33,16 @@ Minimisation:  S = (max - clamp(X, min, max)) / (max - min)
 - Values outside the fixed domain are clamped.
 - If `max == min`, the criterion is misconfigured; the implementation returns
   `S = 0.0` for safety.
-- Available weights are renormalised:
+- User importance ratings `Ri` are in `[1, 10]`. Relative weights are computed
+  inside the scoring strategy:
 
 ```text
+Wi = Ri / sum(Rj for all active criteria j)
 W'i = Wi / sum(Wj for available criteria j)
 ```
+
+The first normalisation makes the active weights sum to `1.0`; the second
+handles missing criteria by renormalising only over available criteria.
 
 - `CriterionScore.normalisedScore` is `S` in `[0, 1]`.
 - `CriterionScore.weight` is `W'i` in `[0, 1]`.
