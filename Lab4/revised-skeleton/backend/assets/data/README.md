@@ -117,6 +117,12 @@ the fixed radius. The radii are 1.0 km for schools and malls, 800 m for MRT,
 500 m for parks, and 2.0 km for polyclinics and hospitals. The factsheet list
 shows all amenities within 2 km, sorted by distance.
 
+`POST /api/v1/data/refresh` reuses the local `amenities.json` point layer as the
+cached raw POI source, recomputes all subzone aggregates in memory, and writes
+the updated snapshot back to `amenities.json`. No network call is required for
+the amenity rebuild. The refreshed file also contains an `aggregates` object
+keyed by subzone code with the computed counts and nearest distances.
+
 ## `environment_baselines.json`
 
 Static values used for scoring, keyed by subzone code:

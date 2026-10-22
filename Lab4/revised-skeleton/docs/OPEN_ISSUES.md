@@ -45,8 +45,9 @@ business logic is written.
   removed from the code, requirements and Dockerfile. The report includes profile
   importance weights, per-subzone criterion scores, data dates and caveats.
 - The frontend Data panel now exposes a refresh button that calls
-  `POST /api/v1/data/refresh`, clears `ApiCache`, updates freshness status and
-  reruns the active ranking.
+  `POST /api/v1/data/refresh`; the endpoint refreshes subzone/HDB data, rebuilds
+  amenities from the cached local POI snapshot, clears `ApiCache`, updates
+  freshness status and reruns the active ranking.
 - Data freshness: `DatasetService` refreshes subzone/HDB snapshots from data.gov.sg
   when older than 24 hours; live environment APIs are already used for display.
 - Frontend caching contract: `/api/v1/data/status` plus `X-Data-As-Of`, `ETag`,

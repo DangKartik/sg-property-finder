@@ -45,8 +45,9 @@ different origin, set `VITE_API_BASE_URL` to the backend origin when building.
 - Comparison matrix with a two-subzone guard.
 - PDF export (ReportLab) with weights, criterion scores, data dates, caveats,
   binary download and shareable scenario URL.
-- Data panel refresh button that refreshes snapshots, clears the API cache and
-  reruns the active ranking.
+- Data panel refresh button that refreshes subzone/HDB snapshots, rebuilds
+  amenities from the local POI snapshot, clears the API cache and reruns the
+  active ranking.
 - Vitest/jsdom/Testing Library suite with 21 tests.
 - Reusable notification modal for validation and API errors.
 - Profile plans persist in IndexedDB through Dexie. The backend exposes

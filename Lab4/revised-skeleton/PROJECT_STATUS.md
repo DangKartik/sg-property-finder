@@ -5,7 +5,7 @@
 - **Application folder:** `Lab4/revised-skeleton/`
 - **Current branch:** `main`
 - **Last commit:** `af953b5` (data refresh UI and ReportLab-only PDFs)
-- **Working tree:** 1–10 relative importance ratings, selection-driven amenity markers and enriched ReportLab report content are added; not yet committed
+- **Working tree:** 1–10 relative importance ratings, selection-driven amenity markers, local amenity rebuild in `/data/refresh`, enforced HDB town-proxy pricing and enriched ReportLab content are added; not yet committed
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -89,7 +89,7 @@ make dev
 ```powershell
 make backend    # FastAPI only
 make frontend   # Vite only
-make test       # backend unittest suite (84 tests)
+make test       # backend unittest suite (85 tests)
 make test-frontend # frontend Vitest suite (21 tests)
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
@@ -251,7 +251,10 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - live PM2.5/UVI/forecast isolated as display-only.
 - `AmenityRetrievalControl`:
   - school/healthcare/park/mall/MRT counts and nearest distances,
-  - graceful missing-data warning when the dataset is absent.
+  - graceful missing-data warning when the dataset is absent,
+  - local `rebuildFromLocalSources()` that recomputes subzone aggregates and
+    updates registry indicators without network calls,
+  - `status()` metadata exposed through `/api/v1/data/status`.
 
 #### Commute
 
@@ -366,8 +369,11 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - highlights shared subzone polygons and fills comparison selection.
 - Data panel:
   - “Refresh data” button calls `POST /api/v1/data/refresh`,
+  - refreshes subzone/HDB snapshots and rebuilds amenities from the cached
+    local POI layer,
   - clears the IndexedDB API cache on success,
-  - updates the freshness display and reruns the active ranking.
+  - reloads amenity points, updates the freshness display and reruns the active
+    ranking.
 - Factsheet modal:
   - multi-flat pricing,
   - town-level proxy badge and note,
@@ -385,7 +391,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 
 ### 4.4 Testing and verification
 
-- **84 backend tests pass** via `make test`.
+- **85 backend tests pass** via `make test`.
 - **21 frontend Vitest tests pass** via `npm test`.
 - Frontend tests cover format/polyline helpers, amenity filtering/colours,
   `ApiCache` persistence/pruning, client cache reuse/stale fallback and top-20
@@ -480,8 +486,9 @@ Supporting scripts:
   `ApiCache`, client cache reuse/stale fallback, refresh cache invalidation and
   top-20 `ResultsListUI` rendering.
 - **Data refresh UI:** the Data panel exposes a refresh button that calls
-  `POST /api/v1/data/refresh`, clears `ApiCache`, updates the status display and
-  reruns the active ranking.
+  `POST /api/v1/data/refresh`, refreshes subzone/HDB data, rebuilds amenities
+  from the local POI snapshot, clears `ApiCache`, reloads amenity points,
+  updates the status display and reruns the active ranking.
 - **PDF generation:** ReportLab Platypus only; WeasyPrint, its requirement and
   Docker native dependencies were removed. The report includes profile
   importance weights, per-subzone criterion scores, data dates and caveats.
@@ -612,7 +619,7 @@ Supporting scripts:
 | Cycling commute | Excluded |
 | Address confidence | `SequenceMatcher` ratio between query and formatted address |
 | Profile creation | Online validation required |
-| Data refresh | `DATA_MAX_AGE_HOURS=24`; local snapshots + live refresh |
+| Data refresh | `DATA_MAX_AGE_HOURS=24`; local snapshots + live refresh; amenities rebuilt from local POI snapshot |
 | Commute matrix | `PUBLIC_TRANSIT` only; driving/walking use live OneMap |
 | Missing commute entry | Straight-line estimate + `ESTIMATED_COMMUTE_FALLBACK` |
 | Ranking result size | Top 20 items; remaining results discarded |
@@ -643,7 +650,7 @@ Supporting scripts:
 - **OneMap tiles** use `https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png`.
 - **PDF generation**: `ReportControl` uses ReportLab Platypus directly; WeasyPrint is no longer imported or installed.
 - **Data payloads can be large:** `/api/v1/subzones/geometry` returns the full 332-subzone FeatureCollection.
-- **No commit was made for the current update.** The 1–10 importance-rating, selection-driven amenity-marker and enriched-ReportLab changes are in the working tree; ReportLab-only PDFs and the data-refresh UI were committed in `af953b5`.
+- **No commit was made for the current update.** The 1–10 importance-rating, selection-driven amenity-marker, local amenity-rebuild, enforced HDB town-proxy and enriched-ReportLab changes are in the working tree; ReportLab-only PDFs and the data-refresh UI were committed in `af953b5`.
 
 ---
 
@@ -668,7 +675,7 @@ Supporting scripts:
 | `backend/app/control/report_control.py` | PDF/share URL generation |
 | `backend/app/api/handlers.py` | Transport-agnostic REST handlers |
 | `scripts/build_amenities.py` | data.gov.sg + OneMap amenity snapshot builder |
-| `backend/tests/` | 84 unit/integration tests |
+| `backend/tests/` | 85 unit/integration tests |
 
 ### Frontend
 
@@ -722,7 +729,7 @@ Supporting scripts:
 
 | Check | Result |
 | --- | --- |
-| `make test` | **84 tests OK** |
+| `make test` | **85 tests OK** |
 | `npm test` | **21 frontend tests OK** |
 | `make build` / `npm run build` | **Passed** |
 | Live Uvicorn health/ready | **Passed**, 332 subzones |
@@ -740,7 +747,8 @@ Supporting scripts:
 | Ranking result cap | **Passed**, response returns exactly the top 20 items |
 | Comparison outside top 20 | **Passed**, comparison requests the full internal ranking |
 | API cache | **Passed**, repeated GETs use IndexedDB; stale fallback works |
-| Data refresh UI | **Passed**, calls `/data/refresh`, clears cache and reranks |
+| Data refresh UI | **Passed**, calls `/data/refresh`, rebuilds amenities, clears cache and reranks |
+| Amenity rebuild | **Passed**, local rebuild writes `aggregates` and updates indicators |
 | ReportLab-only PDF | **Passed**, includes weights, criterion scores, dates and caveats |
 | Amenity map layers | **Passed**, markers hidden until selection; nearby points only |
 | Mall coverage | **Passed**, 143 mall points including major-mall supplements |

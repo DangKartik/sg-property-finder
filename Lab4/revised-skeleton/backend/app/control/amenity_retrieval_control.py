@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
@@ -13,6 +14,7 @@ from app.entity.amenity_info import AmenityInfo
 from app.entity.enums import DataAvailabilityCode
 from app.entity.subzone_indicators import SubzoneIndicators
 from app.entity.types import Coordinates, RawResponse, RetrievalResult
+from app.services.dataset_service import DatasetStatus
 
 if TYPE_CHECKING:
     from app.adapter.data_gov_sg_adapter import DataGovSgAdapter
@@ -25,6 +27,22 @@ MRT_RADIUS_KM = 0.8
 PARK_RADIUS_KM = 0.5
 HEALTHCARE_RADIUS_KM = 2.0
 MALL_RADIUS_KM = 1.0
+AMENITY_INDICATOR_FIELDS = (
+    "nearestParkM",
+    "parkCount500m",
+    "nearestSchoolM",
+    "primarySchoolCount1km",
+    "secondarySchoolCount1km",
+    "nearestPolyclinicM",
+    "polyclinicCount2km",
+    "nearestHospitalM",
+    "hospitalCount2km",
+    "nearestMallM",
+    "mallCount1km",
+    "nearestMrtM",
+    "mrtStationCount800m",
+    "amenityDataAvailable",
+)
 
 
 class AmenityRetrievalControl(RetrievalControl):
@@ -188,6 +206,88 @@ class AmenityRetrievalControl(RetrievalControl):
         items.sort(key=lambda item: (item["category"], item["name"]))
         return RetrievalResult(items, warnings)
 
+    def status(self) -> DatasetStatus:
+        """Return freshness metadata for the local amenity snapshot."""
+        path = self.amenitiesPath
+        if path is None or not path.exists():
+            return DatasetStatus(
+                datasetId="amenities",
+                dataSnapshotId="MISSING",
+                dataAsOf=datetime.now(timezone.utc),
+                source="local-amenity-snapshot",
+                isStale=True,
+                recordCount=0,
+                lastError="amenities.json is missing",
+            )
+        items = self._amenities()
+        stat = path.stat()
+        return DatasetStatus(
+            datasetId="amenities",
+            dataSnapshotId=f"LOCAL:{stat.st_mtime_ns}",
+            dataAsOf=datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc),
+            source="local-amenity-snapshot",
+            isStale=self._amenitiesError,
+            recordCount=len(items),
+            lastError="Amenities snapshot could not be parsed" if self._amenitiesError else None,
+        )
+
+    def rebuildFromLocalSources(self) -> DatasetStatus:
+        """Recompute the amenity snapshot and subzone indicators from local data.
+
+        The cached ``amenities.json`` point layer is the local raw POI source.
+        No network calls are made. The rebuilt file includes per-subzone
+        aggregates so the spatial result is persisted with the snapshot.
+        """
+        path = self.amenitiesPath
+        if path is None or not path.exists():
+            raise FileNotFoundError("amenities.json is missing")
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        items = _extractAmenityItems(payload)
+        if not items:
+            raise ValueError("amenities.json contains no amenity points")
+
+        self._amenitiesCache = items
+        self._amenitiesError = False
+        aggregates: dict[str, dict[str, Any]] = {}
+        if self.subzoneRegistry is not None:
+            for subzone in self.subzoneRegistry.getAllSubzones():
+                result = self.retrieveIndicators(subzone.subzoneCode)
+                indicators = result.data
+                aggregates[subzone.subzoneCode] = {
+                    field: getattr(indicators, field)
+                    for field in AMENITY_INDICATOR_FIELDS
+                }
+                existing = subzone.indicators
+                if existing is None:
+                    subzone.indicators = indicators
+                else:
+                    for field in AMENITY_INDICATOR_FIELDS:
+                        setattr(existing, field, getattr(indicators, field))
+
+        metadata = payload.get("metadata") if isinstance(payload, dict) else {}
+        metadata = dict(metadata) if isinstance(metadata, dict) else {}
+        metadata.update(
+            {
+                "rebuiltAt": datetime.now(timezone.utc).isoformat(),
+                "method": "buffer_distance_density",
+                "counts": dict(
+                    sorted(Counter(str(item.get("category") or "Unknown") for item in items).items())
+                ),
+            }
+        )
+        output = {
+            "metadata": metadata,
+            "items": items,
+            "aggregates": aggregates,
+        }
+        temporary = path.with_suffix(path.suffix + ".tmp")
+        temporary.write_text(
+            json.dumps(output, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+        temporary.replace(path)
+        return self.status()
+
     def retrieveIndicators(self, subzoneCode: str) -> RetrievalResult[SubzoneIndicators]:
         """Compute school, healthcare, park, mall and MRT indicators."""
         warnings = []
@@ -241,6 +341,17 @@ class AmenityRetrievalControl(RetrievalControl):
             amenityDataAvailable=not self._amenitiesError,
         )
         return RetrievalResult(indicators, warnings)
+
+
+def _extractAmenityItems(payload: Any) -> list[dict[str, Any]]:
+    """Extract point records from a list or metadata/items snapshot."""
+    if isinstance(payload, list):
+        return [dict(item) for item in payload if isinstance(item, dict)]
+    if isinstance(payload, dict):
+        items = payload.get("items", payload.get("amenities", []))
+        if isinstance(items, list):
+            return [dict(item) for item in items if isinstance(item, dict)]
+    return []
 
 
 def _category(item: dict[str, Any]) -> str:

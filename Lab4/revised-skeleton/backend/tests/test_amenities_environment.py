@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -46,6 +47,26 @@ class AmenityTests(unittest.TestCase):
         result = self.control.retrieveAmenityInfo("UNKNOWN")
         self.assertEqual(result.data, [])
         self.assertTrue(result.warnings)
+
+    def test_local_rebuild_updates_snapshot_and_indicators(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "amenities.json"
+            shutil.copy(FIXTURES / "amenities.json", path)
+            registry = load_registry()
+            control = AmenityRetrievalControl(
+                DataGovSgAdapter(),
+                DataAvailabilityNotifier(),
+                amenitiesPath=path,
+                subzoneRegistry=registry,
+            )
+            status = control.rebuildFromLocalSources()
+            self.assertEqual(status.recordCount, 15)
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            self.assertIn("rebuiltAt", payload["metadata"])
+            self.assertIn("TAMPINES01", payload["aggregates"])
+            self.assertTrue(
+                control.retrieveIndicators("TAMPINES01").data.amenityDataAvailable
+            )
 
     def test_missing_source_marks_amenity_indicators_unavailable(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

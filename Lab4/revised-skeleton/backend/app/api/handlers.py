@@ -171,15 +171,27 @@ def amenities(context: AppContext) -> ApiEnvelope[Any]:
 
 def dataStatus(context: AppContext) -> ApiEnvelope[Any]:
     """Return live/snapshot freshness metadata for the frontend cache layer."""
-    return ok(context.datasetService.status())
+    statuses = context.datasetService.status()
+    try:
+        statuses["amenities"] = context.amenityControl.status()
+    except Exception:
+        pass
+    return ok(statuses)
 
 
 def refreshData(context: AppContext) -> ApiEnvelope[Any]:
-    """Force a live data.gov.sg refresh and return the resulting statuses."""
+    """Refresh live datasets and rebuild amenities from the local POI snapshot."""
     try:
         statuses = context.datasetService.refresh()
     except Exception:
         return fail("DATA_REFRESH_FAILED", "Unable to refresh data.gov.sg datasets.", {"retryable": True})
+    try:
+        statuses["amenities"] = context.amenityControl.rebuildFromLocalSources()
+    except Exception as exc:
+        status = context.amenityControl.status()
+        status.isStale = True
+        status.lastError = str(exc)
+        statuses["amenities"] = status
     return ok(statuses)
 
 

@@ -193,7 +193,7 @@ All endpoints return the standard envelope:
 | `GET` | `/api/v1/criteria` | - | `CriterionDefinition[]` |
 | `GET` | `/api/v1/amenities` | - | amenity points for the map |
 | `GET` | `/api/v1/data/status` | - | dataset freshness metadata |
-| `POST` | `/api/v1/data/refresh` | - | force live data.gov.sg refresh |
+| `POST` | `/api/v1/data/refresh` | - | force live data.gov.sg refresh and local amenity rebuild |
 | `POST` | `/api/v1/address/search` | `{ "query": "..." }` | `AddressMatch[]` |
 | `POST` | `/api/v1/profiles/validate` | `ProfileDTO` | `ValidationResult` |
 | `POST` | `/api/v1/share/decode` | `{ "share": "..." }` | `{ profile, subzoneCodes }` |

@@ -1,4 +1,4 @@
-"""HDB resale pricing retrieval with 12-month window and town fallback."""
+"""HDB resale pricing retrieval with a 12-month window and town proxy."""
 
 from __future__ import annotations
 
@@ -88,7 +88,7 @@ class HousePricingRetrievalControl(RetrievalControl):
         subzoneCode: str,
         flatTypes: list[str] | None = None,
     ) -> RetrievalResult[dict[str, HousePricing]]:
-        """Return pricing keyed by flat type, using the town proxy when needed."""
+        """Return pricing keyed by flat type using the HDB town median proxy."""
         warnings = []
         if self.subzoneRegistry is None:
             warnings.append(

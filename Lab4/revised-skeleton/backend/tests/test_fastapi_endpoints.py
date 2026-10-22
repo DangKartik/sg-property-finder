@@ -68,6 +68,7 @@ class FastApiEndpointTests(unittest.TestCase):
         self.assertTrue(response.json()["success"])
         self.assertEqual(response.json()["data"]["subzones"]["recordCount"], 3)
         self.assertIn("dataAsOf", response.json()["data"]["subzones"])
+        self.assertIn("amenities", response.json()["data"])
 
     def test_address_recommendations_and_comparison(self) -> None:
         address = self.client.post("/api/v1/address/search", json={"query": "Raffles Place"})

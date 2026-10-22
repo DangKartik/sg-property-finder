@@ -124,6 +124,10 @@ export default function App() {
       const envelope = await api.refreshData();
       const statuses = requireData(envelope);
       setDataStatus(statuses);
+      const amenitiesEnvelope = await api.getAmenities().catch(() => null);
+      if (amenitiesEnvelope?.success && amenitiesEnvelope.data) {
+        setAmenities(amenitiesEnvelope.data);
+      }
       if (activeProfile) {
         await runRanking(activeProfile);
       }
@@ -451,11 +455,16 @@ export default function App() {
                   {dataStatus.hdb.isStale ? " · stale fallback" : ""}
                 </p>
               )}
-              {amenities.length > 0 && (
+              {dataStatus?.amenities ? (
+                <p className="muted">
+                  Amenities snapshot: {dataStatus.amenities.recordCount.toLocaleString("en-SG")} points
+                  {dataStatus.amenities.isStale ? " · stale fallback" : ""}
+                </p>
+              ) : amenities.length > 0 ? (
                 <p className="muted">
                   Amenities: {amenities.length.toLocaleString("en-SG")} points available
                 </p>
-              )}
+              ) : null}
               {subzoneStatus?.isStale && (
                 <p className="warning-text">Snapshot is older than the configured refresh window.</p>
               )}
