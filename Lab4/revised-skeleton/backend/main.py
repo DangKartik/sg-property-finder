@@ -84,6 +84,10 @@ def createApp(context: AppContext | None = None) -> Any:
     def criteria() -> Any:
         return respond(handlers.criteria(context), {"Cache-Control": "public, max-age=86400"})
 
+    @app.get("/api/v1/amenities")
+    def amenities() -> Any:
+        return respond(handlers.amenities(context), {"Cache-Control": "public, max-age=86400"})
+
     @app.get("/api/v1/data/status")
     def data_status() -> Any:
         return respond(handlers.dataStatus(context), {"Cache-Control": "no-store"})

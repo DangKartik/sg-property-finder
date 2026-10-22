@@ -12,6 +12,7 @@ import { ProfileFormUI } from "./boundary/ProfileFormUI";
 import { ProfileSelectorUI } from "./boundary/ProfileSelectorUI";
 import { ResultsListUI } from "./boundary/ResultsListUI";
 import type {
+  AmenityPointDTO,
   CoordinatesDTO,
   CriterionDefinitionDTO,
   DataStatusMapDTO,
@@ -38,6 +39,7 @@ export default function App() {
   const [showForm, setShowForm] = useState(false);
   const [recommendations, setRecommendations] = useState<RecommendationSetDTO | null>(null);
   const [mapData, setMapData] = useState<MapDataDTO | null>(null);
+  const [amenities, setAmenities] = useState<AmenityPointDTO[]>([]);
   const [selectedSubzoneId, setSelectedSubzoneId] = useState<string | null>(null);
   const [sharedSubzoneIds, setSharedSubzoneIds] = useState<string[]>([]);
   const [factsheetCode, setFactsheetCode] = useState<string | null>(null);
@@ -114,12 +116,14 @@ export default function App() {
         const [
           criteriaEnvelope,
           mapEnvelope,
+          amenitiesEnvelope,
           statusEnvelope,
           loadedProfiles,
           shareEnvelope,
         ] = await Promise.all([
           api.getCriteria(),
           api.generateMapData(),
+          api.getAmenities().catch(() => null),
           api.getStatus().catch(() => null),
           profileCatalog.loadFromLocalStorage().catch(() => [] as ProfileDTO[]),
           sharePayload
@@ -129,6 +133,9 @@ export default function App() {
         if (!mounted) return;
         setCriteria(requireData(criteriaEnvelope));
         setMapData(requireData(mapEnvelope));
+        if (amenitiesEnvelope?.success && amenitiesEnvelope.data) {
+          setAmenities(amenitiesEnvelope.data);
+        }
         if (statusEnvelope?.success && statusEnvelope.data) {
           setDataStatus(statusEnvelope.data);
         }
@@ -409,6 +416,11 @@ export default function App() {
                   {dataStatus.hdb.isStale ? " · stale fallback" : ""}
                 </p>
               )}
+              {amenities.length > 0 && (
+                <p className="muted">
+                  Amenities: {amenities.length.toLocaleString("en-SG")} map points
+                </p>
+              )}
               {subzoneStatus?.isStale && (
                 <p className="warning-text">Snapshot is older than the configured refresh window.</p>
               )}
@@ -421,6 +433,7 @@ export default function App() {
               scores={scores}
               selectedSubzoneId={selectedSubzoneId}
               highlightedSubzoneIds={sharedSubzoneIds}
+              amenities={amenities}
               route={route}
               routeOrigin={activeProfile?.anchorCoordinates ?? null}
               routeDestination={routeDestination}

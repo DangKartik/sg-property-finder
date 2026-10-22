@@ -57,15 +57,23 @@ class RankingControl:
         )
         return self.scoringStrategy.computeSuitabilityScore(subzone, profile, commute)
 
-    def generateRankedRecommendations(self, profile: PreferenceProfile) -> RecommendationSet:
+    def generateRankedRecommendations(
+        self,
+        profile: PreferenceProfile,
+        limit: int | None = MAX_RECOMMENDATION_ITEMS,
+    ) -> RecommendationSet:
         """Generate sorted recommendations for a profile.
 
         Every subzone remains in the scoring cohort. Public transport near the
         CBD uses the precomputed matrix (with an estimated fallback for missing
         entries); driving/walking and custom workplaces use live OneMap routing.
         Subzones without a commute estimate are scored with that criterion
-        treated as missing and reweighted. Only the top 20 ranked items are
-        returned; warnings for discarded subzones are filtered out.
+        treated as missing and reweighted.
+
+        Args:
+            profile: Preference profile to rank.
+            limit: Maximum number of returned items. Defaults to the top 20;
+                pass `None` for the full ranking (used by comparison).
         """
         from app.entity.recommendation_set import RecommendationSet
 
@@ -90,7 +98,7 @@ class RankingControl:
             commute_result.data,
             warnings,
         )
-        items = all_items[:MAX_RECOMMENDATION_ITEMS]
+        items = all_items if limit is None else all_items[: max(0, limit)]
         retained_codes = {item.subzoneId for item in items}
         warnings = [
             warning

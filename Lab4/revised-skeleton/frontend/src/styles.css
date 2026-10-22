@@ -206,6 +206,18 @@ input[type="range"] { accent-color: var(--teal); width: 100%; }
   padding: 7px 9px; font-size: 0.7rem; color: #475467; box-shadow: var(--shadow);
 }
 .legend-swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; margin-left: 4px; }
+.amenity-controls {
+  position: absolute; right: 12px; top: 12px; z-index: 500;
+  width: min(220px, calc(100% - 24px));
+  background: rgba(255,255,255,0.96); border: 1px solid var(--line); border-radius: 10px;
+  padding: 9px 11px; font-size: 0.76rem; color: #344054; box-shadow: var(--shadow);
+}
+.amenity-controls summary { cursor: pointer; font-weight: 700; color: var(--ink); }
+.amenity-group-list { display: grid; gap: 5px; margin-top: 8px; }
+.amenity-toggle { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+.amenity-toggle input { accent-color: var(--teal); }
+.amenity-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.amenity-count { margin: 8px 0 0; color: var(--muted); font-size: 0.7rem; }
 .map-selection-bar {
   display: flex; justify-content: space-between; align-items: center; gap: 12px;
   background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 10px 13px;

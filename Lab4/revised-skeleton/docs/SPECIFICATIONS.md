@@ -65,7 +65,9 @@ Sort descending by `totalScore`, then ascending by:
 3. `subzoneCode` (deterministic final tie-break).
 
 `RecommendationSet.items` is capped at the **top 20** after sorting; results
-outside the top 20 are discarded and their warnings are omitted.
+outside the top 20 are discarded and their warnings are omitted. The comparison
+endpoint uses the full internal ranking so subzones outside the top 20 can still
+be compared.
 
 ## 3. Budget semantics
 
@@ -183,6 +185,7 @@ All endpoints return the standard envelope:
 | `GET` | `/api/v1/health` | — | service status |
 | `GET` | `/api/v1/ready` | — | data/cache readiness |
 | `GET` | `/api/v1/criteria` | - | `CriterionDefinition[]` |
+| `GET` | `/api/v1/amenities` | - | amenity points for the map |
 | `GET` | `/api/v1/data/status` | - | dataset freshness metadata |
 | `POST` | `/api/v1/data/refresh` | - | force live data.gov.sg refresh |
 | `POST` | `/api/v1/address/search` | `{ "query": "..." }` | `AddressMatch[]` |

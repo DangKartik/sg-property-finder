@@ -40,7 +40,9 @@ class ComparisonControl:
             raise ValueError("Select at least two subzones to compare")
         if len(unique_codes) > 4:
             raise ValueError("Compare at most four subzones at a time")
-        recommendations = self.rankingControl.generateRankedRecommendations(profile)
+        recommendations = self.rankingControl.generateRankedRecommendations(
+            profile, limit=None
+        )
         selected = [item for item in recommendations.getItems() if item.subzoneId in unique_codes]
         details = [self.detailsControl.fetchNeighborhoodDetails(code, profile) for code in unique_codes]
         best = max(selected, key=lambda item: item.totalScore) if selected else None

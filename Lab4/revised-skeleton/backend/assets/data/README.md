@@ -24,7 +24,7 @@ following real assets are already populated:
 - `planning_area_to_hdb_town.json`
 - `environment_baselines.json`
 - `commute_matrix.json`
-- `amenities.json` (1,095 points; see below)
+- `amenities.json` (1,172 points; see below)
 
 If `amenities.json` is absent or unreadable, factsheets return an empty amenity
 list with a `MISSING_SOURCE_DATA` warning and the school/amenity criteria are
@@ -114,7 +114,7 @@ Supported categories are `Primary School`, `Secondary School`, `Polyclinic`,
 | MRT | LTA **MRT Station Exit** (data.gov.sg); exits are grouped into one point per station |
 | Polyclinics | HPB **Breast Screening Centre** + MOH **Vaccination Polyclinics** (data.gov.sg) |
 | Hospitals | OneMap **Hospitals** theme (`moh_hospitals`, MOH) |
-| Shopping malls | OneMap Search for `mall` / `shopping centre` |
+| Shopping malls | OneMap Search for `mall` / `shopping centre`, supplemented by LTA **Carpark Rates** major-mall names and a short named-mall list |
 
 **Count method:** buffer-distance density, not point-in-polygon. The backend
 takes each subzone's representative point and counts every amenity point within

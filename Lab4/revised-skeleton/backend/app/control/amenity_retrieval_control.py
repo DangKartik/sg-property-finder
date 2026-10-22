@@ -151,6 +151,43 @@ class AmenityRetrievalControl(RetrievalControl):
         amenities.sort(key=lambda item: item.distanceKm or 0.0)
         return RetrievalResult(amenities, warnings)
 
+    def getAllAmenities(self) -> RetrievalResult[list[dict[str, Any]]]:
+        """Return every amenity point for the map overlay layer."""
+        warnings = []
+        source_rows = self._amenities()
+        if self._amenitiesError:
+            warnings.append(
+                self.handleMissingData(
+                    "AMENITIES",
+                    None,
+                    DataAvailabilityCode.MISSING_SOURCE_DATA,
+                    message="Amenity dataset unavailable",
+                )
+            )
+        items: list[dict[str, Any]] = []
+        for item in source_rows:
+            category = str(
+                item.get("category") or item.get("type") or item.get("CLASS") or ""
+            ).strip()
+            if not category:
+                category = _category(item)
+            latitude = _optionalFloat(item.get("latitude", item.get("lat")))
+            longitude = _optionalFloat(item.get("longitude", item.get("lng", item.get("lon"))))
+            if not category or latitude is None or longitude is None:
+                continue
+            items.append(
+                {
+                    "name": str(
+                        item.get("name") or item.get("amenityName") or "Unnamed"
+                    ),
+                    "category": category,
+                    "latitude": latitude,
+                    "longitude": longitude,
+                }
+            )
+        items.sort(key=lambda item: (item["category"], item["name"]))
+        return RetrievalResult(items, warnings)
+
     def retrieveIndicators(self, subzoneCode: str) -> RetrievalResult[SubzoneIndicators]:
         """Compute school, healthcare, park, mall and MRT indicators."""
         warnings = []

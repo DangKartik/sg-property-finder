@@ -1,5 +1,6 @@
 import type {
   AddressMatchDTO,
+  AmenityPointDTO,
   ApiEnvelope,
   ComparisonResultDTO,
   CoordinatesDTO,
@@ -70,6 +71,19 @@ export interface RankingApi {
   generateRankedRecommendations(
     profile: ProfileDTO,
   ): Promise<ApiEnvelope<RecommendationSetDTO>>;
+}
+
+/**
+ * Stereotype: API contract.
+ * Amenity points used by the map overlay layers.
+ */
+export interface AmenitiesApi {
+  /**
+   * Load all amenity points.
+   * @returns Envelope containing amenity points.
+   * @throws When the API request fails.
+   */
+  getAmenities(): Promise<ApiEnvelope<AmenityPointDTO[]>>;
 }
 
 /**

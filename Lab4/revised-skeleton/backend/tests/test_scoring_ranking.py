@@ -7,6 +7,7 @@ from dataclasses import replace
 from datetime import datetime, timezone
 
 from app.control.commute_control import CommuteControl
+from app.control.comparison_control import ComparisonControl
 from app.control.data_availability_notifier import DataAvailabilityNotifier
 from app.control.ranking_control import RankingControl
 from app.entity.commute_estimate import CommuteEstimate
@@ -173,6 +174,46 @@ class RankingTests(unittest.TestCase):
         self.assertEqual(result.items[0].subzoneId, "TOP00")
         self.assertEqual(result.items[-1].subzoneId, "TOP19")
         self.assertEqual([item.rank for item in result.items], list(range(1, 21)))
+
+        full = control.generateRankedRecommendations(make_profile(), limit=None)
+        self.assertEqual(len(full.items), 25)
+        self.assertEqual(full.items[-1].subzoneId, "TOP24")
+
+    def test_comparison_can_score_subzones_outside_the_top_twenty(self) -> None:
+        items = [
+            RecommendationItem(
+                subzoneId=f"TOP{index:02d}",
+                subzoneName=f"Top {index}",
+                rank=index + 1,
+                totalScore=100 - index,
+            )
+            for index in range(25)
+        ]
+
+        class StubRanking:
+            def __init__(self) -> None:
+                self.limit = "unset"
+
+            def generateRankedRecommendations(self, profile, limit=20):
+                self.limit = limit
+                return type(
+                    "StubRecommendationSet",
+                    (),
+                    {"getItems": lambda _: items},
+                )()
+
+        class StubDetails:
+            def fetchNeighborhoodDetails(self, code, profile):
+                return code
+
+        ranking = StubRanking()
+        control = ComparisonControl(ranking, StubDetails())
+        result = control.compare(make_profile(), ["TOP24", "TOP23"])
+        self.assertIsNone(ranking.limit)
+        self.assertEqual(
+            [item.subzoneId for item in result.items],
+            ["TOP23", "TOP24"],
+        )
 
     def test_subzones_without_commute_estimates_remain_in_ranking(self) -> None:
         class PartialCommute:

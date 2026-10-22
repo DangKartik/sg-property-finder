@@ -14,6 +14,7 @@ Sources
 - HPB Breast Screening Centre and MOH Vaccination Polyclinics (data.gov.sg)
 - OneMap Themes: hospitals
 - OneMap Search: shopping malls
+- LTA Carpark Rates: supplemental major-mall names
 
 Usage
 -----
@@ -60,6 +61,45 @@ POLYCLINIC_DATASET_IDS = (
 )
 HOSPITAL_THEME = "moh_hospitals"
 MALL_SEARCH_QUERIES = ("mall", "shopping centre")
+MALL_SUPPLEMENT_DATASET_ID = "d_9f6056bdb6b1dfba57f063593e4f34ae"  # LTA Carpark Rates
+SUPPLEMENTAL_MALL_TOKENS = (
+    "VIVOCITY",
+    "ION ORCHARD",
+    "NEX",
+    "JEM",
+    "WESTGATE",
+    "IMM",
+    "WISMA ATRIA",
+    "HARBOURFRONT CENTRE",
+    "SINGPOST CENTRE",
+    "SINGAPORE POST CENTRE",
+    "313@SOMERSET",
+    "TAMPINES 1",
+    "PARKWAY PARADE",
+    "I12 KATONG",
+    "KINEX",
+    "DOWNTOWN EAST",
+    "JEWEL CHANGI AIRPORT",
+    "PAYA LEBAR QUARTER",
+    "THE CENTREPOINT",
+    "ORCHARD CENTRAL",
+    "ORCHARDGATEWAY",
+    "WHEELOCK PLACE",
+    "SHAW HOUSE",
+)
+SUPPLEMENTAL_MALL_NAMES = (
+    "Waterway Point",
+    "Northpoint City",
+    "Compass One",
+    "Junction 8",
+    "AMK Hub",
+    "White Sands",
+    "112 Katong",
+    "Jewel Changi Airport",
+    "Paya Lebar Quarter",
+    "KINEX",
+    "JEM",
+)
 
 CATEGORY_ORDER = (
     "Primary School",
@@ -72,12 +112,16 @@ CATEGORY_ORDER = (
 )
 
 MALL_NAME_PATTERN = re.compile(
-    r"\b(MALL|SHOPPING CENTRE|SHOPPING CENTER|PLAZA|JUNCTION|SQUARE|COMPLEX|GALLERIA|VILLAGE|WALK|HUB)\b"
+    r"\b(MALL|SHOPPING CENTRE|SHOPPING CENTER|PLAZA|JUNCTION|SQUARE|COMPLEX|"
+    r"GALLERIA|VILLAGE|WALK|HUB|CITY|POINT|MART|EMPORIUM)\b"
 )
 MALL_EXCLUDE_PATTERN = re.compile(
     r"CAR MALL|FURNITURE MALL|FOOD COURT|FOOD CENTRE|CAR PARK|HOTEL|HOSPITAL|CLINIC|"
     r"SCHOOL|COMMUNITY|MARKET|HAWKER|OFFICE|TOWER|BUILDING|STATION|BUS|"
-    r"INTERCHANGE|CONDOMINIUM|APARTMENT|WAREHOUSE|INDUSTRIAL"
+    r"INTERCHANGE|CONDOMINIUM|APARTMENT|WAREHOUSE|INDUSTRIAL|SCIENCE|MUSEUM|"
+    r"GALLERY|MEMORIAL|TEMPLE|CHURCH|MOSQUE|INN|FURAMA|GRAND PARK|"
+    r"HOLIDAY INN|ROYAL PLAZA ON SCOTTS|ASIA SQUARE|BURLINGTON SQUARE|"
+    r"CAPITAL SQUARE|REPUBLIC PLAZA|UOB PLAZA|MERCHANT SQUARE"
 )
 
 DEFAULT_OUTPUT = BACKEND_ROOT / "assets" / "data" / "amenities.json"
@@ -99,6 +143,7 @@ class AmenitySnapshotBuilder:
         self.verbose = verbose
         self._items: dict[tuple[str, str], dict[str, Any]] = {}
         self._geocodeCache: dict[str, tuple[float, float] | None] = {}
+        self._placeGeocodeCache: dict[str, tuple[float, float] | None] = {}
         self._skipped: Counter[str] = Counter()
 
     # ------------------------------------------------------------------
@@ -112,6 +157,8 @@ class AmenitySnapshotBuilder:
         self._addHospitals()
         self._addPolyclinics()
         self._addMalls()
+        self._addSupplementalMalls()
+        self._addNamedMalls()
 
         items = sorted(
             self._items.values(),
@@ -245,6 +292,41 @@ class AmenitySnapshotBuilder:
                 time.sleep(0.05)
             self._log(f"Malls: finished OneMap query '{query}' ({pages} pages)")
 
+    def _addSupplementalMalls(self) -> None:
+        payload = self._download(
+            MALL_SUPPLEMENT_DATASET_ID,
+            "LTA carpark rates (major malls)",
+        )
+        rows = _rows(payload)
+        self._log(f"Malls: {len(rows)} supplemental LTA rows")
+        for row in rows:
+            name = str(row.get("carpark") or "").strip()
+            if not name:
+                continue
+            upper = name.upper()
+            if not MALL_NAME_PATTERN.search(upper) and not any(
+                token in upper for token in SUPPLEMENTAL_MALL_TOKENS
+            ):
+                continue
+            if MALL_EXCLUDE_PATTERN.search(upper) and "IMM" not in upper:
+                self._skipped["mall_supplement_excluded"] += 1
+                continue
+            coordinates = self._geocodePlace(name)
+            if coordinates is None:
+                self._skipped["mall_supplement_geocode"] += 1
+                continue
+            self._add(name, "Shopping Mall", *coordinates)
+
+    def _addNamedMalls(self) -> None:
+        """Geocode major malls whose names do not match the LTA list."""
+        self._log(f"Malls: {len(SUPPLEMENTAL_MALL_NAMES)} named major malls")
+        for name in SUPPLEMENTAL_MALL_NAMES:
+            coordinates = self._geocodePlace(name)
+            if coordinates is None:
+                self._skipped["mall_named_geocode"] += 1
+                continue
+            self._add(name, "Shopping Mall", *coordinates)
+
     # ------------------------------------------------------------------
     # Network / parsing helpers
     # ------------------------------------------------------------------
@@ -311,6 +393,36 @@ class AmenitySnapshotBuilder:
 
         coordinates = (match.coordinates.latitude, match.coordinates.longitude)
         self._geocodeCache[postal] = coordinates
+        time.sleep(0.08)
+        return coordinates
+
+    def _geocodePlace(self, name: str) -> tuple[float, float] | None:
+        key = _normaliseName(name)
+        if key in self._placeGeocodeCache:
+            return self._placeGeocodeCache[key]
+        for attempt in range(3):
+            try:
+                matches = self.oneMap.searchAddress(name)
+                break
+            except OneMapApiError as exc:
+                if exc.statusCode == 429 and attempt < 2:
+                    wait = 2.0 * (attempt + 1)
+                    self._log(f"  OneMap rate limit while geocoding {name}; sleeping {wait:.1f}s")
+                    time.sleep(wait)
+                    continue
+                self._log(f"  Geocoding failed for {name}: {exc}")
+                self._placeGeocodeCache[key] = None
+                return None
+        else:  # pragma: no cover - defensive
+            self._placeGeocodeCache[key] = None
+            return None
+
+        if not matches:
+            self._placeGeocodeCache[key] = None
+            return None
+        match = matches[0]
+        coordinates = (match.coordinates.latitude, match.coordinates.longitude)
+        self._placeGeocodeCache[key] = coordinates
         time.sleep(0.08)
         return coordinates
 
@@ -456,7 +568,7 @@ def main(argv: list[str] | None = None) -> int:
                 "mrt": "LTA MRT Station Exit (data.gov.sg)",
                 "polyclinics": "HPB Breast Screening Centre and MOH Vaccination Polyclinics (data.gov.sg)",
                 "hospitals": "OneMap Hospitals theme (MOH)",
-                "malls": "OneMap Search (mall / shopping centre queries)",
+                "malls": "OneMap Search (mall / shopping centre) + LTA Carpark Rates major-mall names + named major malls",
             },
             "counts": dict(sorted(counts.items())),
         },

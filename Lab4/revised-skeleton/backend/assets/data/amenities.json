@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generatedAt": "2026-10-21T13:27:23.522496+00:00",
+    "generatedAt": "2026-10-22T13:53:23.158035+00:00",
     "method": "buffer_distance_density",
     "anchor": "subzone representative point",
     "radiiKm": {
@@ -16,7 +16,7 @@
       "mrt": "LTA MRT Station Exit (data.gov.sg)",
       "polyclinics": "HPB Breast Screening Centre and MOH Vaccination Polyclinics (data.gov.sg)",
       "hospitals": "OneMap Hospitals theme (MOH)",
-      "malls": "OneMap Search (mall / shopping centre queries)"
+      "malls": "OneMap Search (mall / shopping centre) + LTA Carpark Rates major-mall names + named major malls"
     },
     "counts": {
       "Hospital": 31,
@@ -25,7 +25,7 @@
       "Polyclinic": 22,
       "Primary School": 182,
       "Secondary School": 144,
-      "Shopping Mall": 66
+      "Shopping Mall": 143
     }
   },
   "items": [
@@ -5076,10 +5076,34 @@
       "longitude": 103.773484
     },
     {
+      "name": "112 Katong",
+      "category": "Shopping Mall",
+      "latitude": 1.305207,
+      "longitude": 103.905046
+    },
+    {
+      "name": "313@Somerset",
+      "category": "Shopping Mall",
+      "latitude": 1.301014,
+      "longitude": 103.838361
+    },
+    {
+      "name": "AMK Hub",
+      "category": "Shopping Mall",
+      "latitude": 1.369389,
+      "longitude": 103.848478
+    },
+    {
       "name": "ANCHORPOINT SHOPPING CENTRE",
       "category": "Shopping Mall",
       "latitude": 1.288615,
       "longitude": 103.80501
+    },
+    {
+      "name": "Ang Mo Kio Hub",
+      "category": "Shopping Mall",
+      "latitude": 1.369389,
+      "longitude": 103.848478
     },
     {
       "name": "BALESTIER HILL SHOPPING CENTRE",
@@ -5112,6 +5136,42 @@
       "longitude": 103.776031
     },
     {
+      "name": "Balestier Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.325725,
+      "longitude": 103.850395
+    },
+    {
+      "name": "Balestier Point",
+      "category": "Shopping Mall",
+      "latitude": 1.322812,
+      "longitude": 103.852026
+    },
+    {
+      "name": "Bedok Point",
+      "category": "Shopping Mall",
+      "latitude": 1.330548,
+      "longitude": 103.947778
+    },
+    {
+      "name": "Bras Basah Complex",
+      "category": "Shopping Mall",
+      "latitude": 1.296815,
+      "longitude": 103.853619
+    },
+    {
+      "name": "Bugis Junction",
+      "category": "Shopping Mall",
+      "latitude": 1.299113,
+      "longitude": 103.855411
+    },
+    {
+      "name": "Bukit Panjang Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.37992,
+      "longitude": 103.764357
+    },
+    {
       "name": "CITY SQUARE MALL",
       "category": "Shopping Mall",
       "latitude": 1.311421,
@@ -5128,6 +5188,54 @@
       "category": "Shopping Mall",
       "latitude": 1.313514,
       "longitude": 103.770861
+    },
+    {
+      "name": "Causeway Point",
+      "category": "Shopping Mall",
+      "latitude": 1.43607,
+      "longitude": 103.785982
+    },
+    {
+      "name": "Central Mall",
+      "category": "Shopping Mall",
+      "latitude": 1.372862,
+      "longitude": 103.847645
+    },
+    {
+      "name": "Century Square",
+      "category": "Shopping Mall",
+      "latitude": 1.352368,
+      "longitude": 103.943812
+    },
+    {
+      "name": "Changi City Point",
+      "category": "Shopping Mall",
+      "latitude": 1.334036,
+      "longitude": 103.962918
+    },
+    {
+      "name": "Chinatown Point",
+      "category": "Shopping Mall",
+      "latitude": 1.284999,
+      "longitude": 103.844697
+    },
+    {
+      "name": "City Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.314787,
+      "longitude": 103.893472
+    },
+    {
+      "name": "Compass One",
+      "category": "Shopping Mall",
+      "latitude": 1.392053,
+      "longitude": 103.895071
+    },
+    {
+      "name": "Coronation Shopping Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.323835,
+      "longitude": 103.81
     },
     {
       "name": "DAIRY FARM MALL",
@@ -5152,6 +5260,12 @@
       "category": "Shopping Mall",
       "latitude": 1.32612,
       "longitude": 103.929554
+    },
+    {
+      "name": "Downtown East",
+      "category": "Shopping Mall",
+      "latitude": 1.379127,
+      "longitude": 103.955445
     },
     {
       "name": "EASTLINK MALL",
@@ -5196,6 +5310,24 @@
       "longitude": 103.828679
     },
     {
+      "name": "Far East Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.307177,
+      "longitude": 103.833793
+    },
+    {
+      "name": "Far East Square",
+      "category": "Shopping Mall",
+      "latitude": 1.283383,
+      "longitude": 103.848376
+    },
+    {
+      "name": "Fu Lu Shou Complex",
+      "category": "Shopping Mall",
+      "latitude": 1.301513,
+      "longitude": 103.854497
+    },
+    {
       "name": "GEK POH SHOPPING CENTRE",
       "category": "Shopping Mall",
       "latitude": 1.348744,
@@ -5224,6 +5356,18 @@
       "category": "Shopping Mall",
       "latitude": 1.279921,
       "longitude": 103.854773
+    },
+    {
+      "name": "Goldhill Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.317832,
+      "longitude": 103.843487
+    },
+    {
+      "name": "Great World City",
+      "category": "Shopping Mall",
+      "latitude": 1.293423,
+      "longitude": 103.832022
     },
     {
       "name": "HEARTLAND MALL-KOVAN",
@@ -5256,16 +5400,82 @@
       "longitude": 103.893774
     },
     {
+      "name": "Harbourfront Centre",
+      "category": "Shopping Mall",
+      "latitude": 1.263776,
+      "longitude": 103.818562
+    },
+    {
+      "name": "Heartland Mall",
+      "category": "Shopping Mall",
+      "latitude": 1.359542,
+      "longitude": 103.885167
+    },
+    {
       "name": "ICB SHOPPING CENTRE",
       "category": "Shopping Mall",
       "latitude": 1.354584,
       "longitude": 103.87779
     },
     {
+      "name": "IMM Building",
+      "category": "Shopping Mall",
+      "latitude": 1.334875,
+      "longitude": 103.746895
+    },
+    {
+      "name": "ION Orchard",
+      "category": "Shopping Mall",
+      "latitude": 1.30398,
+      "longitude": 103.832032
+    },
+    {
+      "name": "Icon Village",
+      "category": "Shopping Mall",
+      "latitude": 1.275083,
+      "longitude": 103.84451
+    },
+    {
+      "name": "International Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.275887,
+      "longitude": 103.845924
+    },
+    {
       "name": "JELITA MALL",
       "category": "Shopping Mall",
       "latitude": 1.317546,
       "longitude": 103.785851
+    },
+    {
+      "name": "JEM",
+      "category": "Shopping Mall",
+      "latitude": 1.333293,
+      "longitude": 103.743279
+    },
+    {
+      "name": "Jewel Changi Airport",
+      "category": "Shopping Mall",
+      "latitude": 1.360341,
+      "longitude": 103.989078
+    },
+    {
+      "name": "Junction 10",
+      "category": "Shopping Mall",
+      "latitude": 1.380337,
+      "longitude": 103.760168
+    },
+    {
+      "name": "Junction 8",
+      "category": "Shopping Mall",
+      "latitude": 1.350481,
+      "longitude": 103.84876
+    },
+    {
+      "name": "Jurong Point Shopping Centre",
+      "category": "Shopping Mall",
+      "latitude": 1.334845,
+      "longitude": 103.720462
     },
     {
       "name": "KALLANG WAVE MALL",
@@ -5298,6 +5508,18 @@
       "longitude": 103.839861
     },
     {
+      "name": "KINEX",
+      "category": "Shopping Mall",
+      "latitude": 1.314618,
+      "longitude": 103.894738
+    },
+    {
+      "name": "Katong Village",
+      "category": "Shopping Mall",
+      "latitude": 1.305225,
+      "longitude": 103.905102
+    },
+    {
       "name": "LIMBANG SHOPPING CENTRE",
       "category": "Shopping Mall",
       "latitude": 1.392068,
@@ -5308,6 +5530,12 @@
       "category": "Shopping Mall",
       "latitude": 1.384975,
       "longitude": 103.745012
+    },
+    {
+      "name": "Lucky Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.304506,
+      "longitude": 103.833962
     },
     {
       "name": "MACPHERSON MALL",
@@ -5322,10 +5550,46 @@
       "longitude": 103.85337
     },
     {
+      "name": "Marina Square",
+      "category": "Shopping Mall",
+      "latitude": 1.291855,
+      "longitude": 103.858578
+    },
+    {
+      "name": "Nex Mall",
+      "category": "Shopping Mall",
+      "latitude": 1.350889,
+      "longitude": 103.872116
+    },
+    {
+      "name": "Ngee Ann City",
+      "category": "Shopping Mall",
+      "latitude": 1.302242,
+      "longitude": 103.835182
+    },
+    {
+      "name": "Northpoint City",
+      "category": "Shopping Mall",
+      "latitude": 1.429698,
+      "longitude": 103.835776
+    },
+    {
       "name": "ORCHARD SHOPPING CENTRE",
       "category": "Shopping Mall",
       "latitude": 1.3015,
       "longitude": 103.837888
+    },
+    {
+      "name": "Orchard Central",
+      "category": "Shopping Mall",
+      "latitude": 1.300839,
+      "longitude": 103.839435
+    },
+    {
+      "name": "Orchard Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.301257,
+      "longitude": 103.84115
     },
     {
       "name": "PARKLANE SHOPPING MALL",
@@ -5358,6 +5622,30 @@
       "longitude": 103.892837
     },
     {
+      "name": "Pacific Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.306547,
+      "longitude": 103.832128
+    },
+    {
+      "name": "Parkway Parade",
+      "category": "Shopping Mall",
+      "latitude": 1.30107,
+      "longitude": 103.905279
+    },
+    {
+      "name": "Paya Lebar Quarter",
+      "category": "Shopping Mall",
+      "latitude": 1.317709,
+      "longitude": 103.893415
+    },
+    {
+      "name": "Plaza Singapura",
+      "category": "Shopping Mall",
+      "latitude": 1.300748,
+      "longitude": 103.845048
+    },
+    {
       "name": "QUEENSWAY SHOPPING CENTRE",
       "category": "Shopping Mall",
       "latitude": 1.287595,
@@ -5368,6 +5656,24 @@
       "category": "Shopping Mall",
       "latitude": 1.392198,
       "longitude": 103.904472
+    },
+    {
+      "name": "Raffles City",
+      "category": "Shopping Mall",
+      "latitude": 1.293894,
+      "longitude": 103.85312
+    },
+    {
+      "name": "Robertson Walk",
+      "category": "Shopping Mall",
+      "latitude": 1.291739,
+      "longitude": 103.841194
+    },
+    {
+      "name": "Roxy Square",
+      "category": "Shopping Mall",
+      "latitude": 1.304326,
+      "longitude": 103.904051
     },
     {
       "name": "SEMBAWANG SHOPPING CENTRE",
@@ -5398,6 +5704,54 @@
       "category": "Shopping Mall",
       "latitude": 1.295932,
       "longitude": 103.859014
+    },
+    {
+      "name": "Shaw House",
+      "category": "Shopping Mall",
+      "latitude": 1.30581,
+      "longitude": 103.831507
+    },
+    {
+      "name": "Shaw Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.324974,
+      "longitude": 103.851427
+    },
+    {
+      "name": "Sim Lim Square",
+      "category": "Shopping Mall",
+      "latitude": 1.303024,
+      "longitude": 103.853038
+    },
+    {
+      "name": "Singapore Post Centre",
+      "category": "Shopping Mall",
+      "latitude": 1.318997,
+      "longitude": 103.894895
+    },
+    {
+      "name": "Square 2",
+      "category": "Shopping Mall",
+      "latitude": 1.320705,
+      "longitude": 103.844161
+    },
+    {
+      "name": "Sun Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.448195,
+      "longitude": 103.819502
+    },
+    {
+      "name": "Sunshine Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.300348,
+      "longitude": 103.851046
+    },
+    {
+      "name": "Suntec City",
+      "category": "Shopping Mall",
+      "latitude": 1.29486,
+      "longitude": 103.860334
     },
     {
       "name": "TAMAN JURONG SHOPPING CENTRE",
@@ -5454,10 +5808,76 @@
       "longitude": 103.87167
     },
     {
+      "name": "Tampines 1",
+      "category": "Shopping Mall",
+      "latitude": 1.352228,
+      "longitude": 103.952437
+    },
+    {
+      "name": "Tampines Junction",
+      "category": "Shopping Mall",
+      "latitude": 1.352336,
+      "longitude": 103.941943
+    },
+    {
+      "name": "Tanjong Katong Complex",
+      "category": "Shopping Mall",
+      "latitude": 1.316394,
+      "longitude": 103.894359
+    },
+    {
+      "name": "The Centrepoint",
+      "category": "Shopping Mall",
+      "latitude": 1.302491,
+      "longitude": 103.840146
+    },
+    {
+      "name": "Thomson Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.354669,
+      "longitude": 103.83092
+    },
+    {
+      "name": "Tiong Bahru Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.286459,
+      "longitude": 103.827015
+    },
+    {
+      "name": "Toa Payoh HDB Hub",
+      "category": "Shopping Mall",
+      "latitude": 1.332055,
+      "longitude": 103.848508
+    },
+    {
+      "name": "UE Square",
+      "category": "Shopping Mall",
+      "latitude": 1.292087,
+      "longitude": 103.842729
+    },
+    {
       "name": "UPPER SERANGOON SHOPPING CENTRE",
       "category": "Shopping Mall",
       "latitude": 1.353481,
       "longitude": 103.878828
+    },
+    {
+      "name": "Valley Point",
+      "category": "Shopping Mall",
+      "latitude": 1.293801,
+      "longitude": 103.842145
+    },
+    {
+      "name": "Velocity @ Novena Square",
+      "category": "Shopping Mall",
+      "latitude": 1.319789,
+      "longitude": 103.844034
+    },
+    {
+      "name": "Vivocity",
+      "category": "Shopping Mall",
+      "latitude": 1.264293,
+      "longitude": 103.822305
     },
     {
       "name": "WEST MALL",
@@ -5470,6 +5890,48 @@
       "category": "Shopping Mall",
       "latitude": 1.417953,
       "longitude": 103.841269
+    },
+    {
+      "name": "Waterway Point",
+      "category": "Shopping Mall",
+      "latitude": 1.406536,
+      "longitude": 103.901988
+    },
+    {
+      "name": "Westgate",
+      "category": "Shopping Mall",
+      "latitude": 1.334158,
+      "longitude": 103.742766
+    },
+    {
+      "name": "Wheelock Place",
+      "category": "Shopping Mall",
+      "latitude": 1.304676,
+      "longitude": 103.830642
+    },
+    {
+      "name": "White Sands",
+      "category": "Shopping Mall",
+      "latitude": 1.365636,
+      "longitude": 103.960862
+    },
+    {
+      "name": "Wisma Atria",
+      "category": "Shopping Mall",
+      "latitude": 1.303705,
+      "longitude": 103.833206
+    },
+    {
+      "name": "Yew Tee Point",
+      "category": "Shopping Mall",
+      "latitude": 1.39804,
+      "longitude": 103.747198
+    },
+    {
+      "name": "orchardgateway",
+      "category": "Shopping Mall",
+      "latitude": 1.300489,
+      "longitude": 103.839325
     },
     {
       "name": "ADMIRALTY MRT STATION",

@@ -119,6 +119,14 @@ export interface DataAvailabilityWarningDTO {
   asOf: string | null;
 }
 
+/** Amenity point returned for the map overlay. */
+export interface AmenityPointDTO {
+  name: string;
+  category: string;
+  latitude: number;
+  longitude: number;
+}
+
 /** Amenity and its distance from the subzone anchor. */
 export interface AmenityInfoDTO {
   amenityName: string;

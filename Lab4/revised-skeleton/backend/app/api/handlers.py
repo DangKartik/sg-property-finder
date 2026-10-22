@@ -163,6 +163,12 @@ def criteria(context: AppContext) -> ApiEnvelope[Any]:
     return ok(context.scoringStrategy.criterionCatalog.getAllCriteria())
 
 
+def amenities(context: AppContext) -> ApiEnvelope[Any]:
+    """Return all amenity points for the map overlay."""
+    result = context.amenityControl.getAllAmenities()
+    return ok(result.data, result.warnings)
+
+
 def dataStatus(context: AppContext) -> ApiEnvelope[Any]:
     """Return live/snapshot freshness metadata for the frontend cache layer."""
     return ok(context.datasetService.status())
