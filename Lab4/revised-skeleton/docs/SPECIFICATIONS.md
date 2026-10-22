@@ -51,7 +51,8 @@ W'i = Wi / sum(Wj for available criteria j)
 - A valid zero (for example, zero malls within 1 km) is a real observation and
   is scored as zero; it must not trigger weight renormalisation.
 - `DataAvailabilityWarning.code` distinguishes `MISSING_SOURCE_DATA`,
-  `VALID_ZERO`, `STALE_CACHE` and `PARTIAL_DATA`.
+  `VALID_ZERO`, `STALE_CACHE`, `PARTIAL_DATA` and
+  `ESTIMATED_COMMUTE_FALLBACK`.
 - If a stale cache is used, keep the cached value and attach a warning; do not
   silently present it as fresh.
 
@@ -119,16 +120,20 @@ affect suitability scores. This preserves deterministic rankings.
 ## 6. Commute strategy and latency
 
 - **Default departure:** next weekday at 08:30 SGT.
-- **Precomputed matrix:** all ~332 subzone representative points to four business
-  districts (Raffles Place, Jurong East, One-North, Changi Business Park).
+- **Precomputed matrix:** public-transport travel times for 319/332 subzone
+  representative points to Raffles Place. The matrix is never used for driving
+  or walking.
 - **Cache TTL:** 7 days. The cache key must include workplace/geohash, mode,
   departure date and departure window; a 7-day TTL alone is insufficient because
   OneMap PT results depend on the date/time.
-- **Custom workplace:** live OneMap routing only for a top-50 shortlist selected
-  by straight-line distance from the workplace.
-- **Failure:** fall back to the last cached route and attach a `STALE_CACHE`
-  warning; if no cache exists, return the ranking without the commute criterion
-  and renormalise weights.
+- **Custom workplace:** live OneMap routing for a top-50 shortlist selected by
+  straight-line distance from the workplace. Subzones outside the shortlist stay
+  in the ranking with the commute criterion treated as missing/reweighted.
+- **Driving/walking near the CBD:** always live OneMap routing, never the PT
+  matrix.
+- **Failure / missing matrix entry:** use a straight-line distance estimate,
+  keep the subzone eligible for ranking, and attach a
+  `DataAvailabilityWarning` with code `ESTIMATED_COMMUTE_FALLBACK`.
 
 **SLA risk:** the first ranking for a new workplace may still exceed 5 seconds if
 50 OneMap calls are made. Pre-warm popular workplaces or reduce the shortlist;
@@ -179,6 +184,7 @@ All endpoints return the standard envelope:
 | `POST` | `/api/v1/data/refresh` | - | force live data.gov.sg refresh |
 | `POST` | `/api/v1/address/search` | `{ "query": "..." }` | `AddressMatch[]` |
 | `POST` | `/api/v1/profiles/validate` | `ProfileDTO` | `ValidationResult` |
+| `POST` | `/api/v1/share/decode` | `{ "share": "..." }` | `{ profile, subzoneCodes }` |
 | `POST` | `/api/v1/commute/overlay` | origin, destination, mode | `RouteData` |
 | `POST` | `/api/v1/recommendations` | `ProfileDTO` | `RecommendationSet` |
 | `GET` | `/api/v1/subzones/{code}/factsheet` | profile context (OPEN-10) | `NeighborhoodDetailDTO` |

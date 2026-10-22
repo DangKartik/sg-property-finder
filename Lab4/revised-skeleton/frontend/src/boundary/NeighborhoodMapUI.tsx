@@ -9,6 +9,7 @@ export interface NeighborhoodMapUIProps {
   mapData: MapDataDTO | null;
   scores: Record<string, number>;
   selectedSubzoneId: string | null;
+  highlightedSubzoneIds?: string[];
   route: RouteDataDTO | null;
   routeOrigin: CoordinatesDTO | null;
   routeDestination: CoordinatesDTO | null;
@@ -22,6 +23,7 @@ export function NeighborhoodMapUI({
   mapData,
   scores,
   selectedSubzoneId,
+  highlightedSubzoneIds = [],
   route,
   routeOrigin,
   routeDestination,
@@ -50,9 +52,11 @@ export function NeighborhoodMapUI({
         />
         {mapData && (
           <GeoJSON
-            key={`${selectedSubzoneId ?? "none"}-${JSON.stringify(scores)}`}
+            key={`${selectedSubzoneId ?? "none"}-${highlightedSubzoneIds.join(",")}-${JSON.stringify(scores)}`}
             data={mapData.geojson as GeoJsonObject}
-            style={(feature) => styleFeature(feature, scores, selectedSubzoneId)}
+            style={(feature) =>
+              styleFeature(feature, scores, selectedSubzoneId, highlightedSubzoneIds)
+            }
             onEachFeature={(feature, layer) => bindFeature(feature, layer, onSelect)}
           />
         )}
@@ -86,15 +90,18 @@ function styleFeature(
   feature: Feature | undefined,
   scores: Record<string, number>,
   selectedId: string | null,
+  highlightedIds: string[],
 ): PathOptions {
   const code = (feature?.properties as { subzoneCode?: string } | undefined)?.subzoneCode;
   const score = code ? scores[code] : undefined;
   const selected = code === selectedId;
+  const highlighted = code ? highlightedIds.includes(code) : false;
   return {
     fillColor: scoreColor(score),
-    fillOpacity: score === undefined ? 0.18 : selected ? 0.82 : 0.55,
-    color: selected ? "#0f172a" : "#ffffff",
-    weight: selected ? 3 : 1,
+    fillOpacity:
+      score === undefined ? 0.18 : selected ? 0.82 : highlighted ? 0.78 : 0.55,
+    color: selected ? "#0f172a" : highlighted ? "#f59e0b" : "#ffffff",
+    weight: selected ? 3 : highlighted ? 2.5 : 1,
     opacity: 0.9,
   };
 }

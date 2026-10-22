@@ -95,6 +95,25 @@ class FastApiEndpointTests(unittest.TestCase):
         self.assertTrue(comparison.json()["success"])
         self.assertEqual(len(comparison.json()["data"]["details"]), 2)
 
+    def test_share_decode_endpoint(self) -> None:
+        profile = profilePayload()
+        share_url = self.context.reportControl.generateShareableUrl(
+            preferenceProfileFromDto(profileDtoFromDict(profile)),
+            ["TAMPINES01", "BEDOK01"],
+            "/",
+        )
+        share = parse_qs(urlparse(share_url).query)["share"][0]
+        response = self.client.post("/api/v1/share/decode", json={"share": share})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()["success"])
+        data = response.json()["data"]
+        self.assertEqual(data["profile"]["profileName"], "API Profile")
+        self.assertEqual(data["subzoneCodes"], ["TAMPINES01", "BEDOK01"])
+
+        invalid = self.client.post("/api/v1/share/decode", json={"share": "not-base64"})
+        self.assertEqual(invalid.status_code, 200)
+        self.assertFalse(invalid.json()["success"])
+
     def test_factsheet_and_report_download(self) -> None:
         profile = profilePayload()
         share_url = self.context.reportControl.generateShareableUrl(

@@ -10,6 +10,7 @@ import type {
   RecommendationSetDTO,
   ReportResponseDTO,
   RouteDataDTO,
+  ShareScenarioDTO,
   ValidationResultDTO,
   DataStatusMapDTO,
 } from "../types/dto";
@@ -140,6 +141,20 @@ export interface ReportApi {
     profile: ProfileDTO,
     subzoneCodes: string[],
   ): Promise<ApiEnvelope<ReportResponseDTO>>;
+}
+
+/**
+ * Stereotype: API contract.
+ * Decodes a shareable scenario payload into a profile and subzone selection.
+ */
+export interface ShareApi {
+  /**
+   * Decode a `?share=` payload.
+   * @param share URL-safe base64 share payload.
+   * @returns Envelope containing the profile and shared subzone codes.
+   * @throws When the payload is invalid or the request fails.
+   */
+  decodeShare(share: string): Promise<ApiEnvelope<ShareScenarioDTO>>;
 }
 
 /** Freshness/status API for the future IndexedDB cache layer. */

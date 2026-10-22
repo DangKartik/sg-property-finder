@@ -33,7 +33,8 @@ export type DataAvailabilityCodeDTO =
   | "MISSING_SOURCE_DATA"
   | "VALID_ZERO"
   | "STALE_CACHE"
-  | "PARTIAL_DATA";
+  | "PARTIAL_DATA"
+  | "ESTIMATED_COMMUTE_FALLBACK";
 
 /** Whether a criterion is minimised or maximised. */
 export type CriterionDirectionDTO = "MINIMIZE" | "MAXIMIZE";
@@ -85,6 +86,12 @@ export interface ProfileDTO {
   isActive: boolean;
   creationTime: string | null;
   lastUpdatedTime: string | null;
+}
+
+/** Decoded shareable scenario returned by the backend. */
+export interface ShareScenarioDTO {
+  profile: ProfileDTO;
+  subzoneCodes: string[];
 }
 
 /** One field-level validation error. */

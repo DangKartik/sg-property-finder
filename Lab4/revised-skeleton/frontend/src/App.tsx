@@ -39,6 +39,7 @@ export default function App() {
   const [recommendations, setRecommendations] = useState<RecommendationSetDTO | null>(null);
   const [mapData, setMapData] = useState<MapDataDTO | null>(null);
   const [selectedSubzoneId, setSelectedSubzoneId] = useState<string | null>(null);
+  const [sharedSubzoneIds, setSharedSubzoneIds] = useState<string[]>([]);
   const [factsheetCode, setFactsheetCode] = useState<string | null>(null);
   const [comparisonIds, setComparisonIds] = useState<string[]>([]);
   const [comparisonOpen, setComparisonOpen] = useState(false);
@@ -90,6 +91,7 @@ export default function App() {
         const result = requireData(envelope);
         setRecommendations(result);
         setSelectedSubzoneId(null);
+        setSharedSubzoneIds([]);
         setComparisonIds([]);
         setRoute(null);
       } catch (error) {
@@ -108,11 +110,21 @@ export default function App() {
     let mounted = true;
     (async () => {
       try {
-        const [criteriaEnvelope, mapEnvelope, statusEnvelope, loadedProfiles] = await Promise.all([
+        const sharePayload = new URLSearchParams(window.location.search).get("share");
+        const [
+          criteriaEnvelope,
+          mapEnvelope,
+          statusEnvelope,
+          loadedProfiles,
+          shareEnvelope,
+        ] = await Promise.all([
           api.getCriteria(),
           api.generateMapData(),
           api.getStatus().catch(() => null),
           profileCatalog.loadFromLocalStorage().catch(() => [] as ProfileDTO[]),
+          sharePayload
+            ? api.decodeShare(sharePayload).catch(() => null)
+            : Promise.resolve(null),
         ]);
         if (!mounted) return;
         setCriteria(requireData(criteriaEnvelope));
@@ -121,6 +133,39 @@ export default function App() {
           setDataStatus(statusEnvelope.data);
         }
         setProfiles(loadedProfiles);
+
+        if (shareEnvelope?.success && shareEnvelope.data) {
+          const scenario = shareEnvelope.data;
+          const savedProfileId = await profileCatalog.saveToLocalStorage(scenario.profile);
+          const savedProfiles = await profileCatalog.loadFromLocalStorage();
+          if (!mounted) return;
+          const savedProfile =
+            savedProfiles.find((profile) => profile.profileId === savedProfileId) ?? {
+              ...scenario.profile,
+              profileId: savedProfileId,
+            };
+          setProfiles(savedProfiles);
+          setActiveProfileId(savedProfileId);
+          setShowForm(false);
+          setEditingProfile(null);
+          await runRanking(savedProfile);
+          if (!mounted) return;
+          setSharedSubzoneIds(scenario.subzoneCodes);
+          setComparisonIds(scenario.subzoneCodes.slice(0, 4));
+          setSelectedSubzoneId(scenario.subzoneCodes[0] ?? null);
+          const url = new URL(window.location.href);
+          url.searchParams.delete("share");
+          window.history.replaceState({}, "", url.toString());
+          return;
+        }
+
+        if (sharePayload && (!shareEnvelope || !shareEnvelope.success)) {
+          notify(
+            "Invalid share link",
+            shareEnvelope?.error?.message ?? "The shared scenario could not be loaded.",
+          );
+        }
+
         if (loadedProfiles.length > 0) {
           const first = loadedProfiles[0];
           setActiveProfileId(first.profileId);
@@ -375,6 +420,7 @@ export default function App() {
               mapData={mapData}
               scores={scores}
               selectedSubzoneId={selectedSubzoneId}
+              highlightedSubzoneIds={sharedSubzoneIds}
               route={route}
               routeOrigin={activeProfile?.anchorCoordinates ?? null}
               routeDestination={routeDestination}

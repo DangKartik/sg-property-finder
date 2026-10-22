@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
 from datetime import datetime
 
 from app.control.commute_control import CommuteControl
 from app.control.data_availability_notifier import DataAvailabilityNotifier
 from app.core.time import SGT, nextWeekdayPeak
-from app.entity.enums import TransitMode
+from app.entity.enums import DataAvailabilityCode, TransitMode
 from app.entity.types import Coordinates
 from tests.support import FIXTURES, FakeOneMap, load_registry
 
@@ -44,6 +45,17 @@ class CommuteTests(unittest.TestCase):
         self.assertEqual(estimate.durationMinutes, 20)
         self.assertEqual(self.adapter.routing_calls, 1)
 
+    def test_matrix_is_not_used_for_driving_near_cbd(self) -> None:
+        estimate = self.control.retrieveCommute(
+            Coordinates(1.2830, 103.8513),
+            Coordinates(1.3500, 103.9400),
+            TransitMode.DRIVING,
+            destinationSubzoneCode="TAMPINES01",
+        )
+        self.assertEqual(estimate.durationMinutes, 20)
+        self.assertEqual(estimate.travelMode, TransitMode.DRIVING)
+        self.assertEqual(self.adapter.routing_calls, 1)
+
     def test_batch_matrix_returns_all_candidates(self) -> None:
         result = self.control.retrieveCommutesSync(
             Coordinates(1.2830, 103.8513),
@@ -52,6 +64,63 @@ class CommuteTests(unittest.TestCase):
         )
         self.assertEqual(set(result.data), {"TAMPINES01", "BEDOK01", "JURONG01"})
         self.assertEqual(result.warnings, [])
+
+    def test_batch_driving_uses_live_routing(self) -> None:
+        result = self.control.retrieveCommutesSync(
+            Coordinates(1.2830, 103.8513),
+            self.registry.getAllSubzones(),
+            TransitMode.DRIVING,
+        )
+        self.assertEqual(set(result.data), {"TAMPINES01", "BEDOK01", "JURONG01"})
+        self.assertEqual(self.adapter.routing_calls, 3)
+        self.assertTrue(
+            all(estimate.travelMode is TransitMode.DRIVING for estimate in result.data.values())
+        )
+
+    def test_missing_matrix_entry_uses_estimated_fallback(self) -> None:
+        missing = replace(
+            self.registry.getSubzone("TAMPINES01"),
+            subzoneCode="MISSING01",
+        )
+        result = self.control.retrieveCommutesSync(
+            Coordinates(1.2830, 103.8513),
+            [missing],
+            TransitMode.PUBLIC_TRANSIT,
+        )
+        self.assertIn("MISSING01", result.data)
+        fallback = result.data["MISSING01"]
+        self.assertGreater(fallback.durationMinutes, 0)
+        self.assertEqual(fallback.travelMode, TransitMode.PUBLIC_TRANSIT)
+        self.assertEqual(len(result.warnings), 1)
+        self.assertEqual(
+            result.warnings[0].code,
+            DataAvailabilityCode.ESTIMATED_COMMUTE_FALLBACK,
+        )
+
+    def test_live_routing_failure_uses_estimated_fallback(self) -> None:
+        class FailingOneMap(FakeOneMap):
+            def getRoutingData(self, origin, destination, mode, departureTime=None):
+                self.routing_calls += 1
+                raise RuntimeError("offline")
+
+        control = CommuteControl(
+            FailingOneMap(),
+            DataAvailabilityNotifier(),
+            matrixPath=FIXTURES / "commute_matrix.json",
+        )
+        result = control.retrieveCommutesSync(
+            Coordinates(1.2830, 103.8513),
+            self.registry.getAllSubzones(),
+            TransitMode.DRIVING,
+        )
+        self.assertEqual(set(result.data), {"TAMPINES01", "BEDOK01", "JURONG01"})
+        self.assertEqual(len(result.warnings), 3)
+        self.assertTrue(
+            all(
+                warning.code is DataAvailabilityCode.ESTIMATED_COMMUTE_FALLBACK
+                for warning in result.warnings
+            )
+        )
 
     def test_next_weekday_peak(self) -> None:
         friday_before_peak = datetime(2026, 10, 23, 8, 0, tzinfo=SGT)  # Friday

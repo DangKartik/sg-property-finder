@@ -10,7 +10,7 @@ from app.control.data_availability_notifier import DataAvailabilityNotifier
 from app.control.ranking_control import RankingControl
 from app.entity.commute_estimate import CommuteEstimate
 from app.entity.enums import TransitMode
-from app.entity.types import Coordinates
+from app.entity.types import Coordinates, RetrievalResult
 from app.strategy.weighted_scoring_strategy import WeightedScoringStrategy
 from tests.support import FIXTURES, FakeOneMap, attach_indicators, load_registry, make_profile
 
@@ -129,6 +129,34 @@ class RankingTests(unittest.TestCase):
         self.assertEqual(result.profileSnapshot["profileId"], "profile-1")
         scores = [item.totalScore for item in result.items]
         self.assertEqual(scores, sorted(scores, reverse=True))
+
+    def test_subzones_without_commute_estimates_remain_in_ranking(self) -> None:
+        class PartialCommute:
+            def retrieveCommutesSync(self, origin, subzones, mode, departureTime=None, topK=50):
+                return RetrievalResult(
+                    {
+                        "TAMPINES01": CommuteEstimate(
+                            35, 14.2, 1, TransitMode.PUBLIC_TRANSIT
+                        )
+                    },
+                    [],
+                )
+
+        control = RankingControl(
+            attach_indicators(load_registry()),
+            WeightedScoringStrategy(),
+            PartialCommute(),
+            DataAvailabilityNotifier(),
+        )
+        result = control.generateRankedRecommendations(make_profile())
+        self.assertEqual(len(result.items), 3)
+        bedok = next(item for item in result.items if item.subzoneId == "BEDOK01")
+        commute = next(
+            score
+            for score in bedok.criterionScores
+            if score.criterionId == "COMMUTE_TIME"
+        )
+        self.assertTrue(commute.isMissing)
 
 
 if __name__ == "__main__":

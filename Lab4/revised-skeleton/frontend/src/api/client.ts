@@ -8,6 +8,7 @@ import type {
   ProfileValidationApi,
   RankingApi,
   ReportApi,
+  ShareApi,
 } from "./contracts";
 import type {
   AddressMatchDTO,
@@ -23,6 +24,7 @@ import type {
   RecommendationSetDTO,
   ReportResponseDTO,
   RouteDataDTO,
+  ShareScenarioDTO,
   ValidationResultDTO,
 } from "../types/dto";
 
@@ -94,6 +96,7 @@ export const api: CriteriaApi &
   NeighborhoodDetailsApi &
   ReportApi &
   ComparisonApi &
+  ShareApi &
   DataStatusApi = {
   async getCriteria() {
     return request<CriterionDefinitionDTO[]>("/api/v1/criteria");
@@ -110,6 +113,13 @@ export const api: CriteriaApi &
     return request<ValidationResultDTO>("/api/v1/profiles/validate", {
       method: "POST",
       body: JSON.stringify(data),
+    });
+  },
+
+  async decodeShare(share: string) {
+    return request<ShareScenarioDTO>("/api/v1/share/decode", {
+      method: "POST",
+      body: JSON.stringify({ share }),
     });
   },
 

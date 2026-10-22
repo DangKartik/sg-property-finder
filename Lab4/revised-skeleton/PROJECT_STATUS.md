@@ -1,11 +1,11 @@
 # SG Property Finder — Project Status
 
-**Last updated:** 21 October 2026  
+**Last updated:** 22 October 2026  
 **Repository:** `2006-SCMB-D2`  
 **Application folder:** `Lab4/revised-skeleton/`  
 **Current branch:** `main`  
-**Last commit:** `8013311 Added a Makefile used to start backend and frontend`  
-**Working tree:** amenity pipeline and generated snapshot added; not yet committed
+**Last commit:** `fdf5871` (amenities snapshot and pipeline)  
+**Working tree:** P0 correctness fixes added (commute modes, share import, estimated fallback); not yet committed
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -89,7 +89,7 @@ make dev
 ```powershell
 make backend    # FastAPI only
 make frontend   # Vite only
-make test       # backend unittest suite (72 tests)
+make test       # backend unittest suite (78 tests)
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
 make help
@@ -146,7 +146,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 | Phase 1 — ECB skeleton, entities, documentation | **Completed** |
 | Phase 2.1 — spatial engine, data assets, town mapping | **Completed** |
 | Phase 2.2 — adapters, retrieval, caching | **Completed** |
-| Phase 2.3 — commute strategy | **Completed** with partial matrix coverage |
+| Phase 2.3 — commute strategy | **Completed** (matrix + live + estimated fallback) |
 | Phase 2.4 — MCDA scoring/ranking | **Completed** |
 | Phase 2.5 — factsheets, PDF, share URLs | **Completed** (ReportLab fallback on Windows) |
 | Phase 2.6 — FastAPI endpoints | **Completed** |
@@ -252,10 +252,15 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 #### Commute
 
 - Precomputed CBD commute matrix keyed by actual URA subzone code.
-- 319/332 subzones covered; 13 no-route errors recorded in matrix metadata.
+- Matrix is used **only for `PUBLIC_TRANSIT`**; driving/walking near the CBD
+  always use live OneMap routing.
+- 319/332 subzones covered; the 13 no-route entries now fall back to a
+  straight-line distance estimate with `ESTIMATED_COMMUTE_FALLBACK` and remain
+  eligible for ranking.
 - Next-weekday 08:30 SGT departure.
-- Async parallel routing for custom workplaces over a top-50 shortlist.
-- TTL cache for commute results.
+- Async parallel routing for custom workplaces over a top-50 shortlist; live
+  routing failures also fall back to a straight-line estimate.
+- TTL cache for live commute results.
 
 #### Scoring and ranking
 
@@ -290,6 +295,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 - FastAPI routes:
   - `POST /api/v1/address/search`
   - `POST /api/v1/profiles/validate`
+  - `POST /api/v1/share/decode`
   - `POST /api/v1/recommendations`
   - `POST /api/v1/commute/overlay`
   - `GET /api/v1/subzones/geometry`
@@ -348,7 +354,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 
 ### 4.4 Testing and verification
 
-- **72 backend tests pass** via `make test`.
+- **78 backend tests pass** via `make test`.
 - Frontend `npm run build` passes (`tsc --noEmit` + Vite production build).
 - Live FastAPI server verified:
   - health true,
@@ -385,6 +391,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 - `backend`
 - `frontend`
 - `test`
+- `amenities`
 - `build`
 - `clean`
 - `help`
@@ -393,7 +400,24 @@ Supporting scripts:
 
 - `scripts/dev.py`
 - `scripts/test_backend.py`
+- `scripts/build_amenities.py`
 - `scripts/clean.py`
+
+### 4.6 P0 correctness fixes
+
+- **Commute matrix mode gating:** `CommuteControl` only consults
+  `commute_matrix.json` for `PUBLIC_TRANSIT`. `DRIVING` and `WALKING` near the
+  CBD call OneMap live and fall back to a straight-line estimate only when live
+  routing fails.
+- **Estimated fallback for missing matrix entries:** the 13 subzones without a
+  matrix entry receive a straight-line estimate and an
+  `ESTIMATED_COMMUTE_FALLBACK` warning instead of being excluded.
+- **No silent candidate dropping:** `RankingControl` scores every candidate;
+  missing commute values are treated as a missing criterion and reweighted.
+- **Share URL import:** new `POST /api/v1/share/decode` endpoint. On startup,
+  `App.tsx` reads `?share=`, decodes the scenario, saves the profile to Dexie,
+  activates it, reruns ranking, selects the first shared subzone, fills the
+  comparison selection and highlights all shared subzone polygons.
 
 ---
 
@@ -434,7 +458,9 @@ Supporting scripts:
 
 6. **Commute matrix coverage is 319/332.**
    - 13 subzones returned OneMap HTTP 404/no route (mostly islands/out-of-bounds).
-   - They are recorded in `commute_matrix.json.metadata.errors` and excluded from matrix-based ranking.
+   - They are recorded in `commute_matrix.json.metadata.errors` and now use a
+     straight-line estimate with an `ESTIMATED_COMMUTE_FALLBACK` warning instead
+     of being excluded from ranking.
 
 7. **`BUKIT TIMAH` and `OUT OF BOUNDS` mappings.**
    - These follow the supplied mapping but may not correspond to HDB town pricing data; such subzones can produce missing-price warnings.
@@ -515,6 +541,8 @@ Supporting scripts:
 | Address confidence | `SequenceMatcher` ratio between query and formatted address |
 | Profile creation | Online validation required |
 | Data refresh | `DATA_MAX_AGE_HOURS=24`; local snapshots + live refresh |
+| Commute matrix | `PUBLIC_TRANSIT` only; driving/walking use live OneMap |
+| Missing commute entry | Straight-line estimate + `ESTIMATED_COMMUTE_FALLBACK` |
 | Comparison size | 2–4 subzones |
 | PDF generation | WeasyPrint when native libs available; ReportLab fallback |
 | Persistence | Profiles in browser IndexedDB; no server database |
@@ -534,10 +562,11 @@ Supporting scripts:
   POST /api/v1/data/refresh
   ```
 - **Frontend API base:** Vite proxy `/api` → `http://127.0.0.1:8000`; set `VITE_API_BASE_URL` for non-proxied deployments.
+- **Share links:** `POST /api/v1/share/decode` decodes `?share=`. The frontend imports the profile into Dexie, activates it, reruns ranking and highlights the shared subzones. The `share` query parameter is removed after import.
 - **OneMap tiles** use `https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png`.
 - **WeasyPrint**: importing it without native GTK prints a library error; `ReportControl` checks for GObject before importing and falls back to ReportLab.
 - **Data payloads can be large:** `/api/v1/subzones/geometry` returns the full 332-subzone FeatureCollection.
-- **No commit was made for this update.** `PROJECT_STATUS.md`, `scripts/build_amenities.py` and `backend/assets/data/amenities.json` are new/modified in the working tree.
+- **No commit was made for the P0 update.** The commute, share-import and documentation changes are in the working tree; the amenities snapshot was committed in `fdf5871`.
 
 ---
 
@@ -562,7 +591,7 @@ Supporting scripts:
 | `backend/app/control/report_control.py` | PDF/share URL generation |
 | `backend/app/api/handlers.py` | Transport-agnostic REST handlers |
 | `scripts/build_amenities.py` | data.gov.sg + OneMap amenity snapshot builder |
-| `backend/tests/` | 72 unit/integration tests |
+| `backend/tests/` | 78 unit/integration tests |
 
 ### Frontend
 
@@ -620,7 +649,7 @@ Supporting scripts:
 
 | Check | Result |
 | --- | --- |
-| `make test` | **72 tests OK** |
+| `make test` | **78 tests OK** |
 | `make build` / `npm run build` | **Passed** |
 | Live Uvicorn health/ready | **Passed**, 332 subzones |
 | Browser main flow | **Passed** |
@@ -630,5 +659,8 @@ Supporting scripts:
 | data.gov.sg live refresh | **Passed**, 332 subzones + 243,176 HDB rows in ~5.2s |
 | Amenities snapshot | **Passed**, 1,095 points generated; sample counts nonzero |
 | Amenities-missing fallback | **Passed**, school/amenity criteria excluded and reweighted |
+| Commute mode gating | **Passed**, driving/walking no longer read the PT matrix |
+| Missing matrix fallback | **Passed**, 13 warnings attached; subzones remain ranked |
+| Share decode + import | **Passed**, endpoint returns profile/codes; frontend build succeeds |
 | ReportLab PDF | **Passed** |
 | WeasyPrint rendering on bare Windows | **Not available**; fallback used |

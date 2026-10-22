@@ -100,6 +100,13 @@ def createApp(context: AppContext | None = None) -> Any:
     def validate_profile(body: dict[str, Any]) -> Any:
         return respond(handlers.validateProfile(body, context), {"Cache-Control": "no-store"})
 
+    @app.post("/api/v1/share/decode")
+    def share_decode(body: dict[str, Any]) -> Any:
+        return respond(
+            handlers.decodeShareLink(str(body.get("share", "")), context),
+            {"Cache-Control": "no-store"},
+        )
+
     @app.post("/api/v1/recommendations")
     def recommendations(body: dict[str, Any]) -> Any:
         return respond(handlers.recommendations(body, context), {"Cache-Control": "no-store"})

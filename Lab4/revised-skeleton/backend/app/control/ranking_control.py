@@ -57,9 +57,11 @@ class RankingControl:
     def generateRankedRecommendations(self, profile: PreferenceProfile) -> RecommendationSet:
         """Generate sorted recommendations for a profile.
 
-        Near the CBD the precomputed matrix is used. For a custom workplace the
-        commute control returns the top-50 shortlist, which becomes the candidate
-        cohort for scoring.
+        Every subzone remains in the scoring cohort. Public transport near the
+        CBD uses the precomputed matrix (with an estimated fallback for missing
+        entries); driving/walking and custom workplaces use live OneMap routing.
+        Subzones without a commute estimate are scored with that criterion
+        treated as missing and reweighted.
         """
         from app.entity.recommendation_set import RecommendationSet
 
@@ -74,9 +76,10 @@ class RankingControl:
             topK=50,
         )
         warnings = list(commute_result.warnings)
-        candidates = [subzone for subzone in subzones if subzone.subzoneCode in commute_result.data]
-        if not candidates:
-            candidates = subzones
+        # Keep every subzone in the cohort. Missing commute estimates are
+        # handled by the scoring strategy as a missing criterion and reweighted,
+        # rather than silently dropping the subzone from the ranking.
+        candidates = subzones
         items = self.scoringStrategy.scoreCandidates(
             candidates,
             profile,
