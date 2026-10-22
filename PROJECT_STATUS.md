@@ -1,0 +1,755 @@
+# SG Property Finder — Project Status
+
+- **Last updated:** 22 October 2026
+- **Repository:** `2006-SCMB-D2`
+- **Application folder:** `Lab4/revised-skeleton/`
+- **Current branch:** `main`
+- **Last commit:** `af953b5` (data refresh UI and ReportLab-only PDFs)
+- **Working tree:** 1–10 relative importance ratings, selection-driven amenity markers, local amenity rebuild in `/data/refresh`, enforced HDB town-proxy pricing and enriched ReportLab content are added; not yet committed
+
+This document is intended as the handover/context file for a new conversation or a new developer joining the project.
+
+---
+
+## 1. What this web app is
+
+**SG Property Finder** is a neighbourhood recommender for people planning to move to a new neighbourhood in Singapore. A user creates a preference plan containing:
+
+- a housing budget,
+- selected HDB flat types,
+- a workplace/CBD anchor,
+- a preferred commute mode,
+- 1–10 importance ratings for affordability, commute, schools, greenery and amenities.
+
+The backend ranks URA subzones with a deterministic 0–100 suitability score. The frontend lets the user inspect the ranked list, explore a choropleth map, open neighbourhood factsheets, compare two to four subzones, and export a PDF report with a shareable scenario URL.
+
+### Target users
+
+People choosing where to live in Singapore who want a data-driven comparison of:
+
+- HDB resale affordability,
+- commute time/distance to work or the CBD,
+- school, healthcare, mall, park and MRT access,
+- green coverage and environmental conditions.
+
+### Technology stack
+
+| Layer | Technology |
+| --- | --- |
+| Frontend | React 18 + TypeScript + Vite |
+| Client storage | Dexie.js / IndexedDB |
+| Mapping | Leaflet + React-Leaflet, OneMap basemap tiles |
+| Backend | Python 3.14, FastAPI, Uvicorn |
+| Spatial processing | Shapely (plus a pure-Python geometry fallback) |
+| HTTP clients | `httpx` for async routing; standard-library `urllib` for some adapters |
+| Caching | `cachetools`-compatible TTL cache |
+| PDF | ReportLab (WeasyPrint removed) |
+| Database | **No PostgreSQL.** Profiles live in browser IndexedDB; backend is stateless |
+
+### External data
+
+- **data.gov.sg**
+  - URA Master Plan 2019 Subzone Boundary (No Sea): `d_8594ae9ff96d0c708bc2af633048edfb`
+  - HDB Resale Flat Prices, Jan 2017 onwards: `d_8b84c4ee58e3cfc0ece0d773c8ca6abc`
+  - Live PM2.5, UVI and weather forecast APIs
+- **OneMap**
+  - address search/geocoding,
+  - public-transport/driving/walking routing,
+  - basemap tiles.
+
+---
+
+## 2. Quick start
+
+### Prerequisites
+
+- Python 3.11+ (local verification used Python 3.14)
+- Node.js 20+ and npm (local verification used Node 24)
+- GNU Make (installed via winget package `ezwinports.make`, version 4.4.1)
+- A `.env` file with OneMap credentials
+
+### One command
+
+```powershell
+cd C:\Users\Lucas\Documents\GitHub\2006-SCMB-D2\Lab4\revised-skeleton
+make install
+make dev
+```
+
+`make dev`:
+
+- starts FastAPI on `http://127.0.0.1:8000`,
+- starts Vite on `http://127.0.0.1:5173`,
+- waits for both,
+- opens the browser,
+- stops both on Ctrl+C.
+
+### Other Make targets
+
+```powershell
+make backend    # FastAPI only
+make frontend   # Vite only
+make test       # backend unittest suite (85 tests)
+make test-frontend # frontend Vitest suite (21 tests)
+make build      # frontend type-check + production build
+make clean      # remove dist and Python caches
+make help
+```
+
+### Manual run
+
+```powershell
+# Terminal 1
+cd Lab4/revised-skeleton/backend
+python -m pip install -r requirements.txt
+python -m uvicorn main:app --reload --port 8000
+
+# Terminal 2
+cd Lab4/revised-skeleton/frontend
+npm install
+npm run dev
+```
+
+Open **http://localhost:5173**. Vite proxies `/api` to `http://127.0.0.1:8000`.
+
+### Health/freshness checks
+
+```text
+GET http://127.0.0.1:8000/api/v1/health
+GET http://127.0.0.1:8000/api/v1/ready
+GET http://127.0.0.1:8000/api/v1/data/status
+```
+
+### Important test-run note
+
+Run backend tests with:
+
+```powershell
+cd Lab4/revised-skeleton
+make test
+```
+
+or directly from `backend/`:
+
+```powershell
+cd Lab4/revised-skeleton/backend
+python -m unittest discover -s tests -v
+```
+
+Do **not** run `python -m unittest discover -s backend/tests` from the revised-skeleton root: the tests import `tests.support` and expect `backend/` on `sys.path`.
+
+---
+
+## 3. Current status at a glance
+
+| Area | Status |
+| --- | --- |
+| Phase 1 — ECB skeleton, entities, documentation | **Completed** |
+| Phase 2.1 — spatial engine, data assets, town mapping | **Completed** |
+| Phase 2.2 — adapters, retrieval, caching | **Completed** |
+| Phase 2.3 — commute strategy | **Completed** (matrix + live + estimated fallback) |
+| Phase 2.4 — MCDA scoring/ranking | **Completed** |
+| Phase 2.5 - factsheets, PDF, share URLs | **Completed** (ReportLab) |
+| Phase 2.6 — FastAPI endpoints | **Completed** |
+| Phase 3 — frontend | **Completed** |
+| Phase 4 — formal black-box/white-box testing | **Not completed** |
+| Phase 5 — formal SLA benchmarking/E2E documentation | **Partially completed** (manual verification only) |
+| Makefile / one-command local run | **Completed** |
+| Real amenities dataset | **Completed** — 1,172 points (143 malls); `make amenities` rebuilds it |
+| Amenity dataset pipeline | **Completed** (`scripts/build_amenities.py`) |
+| Amenity map layers | **Completed** (markers shown only for selected subzone) |
+| API-response caching in IndexedDB | **Completed** (`ApiCache`, ETag/TTL/stale fallback) |
+| Frontend tests | **Completed** (21 Vitest tests) |
+| PDF generation | **Completed** (ReportLab only) |
+| Production deployment/CI | **Not completed** |
+
+---
+
+## 4. Completed work
+
+### 4.1 Phase 1 — Skeleton refactoring and specifications
+
+- Reorganized classes into backend/frontend ECB-style packages:
+  - backend: `control/`, `entity/`, `container/`, `adapter/`, `strategy/`, `schemas/`, `core/`, `services/`, `api/`;
+  - frontend: `boundary/`, `control/`, `container/`, `types/`, `utils/`, `api/`.
+- Created `entity/enums.py` with transit mode, environment granularity, warning severity and data-availability codes.
+- Added `Subzone.townName`; removed the mutable `suitabilityScore` from `Subzone`.
+- Added `CriterionScore`, `AddressMatch`, `DatasetMetadata`, `DataAvailabilityWarning`, `ComparisonResult`, `SubzoneIndicators`.
+- Refactored `PdfReport` to browser-safe metadata (`downloadUrl`, `expiresAt`, `fileName`, `contentType`, `sizeBytes`).
+- Added docstrings/JSDoc across the skeleton.
+- Made `DataAvailabilityNotifier` stateless and removed `ReportControl.lastGeneratedReport`.
+- Added `.env.example`, `.gitignore`, `Settings`, and environment documentation.
+- Specifications live in:
+  - `docs/SPECIFICATIONS.md`
+  - `docs/OPEN_ISSUES.md`
+  - `docs/ENVIRONMENT.md`
+
+### 4.2 Phase 2 — Backend
+
+#### Spatial engine and data assets
+
+- `SubzoneRegistry` loads the official URA 332-subzone GeoJSON.
+- Shapely-backed polygon operations with a pure-Python fallback:
+  - point-in-polygon,
+  - centroid,
+  - representative point,
+  - bounds,
+  - polygon boundary distance.
+- `planning_area_to_hdb_town.json` populated.
+- Buffer/count logic for schools (1.0 km), hospitals/polyclinics (2 km), parks (500 m), malls (1 km), MRT (800 m).
+- Town-level HDB pricing proxy accepted and labelled `isTownProxy`.
+- `amenities.json` generated by `scripts/build_amenities.py` (`make amenities`):
+  - 1,172 points: 182 primary schools, 144 secondary schools, 462 parks,
+    188 MRT stations, 22 polyclinics, 31 hospitals and 143 shopping malls.
+  - Sources: MOE school directory, NParks parks, LTA MRT exits, HPB/MOH
+    polyclinics, OneMap hospitals, OneMap mall search, LTA Carpark Rates
+    major-mall names and a short named-mall supplement.
+  - Parks (polygons) are represented by `representative_point()`; MRT exits are
+    grouped into one point per station; school postal codes are geocoded with
+    OneMap Search.
+  - Counts use buffer-distance density from the subzone representative point:
+    schools/malls 1.0 km, MRT 800 m, parks 500 m, healthcare 2.0 km.
+  - If the file is absent or unreadable, school/amenity criteria are excluded
+    and weights renormalised.
+
+#### External adapters
+
+- `OneMapApiAdapter`:
+  - token caching/refresh,
+  - address search returning `AddressMatch` with `SequenceMatcher` confidence,
+  - public transport/driving/walking routing,
+  - async `httpx` routing with shared client,
+  - theme data.
+- `DataGovSgAdapter`:
+  - metadata, poll-download, static dataset download,
+  - real-time API fetch,
+  - TTL caching,
+  - JSON/GeoJSON/CSV/Parquet local fallback.
+- `DatasetService`:
+  - local snapshots for fast startup,
+  - automatic data.gov.sg refresh when snapshots are older than `DATA_MAX_AGE_HOURS` (default 24),
+  - writes refreshed snapshots back to `backend/assets/data/`,
+  - `/api/v1/data/status` and `POST /api/v1/data/refresh`.
+- Live refresh has been manually verified:
+  - 332 subzones,
+  - 243,176 HDB transactions,
+  - ~5.2 seconds.
+
+#### Retrieval engine
+
+- `RetrievalControl` template-method base.
+- `HousePricingRetrievalControl`:
+  - 12-month rolling HDB window,
+  - flat-type keyed `dict[str, HousePricing]`,
+  - minimum-5-transaction subzone rule,
+  - HDB-town median fallback,
+  - median price, median $/sqm and price trend,
+  - indexed by town/flat type for startup performance.
+- `EnvironmentRetrievalControl`:
+  - regional `environment_baselines.json` + `DEFAULT` fallback,
+  - static baseline values for scoring,
+  - live PM2.5/UVI/forecast isolated as display-only.
+- `AmenityRetrievalControl`:
+  - school/healthcare/park/mall/MRT counts and nearest distances,
+  - graceful missing-data warning when the dataset is absent,
+  - local `rebuildFromLocalSources()` that recomputes subzone aggregates and
+    updates registry indicators without network calls,
+  - `status()` metadata exposed through `/api/v1/data/status`.
+
+#### Commute
+
+- Precomputed CBD commute matrix keyed by actual URA subzone code.
+- Matrix is used **only for `PUBLIC_TRANSIT`**; driving/walking near the CBD
+  always use live OneMap routing.
+- 319/332 subzones covered; the 13 no-route entries now fall back to a
+  straight-line distance estimate with `ESTIMATED_COMMUTE_FALLBACK` and remain
+  eligible for ranking.
+- Next-weekday 08:30 SGT departure.
+- Async parallel routing for custom workplaces over a top-50 shortlist; live
+  routing failures also fall back to a straight-line estimate.
+- TTL cache for live commute results.
+
+#### Scoring and ranking
+
+- Hard budget filter using the lowest selected-flat-type median price.
+- **Fixed absolute normalisation** (per product decision):
+  - price: 200k–1.5M,
+  - commute: 0–90 minutes,
+  - schools: 0–4,
+  - green coverage: 0–100%,
+  - amenities: 0–10.
+- User importance ratings are 1–10 and are relative-normalised to weights that
+  sum to 1.0 before scoring.
+- Missing data: exclude criterion, reweight available criteria to 1.0, attach warning.
+- `RecommendationItem` contains 0–100 total score and `CriterionScore` rows.
+- Tie-break: shortest commute, then median $/sqm, then subzone code.
+- `RecommendationSet` preserves `dataSnapshotId`, `dataAsOf`, warnings and `profileSnapshot`.
+- Ranking output is capped at the **top 20** items; the remaining scored
+  subzones are discarded and their warnings are omitted.
+- `ComparisonControl` caps comparisons at four subzones.
+
+#### Factsheets, reports and endpoints
+
+- `NeighborhoodDetailsControl` aggregates:
+  - multi-flat pricing,
+  - amenities,
+  - environment,
+  - commute,
+  - warnings,
+  - pricing town-proxy note.
+- `ReportControl`:
+  - ReportLab Platypus rendering only,
+  - profile importance ratings and relative weights,
+  - per-subzone criterion score tables,
+  - data dates and explicit data-quality caveats,
+  - short-lived temp report store,
+  - secure download metadata,
+  - shareable scenario URL.
+- FastAPI routes:
+  - `POST /api/v1/address/search`
+  - `POST /api/v1/profiles/validate`
+  - `POST /api/v1/share/decode`
+  - `POST /api/v1/recommendations`
+  - `POST /api/v1/commute/overlay`
+  - `GET /api/v1/subzones/geometry`
+  - `GET /api/v1/subzones/{code}/factsheet`
+  - `POST /api/v1/comparison`
+  - `POST /api/v1/reports/pdf`
+  - `GET /api/v1/reports/download/{report_id}`
+  - `GET /api/v1/criteria`
+  - `GET /api/v1/amenities`
+  - `GET /api/v1/health`
+  - `GET /api/v1/ready`
+  - `GET /api/v1/data/status`
+  - `POST /api/v1/data/refresh`
+- Unified `ApiEnvelope` (`success`, `data`, `warnings`, `error`).
+
+### 4.3 Phase 3 — Frontend
+
+- DTOs match backend:
+  - `ProfileDTO`, `CriterionScoreDTO`, `AddressMatchDTO`, `NeighborhoodDetailDTO`,
+    `DataAvailabilityWarningDTO`, `ReportResponseDTO`, `DatasetStatusDTO`,
+    `AmenityPointDTO`, `ShareScenarioDTO`.
+- Dexie/IndexedDB `ProfileCatalog`:
+  - `saveToLocalStorage()`
+  - `loadFromLocalStorage()`
+  - `deleteProfile()`
+- Dexie/IndexedDB `ApiCache`:
+  - caches criteria, geometry, amenities, factsheets, recommendations,
+    comparisons and route overlays,
+  - stores ETag, storedAt and expiresAt,
+  - revalidates cached GETs with `If-None-Match`,
+  - serves a cached envelope with a `STALE_CACHE` warning when the backend is
+    unreachable,
+  - prunes entries older than 7 days.
+- `ProfileControl` performs authoritative backend validation before saving to Dexie.
+- Form:
+  - budget sliders,
+  - flat-type checkboxes,
+  - address search with selectable `AddressMatch` results,
+  - commute mode,
+  - 1–10 importance sliders per criterion; ratings are normalised by the backend.
+- Saved-plan selector with active badge, disabled delete with tooltip when only one plan exists, and delete confirmation.
+- Map:
+  - OneMap tiles,
+  - subzone choropleth,
+  - card-to-polygon and polygon-to-card synchronization,
+  - transit/driving route overlay,
+  - amenity markers appear only after a subzone is selected, showing nearby
+    schools, healthcare, parks, MRT/LRT and malls within 2 km with category
+    colours, counts and tooltips.
+- Results:
+  - top-20 ranked cards,
+  - comparison checkboxes,
+  - factsheet button,
+  - warning count.
+- Share import:
+  - reads `?share=`, decodes via `/api/v1/share/decode`,
+  - saves the profile to Dexie, activates it and reruns ranking,
+  - highlights shared subzone polygons and fills comparison selection.
+- Data panel:
+  - “Refresh data” button calls `POST /api/v1/data/refresh`,
+  - refreshes subzone/HDB snapshots and rebuilds amenities from the cached
+    local POI layer,
+  - clears the IndexedDB API cache on success,
+  - reloads amenity points, updates the freshness display and reruns the active
+    ranking.
+- Factsheet modal:
+  - multi-flat pricing,
+  - town-level proxy badge and note,
+  - green coverage/weather/PM2.5/UVI,
+  - school/hospital/mall/MRT/park counts,
+  - commute details,
+  - missing-data badges.
+- Comparison matrix for 2–4 subzones.
+- PDF export:
+  - generate report,
+  - binary download,
+  - share URL.
+- Notification modal for validation/API errors.
+- Responsive layout and accessible labels.
+
+### 4.4 Testing and verification
+
+- **85 backend tests pass** via `make test`.
+- **21 frontend Vitest tests pass** via `npm test`.
+- Frontend tests cover format/polyline helpers, amenity filtering/colours,
+  `ApiCache` persistence/pruning, client cache reuse/stale fallback and top-20
+  result rendering.
+- Frontend `npm run build` passes (`tsc --noEmit` + Vite production build).
+- Live FastAPI server verified:
+  - health true,
+  - ready true,
+  - 332 subzones.
+- Browser walkthrough verified:
+  - create plan,
+  - OneMap address search,
+  - select address,
+  - save/rank,
+  - results,
+  - choropleth,
+  - factsheet,
+  - comparison,
+  - PDF modal,
+  - plan persistence after reload,
+  - 1–10 importance ratings normalised to weights summing to 1.0,
+  - share-link import and shared-subzone highlighting,
+  - amenity markers hidden until a subzone is selected, then nearby points only,
+  - IndexedDB cache reuse on reload (only `/data/status` refetched).
+- OneMap live checks:
+  - token endpoint,
+  - address search (10 results),
+  - walking route.
+- data.gov.sg live checks:
+  - metadata,
+  - poll-download,
+  - PM2.5 real-time,
+  - full DatasetService refresh.
+
+### 4.5 Makefile
+
+`Lab4/revised-skeleton/Makefile`:
+
+- `install`
+- `dev`
+- `backend`
+- `frontend`
+- `test`
+- `test-frontend`
+- `amenities`
+- `build`
+- `clean`
+- `help`
+
+Supporting scripts:
+
+- `scripts/dev.py`
+- `scripts/test_backend.py`
+- `scripts/build_amenities.py`
+- `scripts/clean.py`
+
+### 4.6 P0 correctness fixes
+
+- **Commute matrix mode gating:** `CommuteControl` only consults
+  `commute_matrix.json` for `PUBLIC_TRANSIT`. `DRIVING` and `WALKING` near the
+  CBD call OneMap live and fall back to a straight-line estimate only when live
+  routing fails.
+- **Estimated fallback for missing matrix entries:** the 13 subzones without a
+  matrix entry receive a straight-line estimate and an
+  `ESTIMATED_COMMUTE_FALLBACK` warning instead of being excluded.
+- **No silent candidate dropping:** `RankingControl` scores every candidate;
+  missing commute values are treated as a missing criterion and reweighted.
+- **Share URL import:** new `POST /api/v1/share/decode` endpoint. On startup,
+  `App.tsx` reads `?share=`, decodes the scenario, saves the profile to Dexie,
+  activates it, reruns ranking, selects the first shared subzone, fills the
+  comparison selection and highlights all shared subzone polygons.
+
+### 4.7 Frontend cache, map layers and tests
+
+- **IndexedDB API cache:** `ApiCache` stores criteria, geometry, amenities,
+  factsheets, recommendations, comparisons and route overlays. GETs revalidate
+  with `If-None-Match`; TTLs are 1 h for geometry/amenities, 24 h for criteria,
+  10 min for factsheets, 5 min for rankings/comparisons and 30 min for route
+  overlays. Expired entries are
+  used with a `STALE_CACHE` warning if the backend is unreachable.
+- **Amenity map layers:** `GET /api/v1/amenities` returns all 1,172 points.
+  `NeighborhoodMapUI` hides them until a subzone is selected, then shows only
+  amenities within 2 km of that subzone with category colours, counts and
+  tooltips.
+- **Mall coverage:** the amenity builder adds LTA Carpark Rates major-mall names
+  and a named supplement, taking the snapshot from 66 to 143 malls.
+- **Comparison outside top 20:** `RankingControl.generateRankedRecommendations`
+  accepts an optional `limit`; the comparison endpoint passes `limit=None` so
+  subzones outside the displayed top 20 still receive score items.
+- **Frontend tests:** Vitest/jsdom/Testing Library with 21 tests covering format
+  helpers, polyline decoding, weight migration, nearby amenity filtering/colours,
+  `ApiCache`, client cache reuse/stale fallback, refresh cache invalidation and
+  top-20 `ResultsListUI` rendering.
+- **Data refresh UI:** the Data panel exposes a refresh button that calls
+  `POST /api/v1/data/refresh`, refreshes subzone/HDB data, rebuilds amenities
+  from the local POI snapshot, clears `ApiCache`, reloads amenity points,
+  updates the status display and reruns the active ranking.
+- **PDF generation:** ReportLab Platypus only; WeasyPrint, its requirement and
+  Docker native dependencies were removed. The report includes profile
+  importance weights, per-subzone criterion scores, data dates and caveats.
+
+---
+
+## 5. Not completed / known gaps
+
+### 5.1 Highest priority
+
+1. **Amenities dataset — resolved 21 October 2026.**
+   - `backend/assets/data/amenities.json` is generated by `make amenities`.
+   - Factsheets now show real school, park, MRT, polyclinic, hospital and mall counts.
+   - The missing-data path is also fixed: absent amenity data excludes the
+     school/amenity criteria and renormalises weights instead of scoring zero.
+   - Mall coverage is now 143 points, including LTA major-mall names and a
+     named supplement; newer malls not present in those sources may still be
+     absent.
+
+2. **API-response caching in IndexedDB — resolved 22 October 2026.**
+   - `ApiCache` persists criteria, geometry, amenities, factsheets,
+     recommendations, comparisons and route overlays.
+   - It revalidates GETs with `If-None-Match`, applies TTLs and serves a
+     `STALE_CACHE` warning when the backend is unreachable.
+   - Profiles remain in the separate `ProfileCatalog` Dexie database.
+
+3. **WeasyPrint — removed 22 October 2026.**
+   - `ReportControl` now renders exclusively with ReportLab Platypus.
+   - WeasyPrint and its native Pango/GObject dependencies were removed from
+     `requirements.txt` and the Dockerfile.
+
+### 5.2 Data limitations
+
+4. **HDB pricing is town-level — accepted decision (22 October 2026).**
+   - The real HDB dataset has no subzone code.
+   - Every price is labelled `isTownProxy=true` and displayed as “Town-Level Median Proxy”.
+   - No block-to-subzone mapping will be built; town-level pricing is the frozen product choice.
+
+5. **Environment baselines are deterministic user-provided values.**
+   - `environment_baselines.json` contains regional green/PM2.5 values.
+   - These are **not** a verified 10-year NParks time series; they are the frozen values supplied for the project.
+   - Live PM2.5/UVI/weather are display-only and do not affect scores.
+
+6. **Commute matrix coverage is 319/332.**
+   - 13 subzones returned OneMap HTTP 404/no route (mostly islands/out-of-bounds).
+   - They are recorded in `commute_matrix.json.metadata.errors` and now use a
+     straight-line estimate with an `ESTIMATED_COMMUTE_FALLBACK` warning instead
+     of being excluded from ranking.
+
+7. **`BUKIT TIMAH` and `OUT OF BOUNDS` mappings.**
+   - These follow the supplied mapping but may not correspond to HDB town pricing data; such subzones can produce missing-price warnings.
+
+### 5.3 Formal testing not completed
+
+8. **Phase 4 black-box testing documentation**
+   - No formal equivalence-class partitioning matrix.
+   - No formal boundary-value analysis matrix.
+   - No test-minimization document.
+   - Some of these checks exist as `unittest` cases, but the required three-column expected/actual matrix has not been produced.
+
+9. **Phase 4 white-box testing documentation**
+   - No control-flow graphs.
+   - No cyclomatic-complexity calculations.
+   - No basis-path test-case table.
+   - `RankingControl.generateRankedRecommendations` and `WeightedScoringStrategy.computeSuitabilityScore` were not formally analysed with CFG/`V(G)`.
+
+10. **Frontend unit testing — resolved 22 October 2026.**
+    - Vitest + jsdom + Testing Library are configured.
+    - 21 tests cover format/polyline helpers, weight migration, nearby amenity
+      filtering, `ApiCache`, client cache reuse/stale fallback and
+      `ResultsListUI` rendering.
+    - `npm run build` remains the production build check.
+
+### 5.4 Phase 5 not completed
+
+11. **Formal SLA benchmark**
+    - The backend ranking calculation was measured at ~13 ms on the local snapshot, but there is no formal HTTP end-to-end benchmark report.
+    - There is no formal cold-cache/OneMap routing benchmark (<10 s) with percentiles.
+
+12. **Complete Dialog Map E2E test**
+    - Manual browser walkthrough succeeded for the main path.
+    - Not systematically covered: invalid form, address failure, delete confirmation, API outage, report expiry, all comparison edge cases, mobile layouts.
+
+### 5.5 Production/operational gaps
+
+13. **No authentication or multi-device sync.**
+    - Profiles are browser-local.
+    - Clearing site data deletes plans.
+    - There is no account system.
+
+14. **No CI/CD or production deployment.**
+    - No GitHub Actions.
+    - No production reverse proxy/HTTPS/host configuration.
+    - CORS currently allows all origins for local development.
+
+15. **In-memory report store is single-process.**
+    - `ReportStore` holds report paths in process memory.
+    - A multi-worker deployment would need shared storage or sticky sessions.
+    - Download URLs expire after 15 minutes.
+
+16. **No formal accessibility audit.**
+    - Forms have labels, buttons have accessible names, and the map has a text/list alternative via results.
+    - No screen-reader or keyboard-only audit has been documented.
+
+17. **OneMap “nearby transport” adapter is not implemented.**
+    - `getNearbyTransport()` raises `NotImplementedError`.
+    - The current app uses the precomputed commute matrix and routing endpoint instead.
+
+18. **Noise-level environment data is not used.**
+    - The skeleton originally included `averageNoiseLevelDb`, but no noise dataset is configured.
+    - Current environment scoring uses green coverage and PM2.5 baseline.
+
+19. **Cycling commute is intentionally excluded.**
+    - `TransitMode` contains `PUBLIC_TRANSIT`, `DRIVING`, `WALKING`.
+    - Cycling paths are still used for amenity/active-mobility indicators.
+
+---
+
+## 6. Frozen product decisions
+
+| Decision | Choice |
+| --- | --- |
+| HDB price geography | HDB town-level median proxy, labelled `isTownProxy` |
+| School radius | 1.0 km |
+| Environment scoring | Deterministic regional baselines; live PM2.5/UVI/weather display-only |
+| Normalisation | Fixed absolute domains, not candidate-relative min-max |
+| Criterion importance | 1–10 ratings, relative-normalised to weights summing to 1.0 |
+| Cycling commute | Excluded |
+| Address confidence | `SequenceMatcher` ratio between query and formatted address |
+| Profile creation | Online validation required |
+| Data refresh | `DATA_MAX_AGE_HOURS=24`; local snapshots + live refresh; amenities rebuilt from local POI snapshot |
+| Commute matrix | `PUBLIC_TRANSIT` only; driving/walking use live OneMap |
+| Missing commute entry | Straight-line estimate + `ESTIMATED_COMMUTE_FALLBACK` |
+| Ranking result size | Top 20 items; remaining results discarded |
+| Comparison size | 2–4 subzones |
+| PDF generation | ReportLab Platypus only |
+| Persistence | Profiles in browser IndexedDB; no server database |
+| API caching | IndexedDB (`ApiCache`), TTL + ETag revalidation + stale fallback |
+| Map amenities | Hidden until a subzone is selected; nearby points only |
+
+---
+
+## 7. Important implementation notes for the next conversation
+
+- **Do not commit `.env`.** It contains OneMap credentials and is ignored by Git.
+- **Do not regenerate the 24 MB HDB CSV unnecessarily.** It is already in `backend/assets/data/hdb_resale.csv`.
+- **Amenities snapshot:** `make amenities` rebuilds `backend/assets/data/amenities.json` from data.gov.sg and OneMap. It needs the OneMap credentials in `.env`; it geocodes school postal codes and queries OneMap themes/search.
+- **Start order matters:** backend first, then frontend. `make dev` handles both.
+- **`make test`** is the reliable way to run backend tests from the revised-skeleton root.
+- **Backend startup is ~4 seconds** because it loads 332 subzones, indexes 243k HDB rows and joins 1,172 amenity points.
+- **Ranking uses local snapshots first.** `DatasetService.refreshIfStale()` refreshes from data.gov.sg after the configured age. Force a live refresh with:
+  ```text
+  POST /api/v1/data/refresh
+  ```
+- **Frontend API base:** Vite proxy `/api` → `http://127.0.0.1:8000`; set `VITE_API_BASE_URL` for non-proxied deployments.
+- **Share links:** `POST /api/v1/share/decode` decodes `?share=`. The frontend imports the profile into Dexie, activates it, reruns ranking and highlights the shared subzones. The `share` query parameter is removed after import.
+- **API cache:** `ApiCache` uses the separate IndexedDB database `sgpropfinder-api-cache`. Clear it from DevTools if you need to force fresh criteria/geometry/amenities after changing data outside the normal TTL.
+- **Amenity layers:** markers are hidden until a subzone is selected. The “Nearby amenities” panel then shows amenities within 2 km and can hide categories.
+- **OneMap tiles** use `https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png`.
+- **PDF generation**: `ReportControl` uses ReportLab Platypus directly; WeasyPrint is no longer imported or installed.
+- **Data payloads can be large:** `/api/v1/subzones/geometry` returns the full 332-subzone FeatureCollection.
+- **No commit was made for the current update.** The 1–10 importance-rating, selection-driven amenity-marker, local amenity-rebuild, enforced HDB town-proxy and enriched-ReportLab changes are in the working tree; ReportLab-only PDFs and the data-refresh UI were committed in `af953b5`.
+
+---
+
+## 8. Key files
+
+### Backend
+
+| File | Purpose |
+| --- | --- |
+| `backend/main.py` | FastAPI app, routes, cache headers, lifespan data refresh |
+| `backend/app/bootstrap.py` | Dependency wiring and registry enrichment |
+| `backend/app/services/dataset_service.py` | Live data.gov.sg/snapshot service |
+| `backend/app/services/live_environment.py` | Live PM2.5/UVI/forecast provider |
+| `backend/app/adapter/one_map_api_adapter.py` | OneMap auth/search/routing/themes |
+| `backend/app/adapter/data_gov_sg_adapter.py` | data.gov.sg API/fallback adapter |
+| `backend/app/control/house_pricing_retrieval_control.py` | HDB pricing/window/town proxy |
+| `backend/app/control/environment_retrieval_control.py` | Regional baselines + live display data |
+| `backend/app/control/amenity_retrieval_control.py` | Amenity counts/indicators |
+| `backend/app/control/commute_control.py` | Matrix/live routing/cache |
+| `backend/app/control/ranking_control.py` | Recommendation orchestration |
+| `backend/app/strategy/weighted_scoring_strategy.py` | Fixed-domain MCDA |
+| `backend/app/control/report_control.py` | PDF/share URL generation |
+| `backend/app/api/handlers.py` | Transport-agnostic REST handlers |
+| `scripts/build_amenities.py` | data.gov.sg + OneMap amenity snapshot builder |
+| `backend/tests/` | 85 unit/integration tests |
+
+### Frontend
+
+| File | Purpose |
+| --- | --- |
+| `frontend/src/App.tsx` | Application state/orchestration |
+| `frontend/src/boundary/ProfileFormUI.tsx` | Plan form, 1–10 importance ratings, address search |
+| `frontend/src/boundary/ProfileSelectorUI.tsx` | Saved plans/delete guard |
+| `frontend/src/boundary/ResultsListUI.tsx` | Ranked cards/comparison selection |
+| `frontend/src/boundary/NeighborhoodMapUI.tsx` | Leaflet choropleth, route and selected-subzone amenity markers |
+| `frontend/src/boundary/FactSheetUI.tsx` | Factsheet modal |
+| `frontend/src/boundary/ComparisonUI.tsx` | Side-by-side matrix |
+| `frontend/src/boundary/ExportReportUI.tsx` | PDF/share modal |
+| `frontend/src/boundary/NotificationModalUI.tsx` | Reusable alerts |
+| `frontend/src/container/ProfileCatalog.ts` | Dexie/IndexedDB profiles |
+| `frontend/src/container/ApiCache.ts` | Dexie/IndexedDB API response cache |
+| `frontend/src/utils/amenities.ts` | Amenity layer groups, filtering and colours |
+| `frontend/src/control/ProfileControl.ts` | Client profile CRUD |
+| `frontend/src/api/client.ts` | Backend API client with cache/revalidation |
+| `frontend/src/styles.css` | Responsive UI and map-layer styles |
+
+### Data assets
+
+| File | Status |
+| --- | --- |
+| `backend/assets/data/subzones.geojson` | Real URA 332 subzones |
+| `backend/assets/data/hdb_resale.csv` | Real HDB resale rows (~243k) |
+| `backend/assets/data/planning_area_to_hdb_town.json` | Populated |
+| `backend/assets/data/environment_baselines.json` | Deterministic regional baselines |
+| `backend/assets/data/commute_matrix.json` | 319/332 subzones |
+| `backend/assets/data/amenities.json` | **Present — 1,172 points generated by `make amenities`** |
+
+---
+
+## 9. Recommended next steps
+
+1. **Complete Phase 4 documentation**:
+   - EP/BVA tables for `InputValidationControl`,
+   - CFGs and cyclomatic complexity for ranking/scoring,
+   - basis-path test cases.
+2. **Complete Phase 5**:
+   - formal HTTP latency benchmark for `/recommendations`,
+   - cold/warm OneMap routing benchmark,
+   - full Dialog Map E2E checklist.
+3. **Add CI/CD, HTTPS/CORS production configuration, and a shared report store** if deploying beyond a single process.
+4. Optionally extend frontend tests to the App/share-import and map-layer flows.
+
+---
+
+## 10. Verification summary
+
+| Check | Result |
+| --- | --- |
+| `make test` | **85 tests OK** |
+| `npm test` | **21 frontend tests OK** |
+| `make build` / `npm run build` | **Passed** |
+| Live Uvicorn health/ready | **Passed**, 332 subzones |
+| Browser main flow | **Passed** |
+| Dexie reload persistence | **Passed** |
+| Weight normalisation | **Passed** (1–10 ratings normalised to 1.0) |
+| OneMap address search/routing | **Passed** |
+| data.gov.sg live refresh | **Passed**, 332 subzones + 243,176 HDB rows in ~5.2s |
+| Amenities snapshot | **Passed**, 1,172 points generated; sample counts nonzero |
+| HDB town proxy | **Passed**, all 300 current pricing rows use `isTownProxy=true` |
+| Amenities-missing fallback | **Passed**, school/amenity criteria excluded and reweighted |
+| Commute mode gating | **Passed**, driving/walking no longer read the PT matrix |
+| Missing matrix fallback | **Passed**, 13 warnings attached; subzones remain ranked |
+| Share decode + import | **Passed**, endpoint returns profile/codes; frontend build succeeds |
+| Ranking result cap | **Passed**, response returns exactly the top 20 items |
+| Comparison outside top 20 | **Passed**, comparison requests the full internal ranking |
+| API cache | **Passed**, repeated GETs use IndexedDB; stale fallback works |
+| Data refresh UI | **Passed**, calls `/data/refresh`, rebuilds amenities, clears cache and reranks |
+| Amenity rebuild | **Passed**, local rebuild writes `aggregates` and updates indicators |
+| ReportLab-only PDF | **Passed**, includes weights, criterion scores, dates and caveats |
+| Amenity map layers | **Passed**, markers hidden until selection; nearby points only |
+| Mall coverage | **Passed**, 143 mall points including major-mall supplements |
+| ReportLab PDF | **Passed** (only renderer) |

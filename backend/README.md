@@ -46,9 +46,8 @@ app starts with an empty registry or falls back to the data.gov.sg adapter.
 
 - Geometry uses Shapely when installed and a dependency-free polygon fallback
   otherwise (`app/core/geometry.py`).
-- WeasyPrint is used when its native Pango/GObject libraries are available;
-  otherwise PDF generation falls back to ReportLab. On Windows, install the GTK3
-  runtime, use the provided `Dockerfile`, or use a Linux environment with Pango.
+- PDF generation uses ReportLab Platypus exclusively. WeasyPrint and its native
+  Pango/GObject dependencies are not required.
 
 ```bash
 docker build -t sgpropfinder-backend .

@@ -55,12 +55,20 @@ class FastApiEndpointTests(unittest.TestCase):
         self.assertIn("ETag", response.headers)
         self.assertIn("max-age", response.headers["Cache-Control"])
 
+    def test_amenities_endpoint(self) -> None:
+        response = self.client.get("/api/v1/amenities")
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()["success"])
+        self.assertEqual(len(response.json()["data"]), 15)
+        self.assertIn("max-age", response.headers["Cache-Control"])
+
     def test_data_status_for_frontend_cache(self) -> None:
         response = self.client.get("/api/v1/data/status")
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.json()["success"])
         self.assertEqual(response.json()["data"]["subzones"]["recordCount"], 3)
         self.assertIn("dataAsOf", response.json()["data"]["subzones"])
+        self.assertIn("amenities", response.json()["data"])
 
     def test_address_recommendations_and_comparison(self) -> None:
         address = self.client.post("/api/v1/address/search", json={"query": "Raffles Place"})
@@ -94,6 +102,25 @@ class FastApiEndpointTests(unittest.TestCase):
         self.assertEqual(comparison.status_code, 200)
         self.assertTrue(comparison.json()["success"])
         self.assertEqual(len(comparison.json()["data"]["details"]), 2)
+
+    def test_share_decode_endpoint(self) -> None:
+        profile = profilePayload()
+        share_url = self.context.reportControl.generateShareableUrl(
+            preferenceProfileFromDto(profileDtoFromDict(profile)),
+            ["TAMPINES01", "BEDOK01"],
+            "/",
+        )
+        share = parse_qs(urlparse(share_url).query)["share"][0]
+        response = self.client.post("/api/v1/share/decode", json={"share": share})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()["success"])
+        data = response.json()["data"]
+        self.assertEqual(data["profile"]["profileName"], "API Profile")
+        self.assertEqual(data["subzoneCodes"], ["TAMPINES01", "BEDOK01"])
+
+        invalid = self.client.post("/api/v1/share/decode", json={"share": "not-base64"})
+        self.assertEqual(invalid.status_code, 200)
+        self.assertFalse(invalid.json()["success"])
 
     def test_factsheet_and_report_download(self) -> None:
         profile = profilePayload()

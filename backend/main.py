@@ -84,6 +84,10 @@ def createApp(context: AppContext | None = None) -> Any:
     def criteria() -> Any:
         return respond(handlers.criteria(context), {"Cache-Control": "public, max-age=86400"})
 
+    @app.get("/api/v1/amenities")
+    def amenities() -> Any:
+        return respond(handlers.amenities(context), {"Cache-Control": "public, max-age=86400"})
+
     @app.get("/api/v1/data/status")
     def data_status() -> Any:
         return respond(handlers.dataStatus(context), {"Cache-Control": "no-store"})
@@ -99,6 +103,13 @@ def createApp(context: AppContext | None = None) -> Any:
     @app.post("/api/v1/profiles/validate")
     def validate_profile(body: dict[str, Any]) -> Any:
         return respond(handlers.validateProfile(body, context), {"Cache-Control": "no-store"})
+
+    @app.post("/api/v1/share/decode")
+    def share_decode(body: dict[str, Any]) -> Any:
+        return respond(
+            handlers.decodeShareLink(str(body.get("share", "")), context),
+            {"Cache-Control": "no-store"},
+        )
 
     @app.post("/api/v1/recommendations")
     def recommendations(body: dict[str, Any]) -> Any:

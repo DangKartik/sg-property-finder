@@ -68,6 +68,7 @@ class NeighborhoodDetailsControl:
                 profile.preferredCommuteMode,
                 nextWeekdayPeak(),
                 subzoneCode,
+                warnings=warnings,
             )
         except Exception:
             commute = CommuteEstimate(

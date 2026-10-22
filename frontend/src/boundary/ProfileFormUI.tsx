@@ -9,7 +9,11 @@ import type {
   ProfileDTO,
   TransitModeDTO,
 } from "../types/dto";
-import { rescaleWeights, round1 } from "../utils/weights";
+import {
+  DEFAULT_IMPORTANCE,
+  clampImportance,
+  importanceFromProfile,
+} from "../utils/weights";
 
 const FLAT_TYPES = [
   "1 ROOM",
@@ -31,7 +35,7 @@ export interface ProfileFormUIProps {
   onNotify: (title: string, message: string) => void;
 }
 
-/** Preference form with budget, flat types, auto-rescaling weights and address verification. */
+/** Preference form with budget, flat types, 1–10 importance ratings and address verification. */
 export function ProfileFormUI({
   profileControl,
   addressSearchApi,
@@ -73,28 +77,14 @@ export function ProfileFormUI({
       return;
     }
     const configured = initialProfile?.criteriaWeights ?? [];
-    const next: Record<string, number> = {};
-    if (configured.length > 0) {
-      criterionIds.forEach((id) => {
-        next[id] = configured.find((weight) => weight.criterionId === id)?.weightValue ?? 0;
-      });
-    } else {
-      const equal = round1(100 / criterionIds.length);
-      criterionIds.forEach((id, index) => {
-        next[id] = index === criterionIds.length - 1
-          ? round1(100 - equal * (criterionIds.length - 1))
-          : equal;
-      });
-    }
-    setWeights(next);
+    setWeights(importanceFromProfile(configured, criterionIds));
   }, [criterionIds, initialProfile]);
 
-  const totalWeight = round1(
-    criterionIds.reduce((sum, id) => sum + (weights[id] ?? 0), 0),
-  );
-
   function handleWeightChange(id: string, value: number) {
-    setWeights((current) => rescaleWeights(current, id, value, criterionIds));
+    setWeights((current) => ({
+      ...current,
+      [id]: clampImportance(value),
+    }));
   }
 
   function toggleFlatType(flatType: string) {
@@ -147,8 +137,13 @@ export function ProfileFormUI({
       setErrors(["Select at least one flat type to continue."]);
       return;
     }
-    if (Math.abs(totalWeight - 100) > 0.05) {
-      setErrors(["Criteria weights must total 100%."]);
+    if (
+      criterionIds.some((criterionId) => {
+        const rating = weights[criterionId] ?? DEFAULT_IMPORTANCE;
+        return rating < 1 || rating > 10;
+      })
+    ) {
+      setErrors(["Each criterion importance must be between 1 and 10."]);
       return;
     }
 
@@ -162,7 +157,7 @@ export function ProfileFormUI({
       anchorCoordinates: anchor,
       criteriaWeights: criterionIds.map((criterionId) => ({
         criterionId,
-        weightValue: round1(weights[criterionId] ?? 0),
+        weightValue: clampImportance(weights[criterionId] ?? DEFAULT_IMPORTANCE),
       })),
       preferredCommuteMode: commuteMode,
       departureTime: null,
@@ -335,29 +330,34 @@ export function ProfileFormUI({
 
       <fieldset className="field-group">
         <legend>
-          Criteria weights <span className={Math.abs(totalWeight - 100) > 0.05 ? "error-text" : "muted"}>
-            ({totalWeight.toFixed(1)}%)
-          </span>
+          Criteria importance <span className="muted">(1 = not important, 10 = very important)</span>
         </legend>
-        {criteria.map((criterion) => (
-          <label className="weight-row" key={criterion.criterionId}>
-            <span className="weight-label">
-              {criterion.criterionName}
-              <small>{criterion.unit}</small>
-            </span>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              step={1}
-              value={weights[criterion.criterionId] ?? 0}
-              onChange={(event) =>
-                handleWeightChange(criterion.criterionId, Number(event.target.value))
-              }
-            />
-            <output>{(weights[criterion.criterionId] ?? 0).toFixed(1)}%</output>
-          </label>
-        ))}
+        {criteria.map((criterion) => {
+          const rating = weights[criterion.criterionId] ?? DEFAULT_IMPORTANCE;
+          return (
+            <label className="weight-row" key={criterion.criterionId}>
+              <span className="weight-label">
+                {criterion.criterionName}
+                <small>{criterion.unit}</small>
+              </span>
+              <input
+                type="range"
+                min={1}
+                max={10}
+                step={1}
+                value={rating}
+                onChange={(event) =>
+                  handleWeightChange(criterion.criterionId, Number(event.target.value))
+                }
+              />
+              <output>{rating}/10</output>
+            </label>
+          );
+        })}
+        <p className="hint">
+          Ratings are relative. The scoring engine normalises them into weights
+          that sum to 1.0, so there is no need to make them add up to 100%.
+        </p>
       </fieldset>
 
       <div className="form-actions">

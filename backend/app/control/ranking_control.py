@@ -20,6 +20,9 @@ if TYPE_CHECKING:
     from app.strategy.scoring_strategy import ScoringStrategy
 
 
+MAX_RECOMMENDATION_ITEMS = 20
+
+
 class RankingControl:
     """Stereotype: Control. Coordinates scoring and ranking for one profile."""
 
@@ -54,12 +57,23 @@ class RankingControl:
         )
         return self.scoringStrategy.computeSuitabilityScore(subzone, profile, commute)
 
-    def generateRankedRecommendations(self, profile: PreferenceProfile) -> RecommendationSet:
+    def generateRankedRecommendations(
+        self,
+        profile: PreferenceProfile,
+        limit: int | None = MAX_RECOMMENDATION_ITEMS,
+    ) -> RecommendationSet:
         """Generate sorted recommendations for a profile.
 
-        Near the CBD the precomputed matrix is used. For a custom workplace the
-        commute control returns the top-50 shortlist, which becomes the candidate
-        cohort for scoring.
+        Every subzone remains in the scoring cohort. Public transport near the
+        CBD uses the precomputed matrix (with an estimated fallback for missing
+        entries); driving/walking and custom workplaces use live OneMap routing.
+        Subzones without a commute estimate are scored with that criterion
+        treated as missing and reweighted.
+
+        Args:
+            profile: Preference profile to rank.
+            limit: Maximum number of returned items. Defaults to the top 20;
+                pass `None` for the full ranking (used by comparison).
         """
         from app.entity.recommendation_set import RecommendationSet
 
@@ -74,15 +88,23 @@ class RankingControl:
             topK=50,
         )
         warnings = list(commute_result.warnings)
-        candidates = [subzone for subzone in subzones if subzone.subzoneCode in commute_result.data]
-        if not candidates:
-            candidates = subzones
-        items = self.scoringStrategy.scoreCandidates(
+        # Keep every subzone in the cohort. Missing commute estimates are
+        # handled by the scoring strategy as a missing criterion and reweighted,
+        # rather than silently dropping the subzone from the ranking.
+        candidates = subzones
+        all_items = self.scoringStrategy.scoreCandidates(
             candidates,
             profile,
             commute_result.data,
             warnings,
         )
+        items = all_items if limit is None else all_items[: max(0, limit)]
+        retained_codes = {item.subzoneId for item in items}
+        warnings = [
+            warning
+            for warning in warnings
+            if warning.subzoneCode is None or warning.subzoneCode in retained_codes
+        ]
         result = RecommendationSet(
             profileId=profile.getProfileId(),
             generatedTime=datetime.now(timezone.utc),

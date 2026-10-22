@@ -52,4 +52,6 @@ def _defaultMessage(datasetCode: str, code: DataAvailabilityCode, isStale: bool)
         return f"{datasetCode} has a valid zero value"
     if code is DataAvailabilityCode.PARTIAL_DATA:
         return f"{datasetCode} is only partially available"
+    if code is DataAvailabilityCode.ESTIMATED_COMMUTE_FALLBACK:
+        return f"{datasetCode} is using a straight-line distance estimate"
     return f"{datasetCode} data is unavailable"

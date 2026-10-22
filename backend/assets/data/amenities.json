@@ -1,0 +1,7065 @@
+{
+  "metadata": {
+    "generatedAt": "2026-10-22T13:53:23.158035+00:00",
+    "method": "buffer_distance_density",
+    "anchor": "subzone representative point",
+    "radiiKm": {
+      "schools": 1.0,
+      "mrt": 0.8,
+      "parks": 0.5,
+      "healthcare": 2.0,
+      "malls": 1.0
+    },
+    "sources": {
+      "schools": "MOE General information of schools (data.gov.sg)",
+      "parks": "NParks Parks and Nature Reserves (data.gov.sg)",
+      "mrt": "LTA MRT Station Exit (data.gov.sg)",
+      "polyclinics": "HPB Breast Screening Centre and MOH Vaccination Polyclinics (data.gov.sg)",
+      "hospitals": "OneMap Hospitals theme (MOH)",
+      "malls": "OneMap Search (mall / shopping centre) + LTA Carpark Rates major-mall names + named major malls"
+    },
+    "counts": {
+      "Hospital": 31,
+      "MRT": 188,
+      "Park": 462,
+      "Polyclinic": 22,
+      "Primary School": 182,
+      "Secondary School": 144,
+      "Shopping Mall": 143
+    }
+  },
+  "items": [
+    {
+      "name": "ADMIRALTY PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.442635,
+      "longitude": 103.80004
+    },
+    {
+      "name": "AHMAD IBRAHIM PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.433153,
+      "longitude": 103.832942
+    },
+    {
+      "name": "AI TONG SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.360583,
+      "longitude": 103.83302
+    },
+    {
+      "name": "ALEXANDRA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.291334,
+      "longitude": 103.824425
+    },
+    {
+      "name": "ANCHOR GREEN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.39037,
+      "longitude": 103.887165
+    },
+    {
+      "name": "ANDERSON PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.384264,
+      "longitude": 103.841392
+    },
+    {
+      "name": "ANG MO KIO PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.369322,
+      "longitude": 103.839631
+    },
+    {
+      "name": "ANGLO-CHINESE SCHOOL (JUNIOR)",
+      "category": "Primary School",
+      "latitude": 1.30935,
+      "longitude": 103.84095
+    },
+    {
+      "name": "ANGLO-CHINESE SCHOOL (PRIMARY)",
+      "category": "Primary School",
+      "latitude": 1.318371,
+      "longitude": 103.83561
+    },
+    {
+      "name": "ANGSANA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.363606,
+      "longitude": 103.938941
+    },
+    {
+      "name": "BEACON PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.383949,
+      "longitude": 103.773632
+    },
+    {
+      "name": "BEDOK GREEN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.323446,
+      "longitude": 103.937879
+    },
+    {
+      "name": "BENDEMEER PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.321813,
+      "longitude": 103.865404
+    },
+    {
+      "name": "BLANGAH RISE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.27612,
+      "longitude": 103.808629
+    },
+    {
+      "name": "BOON LAY GARDEN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.343179,
+      "longitude": 103.713281
+    },
+    {
+      "name": "BUKIT PANJANG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.373622,
+      "longitude": 103.769375
+    },
+    {
+      "name": "BUKIT TIMAH PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.3373,
+      "longitude": 103.766829
+    },
+    {
+      "name": "BUKIT VIEW PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.345861,
+      "longitude": 103.753666
+    },
+    {
+      "name": "CANBERRA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.45125,
+      "longitude": 103.815859
+    },
+    {
+      "name": "CANOSSA CATHOLIC PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.326644,
+      "longitude": 103.882228
+    },
+    {
+      "name": "CANTONMENT PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.275473,
+      "longitude": 103.839963
+    },
+    {
+      "name": "CASUARINA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.372461,
+      "longitude": 103.95702
+    },
+    {
+      "name": "CATHOLIC HIGH SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.354525,
+      "longitude": 103.844901
+    },
+    {
+      "name": "CEDAR PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.335589,
+      "longitude": 103.875621
+    },
+    {
+      "name": "CHANGKAT PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.340232,
+      "longitude": 103.95208
+    },
+    {
+      "name": "CHIJ (KATONG) PRIMARY",
+      "category": "Primary School",
+      "latitude": 1.306485,
+      "longitude": 103.911106
+    },
+    {
+      "name": "CHIJ (KELLOCK)",
+      "category": "Primary School",
+      "latitude": 1.275023,
+      "longitude": 103.828158
+    },
+    {
+      "name": "CHIJ OUR LADY OF GOOD COUNSEL",
+      "category": "Primary School",
+      "latitude": 1.35743,
+      "longitude": 103.864009
+    },
+    {
+      "name": "CHIJ OUR LADY OF THE NATIVITY",
+      "category": "Primary School",
+      "latitude": 1.373303,
+      "longitude": 103.897576
+    },
+    {
+      "name": "CHIJ OUR LADY QUEEN OF PEACE",
+      "category": "Primary School",
+      "latitude": 1.366604,
+      "longitude": 103.767412
+    },
+    {
+      "name": "CHIJ PRIMARY (TOA PAYOH)",
+      "category": "Primary School",
+      "latitude": 1.332753,
+      "longitude": 103.841847
+    },
+    {
+      "name": "CHIJ ST. NICHOLAS GIRLS' SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.373477,
+      "longitude": 103.834253
+    },
+    {
+      "name": "CHONGFU SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.438396,
+      "longitude": 103.839309
+    },
+    {
+      "name": "CHONGZHENG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.350707,
+      "longitude": 103.9514
+    },
+    {
+      "name": "CHUA CHU KANG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.377759,
+      "longitude": 103.741833
+    },
+    {
+      "name": "CLEMENTI PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.315063,
+      "longitude": 103.763144
+    },
+    {
+      "name": "COMPASSVALE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.394445,
+      "longitude": 103.897812
+    },
+    {
+      "name": "CONCORD PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.380008,
+      "longitude": 103.736225
+    },
+    {
+      "name": "CORPORATION PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.350998,
+      "longitude": 103.707594
+    },
+    {
+      "name": "DAMAI PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.335461,
+      "longitude": 103.92127
+    },
+    {
+      "name": "DAZHONG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.35918,
+      "longitude": 103.748472
+    },
+    {
+      "name": "DE LA SALLE SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.394708,
+      "longitude": 103.743202
+    },
+    {
+      "name": "EAST SPRING PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.352684,
+      "longitude": 103.961677
+    },
+    {
+      "name": "EDGEFIELD PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.400091,
+      "longitude": 103.907848
+    },
+    {
+      "name": "ELIAS PARK PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.374513,
+      "longitude": 103.945128
+    },
+    {
+      "name": "ENDEAVOUR PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.454038,
+      "longitude": 103.817436
+    },
+    {
+      "name": "EVERGREEN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.444153,
+      "longitude": 103.794578
+    },
+    {
+      "name": "FAIRFIELD METHODIST SCHOOL (PRIMARY)",
+      "category": "Primary School",
+      "latitude": 1.300541,
+      "longitude": 103.785438
+    },
+    {
+      "name": "FARRER PARK PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.312369,
+      "longitude": 103.850766
+    },
+    {
+      "name": "FENGSHAN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.329806,
+      "longitude": 103.93171
+    },
+    {
+      "name": "FERN GREEN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.39727,
+      "longitude": 103.88033
+    },
+    {
+      "name": "FERNVALE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.390302,
+      "longitude": 103.874445
+    },
+    {
+      "name": "FIRST TOA PAYOH PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.340323,
+      "longitude": 103.85553
+    },
+    {
+      "name": "FRONTIER PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.336413,
+      "longitude": 103.699702
+    },
+    {
+      "name": "FUCHUN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.43048,
+      "longitude": 103.778193
+    },
+    {
+      "name": "FUHUA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.336504,
+      "longitude": 103.736104
+    },
+    {
+      "name": "GAN ENG SENG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.285595,
+      "longitude": 103.815547
+    },
+    {
+      "name": "GEYLANG METHODIST SCHOOL (PRIMARY)",
+      "category": "Primary School",
+      "latitude": 1.317591,
+      "longitude": 103.883846
+    },
+    {
+      "name": "GONGSHANG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.357237,
+      "longitude": 103.949115
+    },
+    {
+      "name": "GREENDALE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.396482,
+      "longitude": 103.912335
+    },
+    {
+      "name": "GREENRIDGE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.385889,
+      "longitude": 103.767794
+    },
+    {
+      "name": "GREENWOOD PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.4399,
+      "longitude": 103.804726
+    },
+    {
+      "name": "HAIG GIRLS' SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.311943,
+      "longitude": 103.902903
+    },
+    {
+      "name": "HENRY PARK PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.316676,
+      "longitude": 103.784296
+    },
+    {
+      "name": "HOLY INNOCENTS' PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.366938,
+      "longitude": 103.894115
+    },
+    {
+      "name": "HONG WEN SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.32176,
+      "longitude": 103.857628
+    },
+    {
+      "name": "HORIZON PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.39955,
+      "longitude": 103.913405
+    },
+    {
+      "name": "HOUGANG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.377382,
+      "longitude": 103.880805
+    },
+    {
+      "name": "HUAMIN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.426973,
+      "longitude": 103.84424
+    },
+    {
+      "name": "INNOVA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.428967,
+      "longitude": 103.790608
+    },
+    {
+      "name": "JIEMIN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.427688,
+      "longitude": 103.830425
+    },
+    {
+      "name": "JING SHAN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.372233,
+      "longitude": 103.852132
+    },
+    {
+      "name": "JUNYUAN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.347871,
+      "longitude": 103.939222
+    },
+    {
+      "name": "JURONG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.348439,
+      "longitude": 103.733157
+    },
+    {
+      "name": "JURONG WEST PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.339175,
+      "longitude": 103.698804
+    },
+    {
+      "name": "KEMING PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.345528,
+      "longitude": 103.756449
+    },
+    {
+      "name": "KHENG CHENG SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.337338,
+      "longitude": 103.847149
+    },
+    {
+      "name": "KONG HWA SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.310997,
+      "longitude": 103.888352
+    },
+    {
+      "name": "KRANJI PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.393561,
+      "longitude": 103.747363
+    },
+    {
+      "name": "KUO CHUAN PRESBYTERIAN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.349398,
+      "longitude": 103.855018
+    },
+    {
+      "name": "LAKESIDE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.338204,
+      "longitude": 103.71809
+    },
+    {
+      "name": "LIANHUA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.354242,
+      "longitude": 103.754166
+    },
+    {
+      "name": "MAHA BODHI SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.328471,
+      "longitude": 103.901299
+    },
+    {
+      "name": "MARIS STELLA HIGH SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.341395,
+      "longitude": 103.877852
+    },
+    {
+      "name": "MARSILING PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.433839,
+      "longitude": 103.773643
+    },
+    {
+      "name": "MARYMOUNT CONVENT SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.340367,
+      "longitude": 103.840021
+    },
+    {
+      "name": "MAYFLOWER PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.376377,
+      "longitude": 103.843253
+    },
+    {
+      "name": "MEE TOH SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.394618,
+      "longitude": 103.908589
+    },
+    {
+      "name": "MERIDIAN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.375528,
+      "longitude": 103.934889
+    },
+    {
+      "name": "METHODIST GIRLS' SCHOOL (PRIMARY)",
+      "category": "Primary School",
+      "latitude": 1.332948,
+      "longitude": 103.783393
+    },
+    {
+      "name": "MONTFORT JUNIOR SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.373824,
+      "longitude": 103.889308
+    },
+    {
+      "name": "NAN CHIAU PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.392211,
+      "longitude": 103.891181
+    },
+    {
+      "name": "NAN HUA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.319202,
+      "longitude": 103.761095
+    },
+    {
+      "name": "NANYANG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.320847,
+      "longitude": 103.80775
+    },
+    {
+      "name": "NAVAL BASE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.416307,
+      "longitude": 103.838794
+    },
+    {
+      "name": "NEW TOWN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.299642,
+      "longitude": 103.800102
+    },
+    {
+      "name": "NGEE ANN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.305525,
+      "longitude": 103.917463
+    },
+    {
+      "name": "NORTH SPRING PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.387061,
+      "longitude": 103.903203
+    },
+    {
+      "name": "NORTH VIEW PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.427523,
+      "longitude": 103.848191
+    },
+    {
+      "name": "NORTH VISTA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.382822,
+      "longitude": 103.895962
+    },
+    {
+      "name": "NORTHLAND PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.42097,
+      "longitude": 103.840928
+    },
+    {
+      "name": "NORTHOAKS PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.456608,
+      "longitude": 103.814197
+    },
+    {
+      "name": "NORTHSHORE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.418138,
+      "longitude": 103.904417
+    },
+    {
+      "name": "OASIS PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.404624,
+      "longitude": 103.911121
+    },
+    {
+      "name": "OPERA ESTATE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.319319,
+      "longitude": 103.923788
+    },
+    {
+      "name": "PALM VIEW PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.383769,
+      "longitude": 103.891355
+    },
+    {
+      "name": "PARK VIEW PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.377381,
+      "longitude": 103.939542
+    },
+    {
+      "name": "PASIR RIS PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.372419,
+      "longitude": 103.962807
+    },
+    {
+      "name": "PAYA LEBAR METHODIST GIRLS' SCHOOL (PRIMARY)",
+      "category": "Primary School",
+      "latitude": 1.349473,
+      "longitude": 103.884971
+    },
+    {
+      "name": "PEI CHUN PUBLIC SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.337374,
+      "longitude": 103.855586
+    },
+    {
+      "name": "PEI HWA PRESBYTERIAN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.338056,
+      "longitude": 103.776106
+    },
+    {
+      "name": "PEI TONG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.316198,
+      "longitude": 103.7676
+    },
+    {
+      "name": "PEIYING PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.417233,
+      "longitude": 103.830417
+    },
+    {
+      "name": "PIONEER PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.354426,
+      "longitude": 103.732791
+    },
+    {
+      "name": "POI CHING SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.357651,
+      "longitude": 103.935246
+    },
+    {
+      "name": "PRINCESS ELIZABETH PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.349204,
+      "longitude": 103.74102
+    },
+    {
+      "name": "PUNGGOL COVE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.411599,
+      "longitude": 103.898804
+    },
+    {
+      "name": "PUNGGOL GREEN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.401872,
+      "longitude": 103.898801
+    },
+    {
+      "name": "PUNGGOL PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.377795,
+      "longitude": 103.894507
+    },
+    {
+      "name": "PUNGGOL VIEW PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.405146,
+      "longitude": 103.905156
+    },
+    {
+      "name": "QIFA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.313251,
+      "longitude": 103.756743
+    },
+    {
+      "name": "QIHUA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.442036,
+      "longitude": 103.78834
+    },
+    {
+      "name": "QUEENSTOWN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.295594,
+      "longitude": 103.807549
+    },
+    {
+      "name": "RADIN MAS PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.274958,
+      "longitude": 103.824188
+    },
+    {
+      "name": "RAFFLES GIRLS' PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.329404,
+      "longitude": 103.806443
+    },
+    {
+      "name": "RED SWASTIKA SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.333243,
+      "longitude": 103.934332
+    },
+    {
+      "name": "RIVER VALLEY PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.294223,
+      "longitude": 103.835815
+    },
+    {
+      "name": "RIVERSIDE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.447047,
+      "longitude": 103.801832
+    },
+    {
+      "name": "RIVERVALE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.39341,
+      "longitude": 103.90456
+    },
+    {
+      "name": "ROSYTH SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.372891,
+      "longitude": 103.875002
+    },
+    {
+      "name": "RULANG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.346739,
+      "longitude": 103.718458
+    },
+    {
+      "name": "SEMBAWANG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.445047,
+      "longitude": 103.821022
+    },
+    {
+      "name": "SENG KANG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.389497,
+      "longitude": 103.899767
+    },
+    {
+      "name": "SENGKANG GREEN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.392846,
+      "longitude": 103.875218
+    },
+    {
+      "name": "SHUQUN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.347653,
+      "longitude": 103.721524
+    },
+    {
+      "name": "SI LING PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.432409,
+      "longitude": 103.786035
+    },
+    {
+      "name": "SINGAPORE CHINESE GIRLS' PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.320634,
+      "longitude": 103.828165
+    },
+    {
+      "name": "SOUTH VIEW PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.381667,
+      "longitude": 103.746276
+    },
+    {
+      "name": "SPRINGDALE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.39467,
+      "longitude": 103.889926
+    },
+    {
+      "name": "ST ANDREW'S SCHOOL (JUNIOR)",
+      "category": "Primary School",
+      "latitude": 1.331403,
+      "longitude": 103.865117
+    },
+    {
+      "name": "ST. ANTHONY'S CANOSSIAN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.334725,
+      "longitude": 103.941235
+    },
+    {
+      "name": "ST. ANTHONY'S PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.364119,
+      "longitude": 103.749252
+    },
+    {
+      "name": "ST. GABRIEL'S PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.349472,
+      "longitude": 103.862561
+    },
+    {
+      "name": "ST. HILDA'S PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.349386,
+      "longitude": 103.937007
+    },
+    {
+      "name": "ST. JOSEPH'S INSTITUTION JUNIOR",
+      "category": "Primary School",
+      "latitude": 1.317729,
+      "longitude": 103.845612
+    },
+    {
+      "name": "ST. MARGARET'S SCHOOL (PRIMARY)",
+      "category": "Primary School",
+      "latitude": 1.303904,
+      "longitude": 103.845955
+    },
+    {
+      "name": "ST. STEPHEN'S SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.31879,
+      "longitude": 103.917258
+    },
+    {
+      "name": "TAMPINES NORTH PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.360476,
+      "longitude": 103.948726
+    },
+    {
+      "name": "TAMPINES PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.349779,
+      "longitude": 103.944005
+    },
+    {
+      "name": "TANJONG KATONG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.305258,
+      "longitude": 103.900163
+    },
+    {
+      "name": "TAO NAN SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.305285,
+      "longitude": 103.911553
+    },
+    {
+      "name": "TECK GHEE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.365588,
+      "longitude": 103.850957
+    },
+    {
+      "name": "TECK WHYE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.38365,
+      "longitude": 103.753292
+    },
+    {
+      "name": "TELOK KURAU PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.331046,
+      "longitude": 103.910934
+    },
+    {
+      "name": "TEMASEK PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.317707,
+      "longitude": 103.945591
+    },
+    {
+      "name": "TOWNSVILLE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.360033,
+      "longitude": 103.853826
+    },
+    {
+      "name": "UNITY PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.402855,
+      "longitude": 103.746823
+    },
+    {
+      "name": "VALOUR PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.406836,
+      "longitude": 103.899078
+    },
+    {
+      "name": "WATERWAY PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.398828,
+      "longitude": 103.918622
+    },
+    {
+      "name": "WELLINGTON PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.45192,
+      "longitude": 103.822304
+    },
+    {
+      "name": "WEST GROVE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.344879,
+      "longitude": 103.699286
+    },
+    {
+      "name": "WEST SPRING PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.389441,
+      "longitude": 103.766196
+    },
+    {
+      "name": "WEST VIEW PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.383676,
+      "longitude": 103.76024
+    },
+    {
+      "name": "WESTWOOD PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.347185,
+      "longitude": 103.700534
+    },
+    {
+      "name": "WHITE SANDS PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.365557,
+      "longitude": 103.960919
+    },
+    {
+      "name": "WOODGROVE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.433103,
+      "longitude": 103.790604
+    },
+    {
+      "name": "WOODLANDS PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.436551,
+      "longitude": 103.791571
+    },
+    {
+      "name": "WOODLANDS RING PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.434952,
+      "longitude": 103.797436
+    },
+    {
+      "name": "XINGHUA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.357909,
+      "longitude": 103.890473
+    },
+    {
+      "name": "XINGNAN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.342547,
+      "longitude": 103.68795
+    },
+    {
+      "name": "XINMIN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.371395,
+      "longitude": 103.883081
+    },
+    {
+      "name": "XISHAN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.433472,
+      "longitude": 103.837755
+    },
+    {
+      "name": "YANGZHENG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.348646,
+      "longitude": 103.868596
+    },
+    {
+      "name": "YEW TEE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.396766,
+      "longitude": 103.750986
+    },
+    {
+      "name": "YIO CHU KANG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.377933,
+      "longitude": 103.885644
+    },
+    {
+      "name": "YISHUN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.433386,
+      "longitude": 103.834087
+    },
+    {
+      "name": "YU NENG PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.333889,
+      "longitude": 103.932145
+    },
+    {
+      "name": "YUHUA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.342802,
+      "longitude": 103.741106
+    },
+    {
+      "name": "YUMIN PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.351292,
+      "longitude": 103.950462
+    },
+    {
+      "name": "ZHANGDE PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.284212,
+      "longitude": 103.825952
+    },
+    {
+      "name": "ZHENGHUA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.379549,
+      "longitude": 103.769314
+    },
+    {
+      "name": "ZHONGHUA PRIMARY SCHOOL",
+      "category": "Primary School",
+      "latitude": 1.360203,
+      "longitude": 103.869762
+    },
+    {
+      "name": "ADMIRALTY SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.445891,
+      "longitude": 103.802398
+    },
+    {
+      "name": "AHMAD IBRAHIM SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.43606,
+      "longitude": 103.829719
+    },
+    {
+      "name": "ANDERSON SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.37434,
+      "longitude": 103.851554
+    },
+    {
+      "name": "ANG MO KIO SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.367337,
+      "longitude": 103.842155
+    },
+    {
+      "name": "ANGLICAN HIGH SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.330581,
+      "longitude": 103.941083
+    },
+    {
+      "name": "ANGLO-CHINESE SCHOOL (BARKER ROAD)",
+      "category": "Secondary School",
+      "latitude": 1.319616,
+      "longitude": 103.835773
+    },
+    {
+      "name": "ANGLO-CHINESE SCHOOL (INDEPENDENT)",
+      "category": "Secondary School",
+      "latitude": 1.303704,
+      "longitude": 103.780363
+    },
+    {
+      "name": "ASSUMPTION ENGLISH SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.368382,
+      "longitude": 103.766688
+    },
+    {
+      "name": "ASSUMPTION PATHWAY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.369671,
+      "longitude": 103.765959
+    },
+    {
+      "name": "BARTLEY SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.339954,
+      "longitude": 103.882806
+    },
+    {
+      "name": "BEATTY SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.34179,
+      "longitude": 103.852281
+    },
+    {
+      "name": "BEDOK GREEN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.334519,
+      "longitude": 103.935028
+    },
+    {
+      "name": "BEDOK SOUTH SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.325137,
+      "longitude": 103.950989
+    },
+    {
+      "name": "BEDOK VIEW SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.324157,
+      "longitude": 103.943776
+    },
+    {
+      "name": "BENDEMEER SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.324611,
+      "longitude": 103.86097
+    },
+    {
+      "name": "BOON LAY SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.342722,
+      "longitude": 103.701891
+    },
+    {
+      "name": "BOWEN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.37036,
+      "longitude": 103.87766
+    },
+    {
+      "name": "BROADRICK SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.307051,
+      "longitude": 103.886918
+    },
+    {
+      "name": "BUKIT BATOK SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.348491,
+      "longitude": 103.740874
+    },
+    {
+      "name": "BUKIT MERAH SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.285693,
+      "longitude": 103.813439
+    },
+    {
+      "name": "BUKIT PANJANG GOVT. HIGH SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.382242,
+      "longitude": 103.738361
+    },
+    {
+      "name": "BUKIT VIEW SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.345733,
+      "longitude": 103.752227
+    },
+    {
+      "name": "CANBERRA SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.453191,
+      "longitude": 103.814204
+    },
+    {
+      "name": "CEDAR GIRLS' SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.333758,
+      "longitude": 103.873933
+    },
+    {
+      "name": "CHANGKAT CHANGI SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.339506,
+      "longitude": 103.953246
+    },
+    {
+      "name": "CHIJ KATONG CONVENT",
+      "category": "Secondary School",
+      "latitude": 1.306443,
+      "longitude": 103.917144
+    },
+    {
+      "name": "CHIJ SECONDARY (TOA PAYOH)",
+      "category": "Secondary School",
+      "latitude": 1.332461,
+      "longitude": 103.843272
+    },
+    {
+      "name": "CHIJ ST. JOSEPH'S CONVENT",
+      "category": "Secondary School",
+      "latitude": 1.391752,
+      "longitude": 103.902465
+    },
+    {
+      "name": "CHIJ ST. THERESA'S CONVENT",
+      "category": "Secondary School",
+      "latitude": 1.275352,
+      "longitude": 103.822441
+    },
+    {
+      "name": "CHRIST CHURCH SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.426568,
+      "longitude": 103.793451
+    },
+    {
+      "name": "CHUA CHU KANG SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.383334,
+      "longitude": 103.755103
+    },
+    {
+      "name": "CHUNG CHENG HIGH SCHOOL (MAIN)",
+      "category": "Secondary School",
+      "latitude": 1.305092,
+      "longitude": 103.891653
+    },
+    {
+      "name": "CHUNG CHENG HIGH SCHOOL (YISHUN)",
+      "category": "Secondary School",
+      "latitude": 1.419226,
+      "longitude": 103.837391
+    },
+    {
+      "name": "CLEMENTI TOWN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.315539,
+      "longitude": 103.762021
+    },
+    {
+      "name": "COMMONWEALTH SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.319204,
+      "longitude": 103.745637
+    },
+    {
+      "name": "COMPASSVALE SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.396141,
+      "longitude": 103.899847
+    },
+    {
+      "name": "CRESCENT GIRLS' SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.293319,
+      "longitude": 103.817544
+    },
+    {
+      "name": "CREST SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.34312,
+      "longitude": 103.742628
+    },
+    {
+      "name": "DAMAI SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.336928,
+      "longitude": 103.927092
+    },
+    {
+      "name": "DEYI SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.365997,
+      "longitude": 103.852546
+    },
+    {
+      "name": "DUNEARN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.363579,
+      "longitude": 103.744721
+    },
+    {
+      "name": "DUNMAN HIGH SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.299962,
+      "longitude": 103.882942
+    },
+    {
+      "name": "DUNMAN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.360653,
+      "longitude": 103.956214
+    },
+    {
+      "name": "EAST SPRING SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.356225,
+      "longitude": 103.960641
+    },
+    {
+      "name": "EDGEFIELD SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.400593,
+      "longitude": 103.902687
+    },
+    {
+      "name": "EVERGREEN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.441491,
+      "longitude": 103.794138
+    },
+    {
+      "name": "FAIRFIELD METHODIST SCHOOL (SECONDARY)",
+      "category": "Secondary School",
+      "latitude": 1.301634,
+      "longitude": 103.7841
+    },
+    {
+      "name": "FUHUA SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.347014,
+      "longitude": 103.726521
+    },
+    {
+      "name": "GAN ENG SENG SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.289071,
+      "longitude": 103.823734
+    },
+    {
+      "name": "GEYLANG METHODIST SCHOOL (SECONDARY)",
+      "category": "Secondary School",
+      "latitude": 1.317649,
+      "longitude": 103.882661
+    },
+    {
+      "name": "GREENDALE SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.39696,
+      "longitude": 103.9117
+    },
+    {
+      "name": "GREENRIDGE SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.3756,
+      "longitude": 103.763999
+    },
+    {
+      "name": "GUANGYANG SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.344409,
+      "longitude": 103.850212
+    },
+    {
+      "name": "HAI SING CATHOLIC SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.374337,
+      "longitude": 103.954545
+    },
+    {
+      "name": "HILLGROVE SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.352736,
+      "longitude": 103.752986
+    },
+    {
+      "name": "HOLY INNOCENTS' HIGH SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.371545,
+      "longitude": 103.896399
+    },
+    {
+      "name": "HOUGANG SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.377629,
+      "longitude": 103.882539
+    },
+    {
+      "name": "HUA YI SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.352344,
+      "longitude": 103.721832
+    },
+    {
+      "name": "HWA CHONG INSTITUTION",
+      "category": "Secondary School",
+      "latitude": 1.326358,
+      "longitude": 103.80329
+    },
+    {
+      "name": "JUNYUAN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.353613,
+      "longitude": 103.933886
+    },
+    {
+      "name": "JURONG SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.33002,
+      "longitude": 103.723953
+    },
+    {
+      "name": "JURONG WEST SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.335256,
+      "longitude": 103.702099
+    },
+    {
+      "name": "JURONGVILLE SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.351289,
+      "longitude": 103.728908
+    },
+    {
+      "name": "JUYING SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.338723,
+      "longitude": 103.68731
+    },
+    {
+      "name": "KENT RIDGE SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.301228,
+      "longitude": 103.76489
+    },
+    {
+      "name": "KRANJI SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.390051,
+      "longitude": 103.741191
+    },
+    {
+      "name": "KUO CHUAN PRESBYTERIAN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.350171,
+      "longitude": 103.854984
+    },
+    {
+      "name": "LOYANG VIEW SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.366584,
+      "longitude": 103.956945
+    },
+    {
+      "name": "MANJUSRI SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.327471,
+      "longitude": 103.90172
+    },
+    {
+      "name": "MARSILING SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.436644,
+      "longitude": 103.776008
+    },
+    {
+      "name": "MAYFLOWER SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.368273,
+      "longitude": 103.835361
+    },
+    {
+      "name": "MERIDIAN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.367247,
+      "longitude": 103.948972
+    },
+    {
+      "name": "METHODIST GIRLS' SCHOOL (SECONDARY)",
+      "category": "Secondary School",
+      "latitude": 1.332948,
+      "longitude": 103.783393
+    },
+    {
+      "name": "MONTFORT SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.373961,
+      "longitude": 103.888928
+    },
+    {
+      "name": "NAN CHIAU HIGH SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.388796,
+      "longitude": 103.890004
+    },
+    {
+      "name": "NAN HUA HIGH SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.308095,
+      "longitude": 103.768561
+    },
+    {
+      "name": "NANYANG GIRLS' HIGH SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.330583,
+      "longitude": 103.802421
+    },
+    {
+      "name": "NATIONAL JUNIOR COLLEGE",
+      "category": "Secondary School",
+      "latitude": 1.330293,
+      "longitude": 103.804111
+    },
+    {
+      "name": "NAVAL BASE SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.419379,
+      "longitude": 103.83105
+    },
+    {
+      "name": "NEW TOWN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.309776,
+      "longitude": 103.773189
+    },
+    {
+      "name": "NGEE ANN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.354475,
+      "longitude": 103.956747
+    },
+    {
+      "name": "NORTH VISTA SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.381131,
+      "longitude": 103.899189
+    },
+    {
+      "name": "NORTHBROOKS SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.420813,
+      "longitude": 103.845147
+    },
+    {
+      "name": "NORTHLAND SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.435802,
+      "longitude": 103.840105
+    },
+    {
+      "name": "NORTHLIGHT SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.3191,
+      "longitude": 103.85576
+    },
+    {
+      "name": "NUS HIGH SCHOOL OF MATHEMATICS AND SCIENCE",
+      "category": "Secondary School",
+      "latitude": 1.306007,
+      "longitude": 103.770153
+    },
+    {
+      "name": "ORCHID PARK SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.41532,
+      "longitude": 103.837859
+    },
+    {
+      "name": "OUTRAM SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.39775,
+      "longitude": 103.89123
+    },
+    {
+      "name": "PASIR RIS CREST SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.372841,
+      "longitude": 103.959728
+    },
+    {
+      "name": "PASIR RIS SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.354227,
+      "longitude": 103.948963
+    },
+    {
+      "name": "PAYA LEBAR METHODIST GIRLS' SCHOOL (SECONDARY)",
+      "category": "Secondary School",
+      "latitude": 1.350968,
+      "longitude": 103.88512
+    },
+    {
+      "name": "PEI HWA SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.390375,
+      "longitude": 103.878462
+    },
+    {
+      "name": "PEICAI SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.359516,
+      "longitude": 103.870011
+    },
+    {
+      "name": "PEIRCE SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.366659,
+      "longitude": 103.830216
+    },
+    {
+      "name": "PRESBYTERIAN HIGH SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.382012,
+      "longitude": 103.843149
+    },
+    {
+      "name": "PUNGGOL SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.402057,
+      "longitude": 103.909214
+    },
+    {
+      "name": "QUEENSTOWN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.293521,
+      "longitude": 103.813191
+    },
+    {
+      "name": "QUEENSWAY SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.300223,
+      "longitude": 103.802207
+    },
+    {
+      "name": "RAFFLES GIRLS' SCHOOL (SECONDARY)",
+      "category": "Secondary School",
+      "latitude": 1.342175,
+      "longitude": 103.843134
+    },
+    {
+      "name": "RAFFLES INSTITUTION",
+      "category": "Secondary School",
+      "latitude": 1.34629,
+      "longitude": 103.84362
+    },
+    {
+      "name": "REGENT SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.393279,
+      "longitude": 103.751034
+    },
+    {
+      "name": "RIVER VALLEY HIGH SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.344596,
+      "longitude": 103.708191
+    },
+    {
+      "name": "RIVERSIDE SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.441102,
+      "longitude": 103.788308
+    },
+    {
+      "name": "SCHOOL OF SCIENCE AND TECHNOLOGY, SINGAPORE",
+      "category": "Secondary School",
+      "latitude": 1.312928,
+      "longitude": 103.774012
+    },
+    {
+      "name": "SCHOOL OF THE ARTS, SINGAPORE",
+      "category": "Secondary School",
+      "latitude": 1.299365,
+      "longitude": 103.848687
+    },
+    {
+      "name": "SEMBAWANG SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.445315,
+      "longitude": 103.816843
+    },
+    {
+      "name": "SENG KANG SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.386597,
+      "longitude": 103.898365
+    },
+    {
+      "name": "SERANGOON GARDEN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.369326,
+      "longitude": 103.86927
+    },
+    {
+      "name": "SERANGOON SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.374655,
+      "longitude": 103.902139
+    },
+    {
+      "name": "SINGAPORE CHINESE GIRLS' SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.320634,
+      "longitude": 103.828165
+    },
+    {
+      "name": "SINGAPORE SPORTS SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.426411,
+      "longitude": 103.789445
+    },
+    {
+      "name": "SPECTRA SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.437038,
+      "longitude": 103.8041
+    },
+    {
+      "name": "SPRINGFIELD SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.349573,
+      "longitude": 103.930354
+    },
+    {
+      "name": "ST ANDREW'S SCHOOL (SECONDARY)",
+      "category": "Secondary School",
+      "latitude": 1.330694,
+      "longitude": 103.866249
+    },
+    {
+      "name": "ST. ANTHONY'S CANOSSIAN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.334663,
+      "longitude": 103.941977
+    },
+    {
+      "name": "ST. GABRIEL'S SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.346488,
+      "longitude": 103.876094
+    },
+    {
+      "name": "ST. HILDA'S SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.349739,
+      "longitude": 103.937608
+    },
+    {
+      "name": "ST. JOSEPH'S INSTITUTION",
+      "category": "Secondary School",
+      "latitude": 1.323653,
+      "longitude": 103.828499
+    },
+    {
+      "name": "ST. MARGARET'S SCHOOL (SECONDARY)",
+      "category": "Secondary School",
+      "latitude": 1.320068,
+      "longitude": 103.809951
+    },
+    {
+      "name": "ST. PATRICK'S SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.307883,
+      "longitude": 103.917638
+    },
+    {
+      "name": "SWISS COTTAGE SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.364717,
+      "longitude": 103.750396
+    },
+    {
+      "name": "TAMPINES SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.349261,
+      "longitude": 103.944264
+    },
+    {
+      "name": "TANJONG KATONG GIRLS' SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.308213,
+      "longitude": 103.89582
+    },
+    {
+      "name": "TANJONG KATONG SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.308735,
+      "longitude": 103.897225
+    },
+    {
+      "name": "TEMASEK JUNIOR COLLEGE",
+      "category": "Secondary School",
+      "latitude": 1.35728,
+      "longitude": 103.956186
+    },
+    {
+      "name": "TEMASEK SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.315917,
+      "longitude": 103.947564
+    },
+    {
+      "name": "UNITY SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.400015,
+      "longitude": 103.746021
+    },
+    {
+      "name": "VICTORIA SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.308713,
+      "longitude": 103.927981
+    },
+    {
+      "name": "WEST SPRING SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.387823,
+      "longitude": 103.760129
+    },
+    {
+      "name": "WESTWOOD SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.353737,
+      "longitude": 103.701772
+    },
+    {
+      "name": "WHITLEY SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.355052,
+      "longitude": 103.842552
+    },
+    {
+      "name": "WOODGROVE SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.428318,
+      "longitude": 103.796048
+    },
+    {
+      "name": "WOODLANDS RING SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.430705,
+      "longitude": 103.777626
+    },
+    {
+      "name": "WOODLANDS SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.439121,
+      "longitude": 103.774586
+    },
+    {
+      "name": "XINMIN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.372559,
+      "longitude": 103.883052
+    },
+    {
+      "name": "YIO CHU KANG SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.377976,
+      "longitude": 103.842137
+    },
+    {
+      "name": "YISHUN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.428133,
+      "longitude": 103.828764
+    },
+    {
+      "name": "YISHUN TOWN SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.432322,
+      "longitude": 103.838094
+    },
+    {
+      "name": "YUAN CHING SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.342006,
+      "longitude": 103.720899
+    },
+    {
+      "name": "YUHUA SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.347186,
+      "longitude": 103.722687
+    },
+    {
+      "name": "YUSOF ISHAK SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.406937,
+      "longitude": 103.896275
+    },
+    {
+      "name": "YUYING SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.357136,
+      "longitude": 103.890195
+    },
+    {
+      "name": "ZHENGHUA SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.388366,
+      "longitude": 103.765511
+    },
+    {
+      "name": "ZHONGHUA SECONDARY SCHOOL",
+      "category": "Secondary School",
+      "latitude": 1.348407,
+      "longitude": 103.86943
+    },
+    {
+      "name": "Ang Mo Kio Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.374311,
+      "longitude": 103.845608
+    },
+    {
+      "name": "Bedok Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.326985,
+      "longitude": 103.931621
+    },
+    {
+      "name": "Bukit Batok Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.352015,
+      "longitude": 103.747822
+    },
+    {
+      "name": "Bukit Panjang Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.382713,
+      "longitude": 103.760166
+    },
+    {
+      "name": "Choa Chu Kang Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.382341,
+      "longitude": 103.750777
+    },
+    {
+      "name": "Clementi Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.312481,
+      "longitude": 103.765477
+    },
+    {
+      "name": "Eunos Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.317328,
+      "longitude": 103.905711
+    },
+    {
+      "name": "Geylang Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.319494,
+      "longitude": 103.887166
+    },
+    {
+      "name": "Hougang Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.370018,
+      "longitude": 103.888996
+    },
+    {
+      "name": "Kallang Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.316693,
+      "longitude": 103.858687
+    },
+    {
+      "name": "Khatib Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.418251,
+      "longitude": 103.834346
+    },
+    {
+      "name": "Outram Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.279331,
+      "longitude": 103.838315
+    },
+    {
+      "name": "Pasir Ris Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.368587,
+      "longitude": 103.959205
+    },
+    {
+      "name": "Pioneer Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.338562,
+      "longitude": 103.698979
+    },
+    {
+      "name": "Punggol Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.402878,
+      "longitude": 103.913196
+    },
+    {
+      "name": "Sembawang Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.448263,
+      "longitude": 103.822764
+    },
+    {
+      "name": "SengKang Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.392786,
+      "longitude": 103.893906
+    },
+    {
+      "name": "Tampines North Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.363311,
+      "longitude": 103.937556
+    },
+    {
+      "name": "Tampines Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.35731,
+      "longitude": 103.945849
+    },
+    {
+      "name": "Toa Payoh Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.33448,
+      "longitude": 103.858956
+    },
+    {
+      "name": "Woodlands Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.430893,
+      "longitude": 103.775213
+    },
+    {
+      "name": "Yishun Polyclinic",
+      "category": "Polyclinic",
+      "latitude": 1.430359,
+      "longitude": 103.839191
+    },
+    {
+      "name": "ALEXANDRA HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.285481,
+      "longitude": 103.800181
+    },
+    {
+      "name": "ANG MO KIO - THYE HUA KWAN HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.384032,
+      "longitude": 103.840357
+    },
+    {
+      "name": "CHANGI GENERAL HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.340826,
+      "longitude": 103.949465
+    },
+    {
+      "name": "CRAWFURD HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.326802,
+      "longitude": 103.813318
+    },
+    {
+      "name": "Changi Medical Facility",
+      "category": "Hospital",
+      "latitude": 1.358034,
+      "longitude": 103.971332
+    },
+    {
+      "name": "FARRER PARK HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.312473,
+      "longitude": 103.85393
+    },
+    {
+      "name": "GLENEAGLES HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.307428,
+      "longitude": 103.819605
+    },
+    {
+      "name": "INSTITUTE OF MENTAL HEALTH / WOODBRIDGE HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.381698,
+      "longitude": 103.886316
+    },
+    {
+      "name": "JURONG COMMUNITY HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.333463,
+      "longitude": 103.745567
+    },
+    {
+      "name": "KHOO TECK PUAT HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.424081,
+      "longitude": 103.838579
+    },
+    {
+      "name": "KK WOMEN'S AND CHILDREN'S HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.31049,
+      "longitude": 103.846813
+    },
+    {
+      "name": "MOUNT ALVERNIA HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.34182,
+      "longitude": 103.837594
+    },
+    {
+      "name": "MOUNT ELIZABETH HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.305155,
+      "longitude": 103.835433
+    },
+    {
+      "name": "MOUNT ELIZABETH NOVENA HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.32214,
+      "longitude": 103.844212
+    },
+    {
+      "name": "NATIONAL HEART CENTRE SINGAPORE",
+      "category": "Hospital",
+      "latitude": 1.278581,
+      "longitude": 103.836119
+    },
+    {
+      "name": "NATIONAL UNIVERSITY HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.293489,
+      "longitude": 103.782736
+    },
+    {
+      "name": "NG TENG FONG GENERAL HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.333463,
+      "longitude": 103.745567
+    },
+    {
+      "name": "OUTRAM COMMUNITY HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.277557,
+      "longitude": 103.835504
+    },
+    {
+      "name": "PARKWAY EAST HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.315088,
+      "longitude": 103.908757
+    },
+    {
+      "name": "RAFFLES HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.301182,
+      "longitude": 103.857466
+    },
+    {
+      "name": "REN CI COMMUNITY HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.322885,
+      "longitude": 103.845973
+    },
+    {
+      "name": "SENGKANG COMMUNITY HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.396022,
+      "longitude": 103.891834
+    },
+    {
+      "name": "SENGKANG GENERAL HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.394393,
+      "longitude": 103.893164
+    },
+    {
+      "name": "SINGAPORE GENERAL HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.279644,
+      "longitude": 103.835542
+    },
+    {
+      "name": "ST. ANDREW'S COMMUNITY HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.341687,
+      "longitude": 103.948799
+    },
+    {
+      "name": "ST. LUKE'S HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.3496,
+      "longitude": 103.742182
+    },
+    {
+      "name": "TAN TOCK SENG HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.320631,
+      "longitude": 103.84846
+    },
+    {
+      "name": "THOMSON MEDICAL CENTRE",
+      "category": "Hospital",
+      "latitude": 1.325361,
+      "longitude": 103.841458
+    },
+    {
+      "name": "TTSH Integrated Care Hub",
+      "category": "Hospital",
+      "latitude": 1.323695,
+      "longitude": 103.846335
+    },
+    {
+      "name": "Woodlands Hospital",
+      "category": "Hospital",
+      "latitude": 1.424681,
+      "longitude": 103.794744
+    },
+    {
+      "name": "YISHUN COMMUNITY HOSPITAL",
+      "category": "Hospital",
+      "latitude": 1.423767,
+      "longitude": 103.837242
+    },
+    {
+      "name": "ADMIRALTY PK",
+      "category": "Park",
+      "latitude": 1.443813,
+      "longitude": 103.782425
+    },
+    {
+      "name": "AIDA PK",
+      "category": "Park",
+      "latitude": 1.31934,
+      "longitude": 103.927954
+    },
+    {
+      "name": "ALJUNIED PK",
+      "category": "Park",
+      "latitude": 1.329474,
+      "longitude": 103.880024
+    },
+    {
+      "name": "ALMOND CRESCENT PG",
+      "category": "Park",
+      "latitude": 1.3732,
+      "longitude": 103.771969
+    },
+    {
+      "name": "ANG MO KIO LINEAR PARK (PLOT 4)",
+      "category": "Park",
+      "latitude": 1.379134,
+      "longitude": 103.865796
+    },
+    {
+      "name": "ANG MO KIO LINEAR PK (PLOT 2)",
+      "category": "Park",
+      "latitude": 1.379351,
+      "longitude": 103.871759
+    },
+    {
+      "name": "ANG MO KIO LINEAR PK (PLOT 3)",
+      "category": "Park",
+      "latitude": 1.379292,
+      "longitude": 103.868722
+    },
+    {
+      "name": "ANG MO KIO TOWN GARDEN EAST",
+      "category": "Park",
+      "latitude": 1.370814,
+      "longitude": 103.850494
+    },
+    {
+      "name": "ANG MO KIO TOWN GARDEN WEST",
+      "category": "Park",
+      "latitude": 1.374588,
+      "longitude": 103.842742
+    },
+    {
+      "name": "ANN SIANG HILL PK",
+      "category": "Park",
+      "latitude": 1.280745,
+      "longitude": 103.846431
+    },
+    {
+      "name": "ARMENIAN STREET (FCP)",
+      "category": "Park",
+      "latitude": 1.294437,
+      "longitude": 103.849479
+    },
+    {
+      "name": "AROOZOO AVE PG",
+      "category": "Park",
+      "latitude": 1.3552,
+      "longitude": 103.885955
+    },
+    {
+      "name": "ARTHUR PK",
+      "category": "Park",
+      "latitude": 1.303882,
+      "longitude": 103.888196
+    },
+    {
+      "name": "BANGSAWAN PK",
+      "category": "Park",
+      "latitude": 1.321226,
+      "longitude": 103.92381
+    },
+    {
+      "name": "BANYAN VILLAS PG",
+      "category": "Park",
+      "latitude": 1.387296,
+      "longitude": 103.838843
+    },
+    {
+      "name": "BEDOK RESERVOIR PK",
+      "category": "Park",
+      "latitude": 1.343157,
+      "longitude": 103.931055
+    },
+    {
+      "name": "BEDOK RIA CRESCENT PG",
+      "category": "Park",
+      "latitude": 1.327417,
+      "longitude": 103.953009
+    },
+    {
+      "name": "BEDOK TERRACE PG",
+      "category": "Park",
+      "latitude": 1.325501,
+      "longitude": 103.94746
+    },
+    {
+      "name": "BEDOK TOWN PK",
+      "category": "Park",
+      "latitude": 1.334961,
+      "longitude": 103.923893
+    },
+    {
+      "name": "BEGONIA RD PG",
+      "category": "Park",
+      "latitude": 1.387819,
+      "longitude": 103.863289
+    },
+    {
+      "name": "BENG WAN RD PG",
+      "category": "Park",
+      "latitude": 1.323805,
+      "longitude": 103.865835
+    },
+    {
+      "name": "BERLAYER CREEK",
+      "category": "Park",
+      "latitude": 1.269056,
+      "longitude": 103.803823
+    },
+    {
+      "name": "BETING BRONOK",
+      "category": "Park",
+      "latitude": 1.436924,
+      "longitude": 104.047526
+    },
+    {
+      "name": "BIDADARI PARK HILLOCK",
+      "category": "Park",
+      "latitude": 1.341966,
+      "longitude": 103.872961
+    },
+    {
+      "name": "BIDADARI PARK MEMORIAL GARDEN",
+      "category": "Park",
+      "latitude": 1.338029,
+      "longitude": 103.876211
+    },
+    {
+      "name": "BIDADARI PARK SOUTH",
+      "category": "Park",
+      "latitude": 1.338654,
+      "longitude": 103.873473
+    },
+    {
+      "name": "BIDADARI PK",
+      "category": "Park",
+      "latitude": 1.340338,
+      "longitude": 103.874424
+    },
+    {
+      "name": "BINCHANG RISE PG",
+      "category": "Park",
+      "latitude": 1.348811,
+      "longitude": 103.843659
+    },
+    {
+      "name": "BISHAN-ANG MO KIO PARK (POND GARDENS)",
+      "category": "Park",
+      "latitude": 1.365191,
+      "longitude": 103.836444
+    },
+    {
+      "name": "BISHAN-ANG MO KIO PARK (RIVER PLAINS)",
+      "category": "Park",
+      "latitude": 1.360519,
+      "longitude": 103.848867
+    },
+    {
+      "name": "BOUGAINVILLEA PK",
+      "category": "Park",
+      "latitude": 1.326768,
+      "longitude": 103.807574
+    },
+    {
+      "name": "BOUNDARY ROAD PARK",
+      "category": "Park",
+      "latitude": 1.35401,
+      "longitude": 103.874801
+    },
+    {
+      "name": "BROOK'S PARK",
+      "category": "Park",
+      "latitude": 1.405612,
+      "longitude": 103.822986
+    },
+    {
+      "name": "BUKIT BATOK NATURE PARK",
+      "category": "Park",
+      "latitude": 1.349979,
+      "longitude": 103.764614
+    },
+    {
+      "name": "BUKIT BATOK TOWN PARK",
+      "category": "Park",
+      "latitude": 1.358251,
+      "longitude": 103.755886
+    },
+    {
+      "name": "BUKIT CANBERRA",
+      "category": "Park",
+      "latitude": 1.447752,
+      "longitude": 103.824884
+    },
+    {
+      "name": "BUKIT CANBERRA (SPORTSG)",
+      "category": "Park",
+      "latitude": 1.447584,
+      "longitude": 103.823183
+    },
+    {
+      "name": "BUKIT CHERMIN BOARDWALK",
+      "category": "Park",
+      "latitude": 1.265281,
+      "longitude": 103.807425
+    },
+    {
+      "name": "BUKIT GOMBAK PARK",
+      "category": "Park",
+      "latitude": 1.367267,
+      "longitude": 103.752413
+    },
+    {
+      "name": "BUKIT TIMAH NATURE RESERVE",
+      "category": "Park",
+      "latitude": 1.354117,
+      "longitude": 103.779375
+    },
+    {
+      "name": "BULIM PARK (PHASE 1)",
+      "category": "Park",
+      "latitude": 1.35511,
+      "longitude": 103.705648
+    },
+    {
+      "name": "BUNGA RAMPAI PK",
+      "category": "Park",
+      "latitude": 1.340401,
+      "longitude": 103.884275
+    },
+    {
+      "name": "BURGUNDY CRESCENT PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.339714,
+      "longitude": 103.761018
+    },
+    {
+      "name": "BUTTERFLY AVE PG",
+      "category": "Park",
+      "latitude": 1.334449,
+      "longitude": 103.877377
+    },
+    {
+      "name": "CACTUS RD PG",
+      "category": "Park",
+      "latitude": 1.390139,
+      "longitude": 103.852202
+    },
+    {
+      "name": "CAMBRIDGE PARK",
+      "category": "Park",
+      "latitude": 1.313661,
+      "longitude": 103.846841
+    },
+    {
+      "name": "CAMP ROAD INTERIM PARK",
+      "category": "Park",
+      "latitude": 1.302439,
+      "longitude": 103.818491
+    },
+    {
+      "name": "CANNING RISE (FCP)",
+      "category": "Park",
+      "latitude": 1.295459,
+      "longitude": 103.848307
+    },
+    {
+      "name": "CARMICHAEL RD PG",
+      "category": "Park",
+      "latitude": 1.342726,
+      "longitude": 103.863096
+    },
+    {
+      "name": "CARPMAEL PARK",
+      "category": "Park",
+      "latitude": 1.311501,
+      "longitude": 103.89895
+    },
+    {
+      "name": "CASHEW CRESCENT FC PG",
+      "category": "Park",
+      "latitude": 1.372315,
+      "longitude": 103.769569
+    },
+    {
+      "name": "CASHEW LINK PG",
+      "category": "Park",
+      "latitude": 1.371316,
+      "longitude": 103.768931
+    },
+    {
+      "name": "CASHEW RD INTERIM PK",
+      "category": "Park",
+      "latitude": 1.372423,
+      "longitude": 103.767991
+    },
+    {
+      "name": "CASHEW RD PG",
+      "category": "Park",
+      "latitude": 1.370619,
+      "longitude": 103.764662
+    },
+    {
+      "name": "CENTRAL CATCHMENT NATURE RESERVE",
+      "category": "Park",
+      "latitude": 1.376383,
+      "longitude": 103.804784
+    },
+    {
+      "name": "CEYLON ROAD INTERIM PARK",
+      "category": "Park",
+      "latitude": 1.309781,
+      "longitude": 103.899598
+    },
+    {
+      "name": "CHANGI BEACH PK",
+      "category": "Park",
+      "latitude": 1.371747,
+      "longitude": 104.005707
+    },
+    {
+      "name": "CHANGI EAST BOARDWALK (CHANGI FERRY TER)",
+      "category": "Park",
+      "latitude": 1.392213,
+      "longitude": 103.98419
+    },
+    {
+      "name": "CHANGI HEIGHTS PG",
+      "category": "Park",
+      "latitude": 1.362846,
+      "longitude": 103.972206
+    },
+    {
+      "name": "CHANGI POINT PROMENADE",
+      "category": "Park",
+      "latitude": 1.390203,
+      "longitude": 103.989125
+    },
+    {
+      "name": "CHANGI POINT WATERFRONT PK",
+      "category": "Park",
+      "latitude": 1.390467,
+      "longitude": 103.988268
+    },
+    {
+      "name": "CHANGI PT FERRY TERMINAL",
+      "category": "Park",
+      "latitude": 1.391212,
+      "longitude": 103.987307
+    },
+    {
+      "name": "CHANGI WEST BOARDWALK (CHANGI BC)",
+      "category": "Park",
+      "latitude": 1.392303,
+      "longitude": 103.977641
+    },
+    {
+      "name": "CHARTWELL DR PK",
+      "category": "Park",
+      "latitude": 1.35959,
+      "longitude": 103.863862
+    },
+    {
+      "name": "CHEMPAKA AVE PG",
+      "category": "Park",
+      "latitude": 1.331874,
+      "longitude": 103.875616
+    },
+    {
+      "name": "CHENG SOON GARDEN PG",
+      "category": "Park",
+      "latitude": 1.336031,
+      "longitude": 103.771639
+    },
+    {
+      "name": "CHESTNUT CLOSE PARK",
+      "category": "Park",
+      "latitude": 1.368958,
+      "longitude": 103.7733
+    },
+    {
+      "name": "CHESTNUT DR PG",
+      "category": "Park",
+      "latitude": 1.367621,
+      "longitude": 103.768825
+    },
+    {
+      "name": "CHESTNUT NATURE PARK",
+      "category": "Park",
+      "latitude": 1.373018,
+      "longitude": 103.780032
+    },
+    {
+      "name": "CHILTERN DRIVE INTERIM PARK",
+      "category": "Park",
+      "latitude": 1.34856,
+      "longitude": 103.862012
+    },
+    {
+      "name": "CHINESE GARDENS",
+      "category": "Park",
+      "latitude": 1.338595,
+      "longitude": 103.729827
+    },
+    {
+      "name": "CHOA CHU KANG PK",
+      "category": "Park",
+      "latitude": 1.386889,
+      "longitude": 103.747195
+    },
+    {
+      "name": "CHOA CHU KANG WAY PARK (PD WORKSITE)",
+      "category": "Park",
+      "latitude": 1.404813,
+      "longitude": 103.745849
+    },
+    {
+      "name": "CHU YEN PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.358684,
+      "longitude": 103.758989
+    },
+    {
+      "name": "CHUAN GREEN PG",
+      "category": "Park",
+      "latitude": 1.360553,
+      "longitude": 103.866042
+    },
+    {
+      "name": "CHUAN LANE PARK",
+      "category": "Park",
+      "latitude": 1.352179,
+      "longitude": 103.857994
+    },
+    {
+      "name": "CHUAN WALK PG",
+      "category": "Park",
+      "latitude": 1.357223,
+      "longitude": 103.867558
+    },
+    {
+      "name": "CHWEE CHIAN PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.27942,
+      "longitude": 103.78886
+    },
+    {
+      "name": "CITY GREEN",
+      "category": "Park",
+      "latitude": 1.311829,
+      "longitude": 103.856003
+    },
+    {
+      "name": "CLEMENTI CRESCENT PG",
+      "category": "Park",
+      "latitude": 1.323517,
+      "longitude": 103.773303
+    },
+    {
+      "name": "CLEMENTI WOODS PARK",
+      "category": "Park",
+      "latitude": 1.300341,
+      "longitude": 103.7672
+    },
+    {
+      "name": "CLOVER CRESCENT PG",
+      "category": "Park",
+      "latitude": 1.351044,
+      "longitude": 103.844577
+    },
+    {
+      "name": "CLOVER WAY PG",
+      "category": "Park",
+      "latitude": 1.350194,
+      "longitude": 103.845998
+    },
+    {
+      "name": "COLCHESTER GROVE INTERIM OS",
+      "category": "Park",
+      "latitude": 1.356429,
+      "longitude": 103.866713
+    },
+    {
+      "name": "COLCHESTER GROVE OS",
+      "category": "Park",
+      "latitude": 1.35752,
+      "longitude": 103.867429
+    },
+    {
+      "name": "CONEY ISLAND PARK",
+      "category": "Park",
+      "latitude": 1.409458,
+      "longitude": 103.92151
+    },
+    {
+      "name": "CONNAUGHT DRIVE",
+      "category": "Park",
+      "latitude": 1.288312,
+      "longitude": 103.852346
+    },
+    {
+      "name": "CORONATION PARK",
+      "category": "Park",
+      "latitude": 1.321921,
+      "longitude": 103.796457
+    },
+    {
+      "name": "COUNTRYSIDE PG",
+      "category": "Park",
+      "latitude": 1.390184,
+      "longitude": 103.83841
+    },
+    {
+      "name": "DAIRY FARM NATURE PARK",
+      "category": "Park",
+      "latitude": 1.358902,
+      "longitude": 103.770674
+    },
+    {
+      "name": "DEDAP PLACE PG",
+      "category": "Park",
+      "latitude": 1.387782,
+      "longitude": 103.868435
+    },
+    {
+      "name": "DEW GARDEN",
+      "category": "Park",
+      "latitude": 1.399182,
+      "longitude": 103.871083
+    },
+    {
+      "name": "DHOBY GHAUT GREEN",
+      "category": "Park",
+      "latitude": 1.298425,
+      "longitude": 103.845864
+    },
+    {
+      "name": "DUCHESS PK",
+      "category": "Park",
+      "latitude": 1.324192,
+      "longitude": 103.805452
+    },
+    {
+      "name": "DUXTON PLAIN PK",
+      "category": "Park",
+      "latitude": 1.277532,
+      "longitude": 103.842013
+    },
+    {
+      "name": "EAST COAST PARK AREA A",
+      "category": "Park",
+      "latitude": 1.294058,
+      "longitude": 103.869658
+    },
+    {
+      "name": "EAST COAST PARK AREA A3",
+      "category": "Park",
+      "latitude": 1.293693,
+      "longitude": 103.877504
+    },
+    {
+      "name": "EAST COAST PARK AREA B",
+      "category": "Park",
+      "latitude": 1.296479,
+      "longitude": 103.900151
+    },
+    {
+      "name": "EAST COAST PARK AREA C",
+      "category": "Park",
+      "latitude": 1.300351,
+      "longitude": 103.91246
+    },
+    {
+      "name": "EAST COAST PARK AREA D",
+      "category": "Park",
+      "latitude": 1.304281,
+      "longitude": 103.925243
+    },
+    {
+      "name": "EAST COAST PARK AREA E",
+      "category": "Park",
+      "latitude": 1.307063,
+      "longitude": 103.932635
+    },
+    {
+      "name": "EAST COAST PARK AREA E1 CAR PARK",
+      "category": "Park",
+      "latitude": 1.307312,
+      "longitude": 103.930213
+    },
+    {
+      "name": "EAST COAST PARK AREA F",
+      "category": "Park",
+      "latitude": 1.309473,
+      "longitude": 103.9396
+    },
+    {
+      "name": "EAST COAST PARK AREA G",
+      "category": "Park",
+      "latitude": 1.313744,
+      "longitude": 103.958876
+    },
+    {
+      "name": "EAST COAST PARK AREA H",
+      "category": "Park",
+      "latitude": 1.315619,
+      "longitude": 103.967306
+    },
+    {
+      "name": "EAST COAST TERRACE PK",
+      "category": "Park",
+      "latitude": 1.310745,
+      "longitude": 103.92384
+    },
+    {
+      "name": "EASTWOOD PK PG",
+      "category": "Park",
+      "latitude": 1.323164,
+      "longitude": 103.957546
+    },
+    {
+      "name": "ELIAS TERRACE PG",
+      "category": "Park",
+      "latitude": 1.372232,
+      "longitude": 103.941085
+    },
+    {
+      "name": "ELITE TERRACE PK",
+      "category": "Park",
+      "latitude": 1.315619,
+      "longitude": 103.924258
+    },
+    {
+      "name": "ELLINGTON SQUARE PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.372082,
+      "longitude": 103.834587
+    },
+    {
+      "name": "EMPRESS PLACE",
+      "category": "Park",
+      "latitude": 1.287862,
+      "longitude": 103.851926
+    },
+    {
+      "name": "ENG KONG GARDEN PG",
+      "category": "Park",
+      "latitude": 1.337157,
+      "longitude": 103.769025
+    },
+    {
+      "name": "ENG KONG PLACE FC",
+      "category": "Park",
+      "latitude": 1.334739,
+      "longitude": 103.767245
+    },
+    {
+      "name": "ESPLANADE PK",
+      "category": "Park",
+      "latitude": 1.28954,
+      "longitude": 103.853786
+    },
+    {
+      "name": "FABER HEIGHTS OPEN SPACE",
+      "category": "Park",
+      "latitude": 1.32254,
+      "longitude": 103.757621
+    },
+    {
+      "name": "FABER HEIGHTS PARK",
+      "category": "Park",
+      "latitude": 1.323831,
+      "longitude": 103.755269
+    },
+    {
+      "name": "FABER HILLS PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.319796,
+      "longitude": 103.757976
+    },
+    {
+      "name": "FARQUHAR GARDEN (FCP)",
+      "category": "Park",
+      "latitude": 1.29567,
+      "longitude": 103.848663
+    },
+    {
+      "name": "FERNVALE PARK",
+      "category": "Park",
+      "latitude": 1.397474,
+      "longitude": 103.874875
+    },
+    {
+      "name": "FLORISSA PK PG",
+      "category": "Park",
+      "latitude": 1.386971,
+      "longitude": 103.835072
+    },
+    {
+      "name": "FORT CANNING PARK",
+      "category": "Park",
+      "latitude": 1.294018,
+      "longitude": 103.84542
+    },
+    {
+      "name": "FUDU WALK PG",
+      "category": "Park",
+      "latitude": 1.389714,
+      "longitude": 103.837211
+    },
+    {
+      "name": "FULTON AVE PG",
+      "category": "Park",
+      "latitude": 1.362124,
+      "longitude": 103.833527
+    },
+    {
+      "name": "FUYONG INTERIM PK",
+      "category": "Park",
+      "latitude": 1.357431,
+      "longitude": 103.768766
+    },
+    {
+      "name": "GANGES AVE OS",
+      "category": "Park",
+      "latitude": 1.29079,
+      "longitude": 103.831799
+    },
+    {
+      "name": "GARDEN VIEW PG",
+      "category": "Park",
+      "latitude": 1.360278,
+      "longitude": 103.86571
+    },
+    {
+      "name": "GELENGGANG PARK",
+      "category": "Park",
+      "latitude": 1.373578,
+      "longitude": 103.829845
+    },
+    {
+      "name": "GENTLE DR PG",
+      "category": "Park",
+      "latitude": 1.320403,
+      "longitude": 103.840694
+    },
+    {
+      "name": "GEYLANG EAST PK",
+      "category": "Park",
+      "latitude": 1.321794,
+      "longitude": 103.887655
+    },
+    {
+      "name": "GOLDEN RISE PG",
+      "category": "Park",
+      "latitude": 1.336232,
+      "longitude": 103.764904
+    },
+    {
+      "name": "GOLDHILL AVE PG",
+      "category": "Park",
+      "latitude": 1.321123,
+      "longitude": 103.8332
+    },
+    {
+      "name": "GOODLINK PK PG",
+      "category": "Park",
+      "latitude": 1.427304,
+      "longitude": 103.825386
+    },
+    {
+      "name": "GREEN LANE PARK",
+      "category": "Park",
+      "latitude": 1.31081,
+      "longitude": 103.892459
+    },
+    {
+      "name": "GREENFIELD DR PG",
+      "category": "Park",
+      "latitude": 1.313016,
+      "longitude": 103.917664
+    },
+    {
+      "name": "GREENLEAF VIEW PK PG",
+      "category": "Park",
+      "latitude": 1.32231,
+      "longitude": 103.788087
+    },
+    {
+      "name": "GREENRIDGE CRESCENT PG",
+      "category": "Park",
+      "latitude": 1.334227,
+      "longitude": 103.765752
+    },
+    {
+      "name": "GREENWAY SOUTH",
+      "category": "Park",
+      "latitude": 1.334355,
+      "longitude": 103.870693
+    },
+    {
+      "name": "GREENWOOD CRESCENT PG",
+      "category": "Park",
+      "latitude": 1.335523,
+      "longitude": 103.805444
+    },
+    {
+      "name": "GROVE LANE PG",
+      "category": "Park",
+      "latitude": 1.313819,
+      "longitude": 103.784195
+    },
+    {
+      "name": "GUILLEMARD RD OS",
+      "category": "Park",
+      "latitude": 1.314598,
+      "longitude": 103.892414
+    },
+    {
+      "name": "HAIG WALK (GEYLANG RD-DUNMAN RD)",
+      "category": "Park",
+      "latitude": 1.306425,
+      "longitude": 103.900788
+    },
+    {
+      "name": "HAIG WALK EXTENSION",
+      "category": "Park",
+      "latitude": 1.310717,
+      "longitude": 103.89866
+    },
+    {
+      "name": "HAMPSTEAD WETLANDS PARK",
+      "category": "Park",
+      "latitude": 1.409314,
+      "longitude": 103.869172
+    },
+    {
+      "name": "HANDY RD OS",
+      "category": "Park",
+      "latitude": 1.299052,
+      "longitude": 103.847807
+    },
+    {
+      "name": "HARVEY CRESCENT PG",
+      "category": "Park",
+      "latitude": 1.34082,
+      "longitude": 103.955123
+    },
+    {
+      "name": "HAUS LINEAR PARK",
+      "category": "Park",
+      "latitude": 1.364549,
+      "longitude": 103.860041
+    },
+    {
+      "name": "HAZEL PK OS",
+      "category": "Park",
+      "latitude": 1.371595,
+      "longitude": 103.763646
+    },
+    {
+      "name": "HDB - COMPASSVALE LN (BLK 205B)",
+      "category": "Park",
+      "latitude": 1.385095,
+      "longitude": 103.89693
+    },
+    {
+      "name": "HENRY PK",
+      "category": "Park",
+      "latitude": 1.316262,
+      "longitude": 103.783108
+    },
+    {
+      "name": "HIGHGATE WALK PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.340415,
+      "longitude": 103.765909
+    },
+    {
+      "name": "HILLVIEW CRESCENT PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.355278,
+      "longitude": 103.76116
+    },
+    {
+      "name": "HINDHEDE NATURE PARK",
+      "category": "Park",
+      "latitude": 1.349919,
+      "longitude": 103.775879
+    },
+    {
+      "name": "HOLLAND GREEN LINEAR PARK",
+      "category": "Park",
+      "latitude": 1.321428,
+      "longitude": 103.775926
+    },
+    {
+      "name": "HOLLAND GREEN PG",
+      "category": "Park",
+      "latitude": 1.326816,
+      "longitude": 103.782583
+    },
+    {
+      "name": "HOLLAND GROVE VIEW FC",
+      "category": "Park",
+      "latitude": 1.312486,
+      "longitude": 103.782776
+    },
+    {
+      "name": "HOLLAND GROVE VIEW PG",
+      "category": "Park",
+      "latitude": 1.312964,
+      "longitude": 103.781225
+    },
+    {
+      "name": "HOLLAND VILLAGE PK",
+      "category": "Park",
+      "latitude": 1.311578,
+      "longitude": 103.795675
+    },
+    {
+      "name": "HONG LIM PK",
+      "category": "Park",
+      "latitude": 1.286327,
+      "longitude": 103.847059
+    },
+    {
+      "name": "HOOPER RD PG",
+      "category": "Park",
+      "latitude": 1.312252,
+      "longitude": 103.843072
+    },
+    {
+      "name": "HOOVER PARK (LOR PISANG HIJAU PLAYGROUND)",
+      "category": "Park",
+      "latitude": 1.34387,
+      "longitude": 103.773021
+    },
+    {
+      "name": "HORTPARK",
+      "category": "Park",
+      "latitude": 1.279077,
+      "longitude": 103.798053
+    },
+    {
+      "name": "HOW SUN LINEAR PARK",
+      "category": "Park",
+      "latitude": 1.344512,
+      "longitude": 103.876373
+    },
+    {
+      "name": "HUA GUAN CRESCENT PG",
+      "category": "Park",
+      "latitude": 1.337,
+      "longitude": 103.785036
+    },
+    {
+      "name": "INTERIM PK AT TERANG BULAN AVE",
+      "category": "Park",
+      "latitude": 1.321548,
+      "longitude": 103.921504
+    },
+    {
+      "name": "IRAU DRIVE PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.461945,
+      "longitude": 103.840067
+    },
+    {
+      "name": "ISLAND GDNS WALK PG",
+      "category": "Park",
+      "latitude": 1.362034,
+      "longitude": 103.828389
+    },
+    {
+      "name": "ISTANA PK",
+      "category": "Park",
+      "latitude": 1.299255,
+      "longitude": 103.843993
+    },
+    {
+      "name": "JALAN DERMAWAN PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.360503,
+      "longitude": 103.758629
+    },
+    {
+      "name": "JALAN ISHAK PARK",
+      "category": "Park",
+      "latitude": 1.325254,
+      "longitude": 103.907072
+    },
+    {
+      "name": "JALAN MAS KUNING PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.307842,
+      "longitude": 103.763519
+    },
+    {
+      "name": "JALAN MAS PUTEH PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.30906,
+      "longitude": 103.762007
+    },
+    {
+      "name": "JALAN REMAJA INTERIM PARK",
+      "category": "Park",
+      "latitude": 1.357583,
+      "longitude": 103.760826
+    },
+    {
+      "name": "JALAN SEMBILANG PARK",
+      "category": "Park",
+      "latitude": 1.356602,
+      "longitude": 103.833999
+    },
+    {
+      "name": "JALAN SENANG LINEAR PARK",
+      "category": "Park",
+      "latitude": 1.324223,
+      "longitude": 103.915001
+    },
+    {
+      "name": "JALAN SINGA PARK",
+      "category": "Park",
+      "latitude": 1.330948,
+      "longitude": 103.9069
+    },
+    {
+      "name": "JALAN TEKUKOR PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.3461,
+      "longitude": 103.766844
+    },
+    {
+      "name": "JAMBOL PLACE PARK",
+      "category": "Park",
+      "latitude": 1.279106,
+      "longitude": 103.790217
+    },
+    {
+      "name": "JANGGUS GARDEN",
+      "category": "Park",
+      "latitude": 1.457523,
+      "longitude": 103.836997
+    },
+    {
+      "name": "JAPANESE GARDENS",
+      "category": "Park",
+      "latitude": 1.335008,
+      "longitude": 103.731024
+    },
+    {
+      "name": "JLG: LAKESIDE GARDEN",
+      "category": "Park",
+      "latitude": 1.334568,
+      "longitude": 103.727267
+    },
+    {
+      "name": "JLN ANGIN LAUT PG",
+      "category": "Park",
+      "latitude": 1.337137,
+      "longitude": 103.956234
+    },
+    {
+      "name": "JLN AWANG INTERIM PK",
+      "category": "Park",
+      "latitude": 1.323883,
+      "longitude": 103.905868
+    },
+    {
+      "name": "JLN BULOH PERINDU PG",
+      "category": "Park",
+      "latitude": 1.30838,
+      "longitude": 103.919427
+    },
+    {
+      "name": "JLN CHEMPAKA KUNING PG",
+      "category": "Park",
+      "latitude": 1.329845,
+      "longitude": 103.950187
+    },
+    {
+      "name": "JLN DAUD INTERIM PK",
+      "category": "Park",
+      "latitude": 1.325589,
+      "longitude": 103.906532
+    },
+    {
+      "name": "JLN DAUD PK",
+      "category": "Park",
+      "latitude": 1.325861,
+      "longitude": 103.907043
+    },
+    {
+      "name": "JLN EUNOS INTERIM PK",
+      "category": "Park",
+      "latitude": 1.324956,
+      "longitude": 103.906013
+    },
+    {
+      "name": "JLN GENENG INTERIM PK",
+      "category": "Park",
+      "latitude": 1.353336,
+      "longitude": 103.880907
+    },
+    {
+      "name": "JLN ISMAIL PK",
+      "category": "Park",
+      "latitude": 1.323192,
+      "longitude": 103.905858
+    },
+    {
+      "name": "JLN KAYU INTERIM PK",
+      "category": "Park",
+      "latitude": 1.398687,
+      "longitude": 103.872593
+    },
+    {
+      "name": "JLN KAYU PK",
+      "category": "Park",
+      "latitude": 1.397975,
+      "longitude": 103.872908
+    },
+    {
+      "name": "JLN KEBAYA PG",
+      "category": "Park",
+      "latitude": 1.314252,
+      "longitude": 103.780285
+    },
+    {
+      "name": "JLN KELICHAP PG",
+      "category": "Park",
+      "latitude": 1.346816,
+      "longitude": 103.881827
+    },
+    {
+      "name": "JLN LIMAU KASTURI OS",
+      "category": "Park",
+      "latitude": 1.324406,
+      "longitude": 103.946221
+    },
+    {
+      "name": "JLN LIMAU KASTURI PG",
+      "category": "Park",
+      "latitude": 1.323983,
+      "longitude": 103.946385
+    },
+    {
+      "name": "JLN LIMAU MANIS PG",
+      "category": "Park",
+      "latitude": 1.324732,
+      "longitude": 103.949046
+    },
+    {
+      "name": "JLN NAUNG PG",
+      "category": "Park",
+      "latitude": 1.369523,
+      "longitude": 103.892813
+    },
+    {
+      "name": "JLN PARI BURONG PG",
+      "category": "Park",
+      "latitude": 1.333835,
+      "longitude": 103.94696
+    },
+    {
+      "name": "JLN PARI DEDAP PG",
+      "category": "Park",
+      "latitude": 1.332934,
+      "longitude": 103.943935
+    },
+    {
+      "name": "JLN PELATOK OS",
+      "category": "Park",
+      "latitude": 1.346175,
+      "longitude": 103.960857
+    },
+    {
+      "name": "JLN PELATOK PG",
+      "category": "Park",
+      "latitude": 1.346148,
+      "longitude": 103.960334
+    },
+    {
+      "name": "JLN PINTAU PG",
+      "category": "Park",
+      "latitude": 1.353963,
+      "longitude": 103.839969
+    },
+    {
+      "name": "JLN RASOK PK",
+      "category": "Park",
+      "latitude": 1.416388,
+      "longitude": 103.75905
+    },
+    {
+      "name": "JLN RIANG PG",
+      "category": "Park",
+      "latitude": 1.347171,
+      "longitude": 103.867372
+    },
+    {
+      "name": "JLN SELASEH PG",
+      "category": "Park",
+      "latitude": 1.385717,
+      "longitude": 103.873472
+    },
+    {
+      "name": "JLN SENANG PG",
+      "category": "Park",
+      "latitude": 1.329006,
+      "longitude": 103.915548
+    },
+    {
+      "name": "JLN SENDUDOK PARK",
+      "category": "Park",
+      "latitude": 1.443743,
+      "longitude": 103.827233
+    },
+    {
+      "name": "JLN YASIN INTERIM PK",
+      "category": "Park",
+      "latitude": 1.32136,
+      "longitude": 103.905503
+    },
+    {
+      "name": "JOO CHIAT TERRACE PK",
+      "category": "Park",
+      "latitude": 1.31433,
+      "longitude": 103.901751
+    },
+    {
+      "name": "JUBILEE PARK (FCP)",
+      "category": "Park",
+      "latitude": 1.2934,
+      "longitude": 103.844931
+    },
+    {
+      "name": "JUPITER PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.358293,
+      "longitude": 103.825134
+    },
+    {
+      "name": "JURONG CENTRAL PARK",
+      "category": "Park",
+      "latitude": 1.335791,
+      "longitude": 103.706946
+    },
+    {
+      "name": "KALLANG LINEAR PARK",
+      "category": "Park",
+      "latitude": 1.350298,
+      "longitude": 103.855837
+    },
+    {
+      "name": "KALLANG RIVERSIDE PK",
+      "category": "Park",
+      "latitude": 1.30773,
+      "longitude": 103.868833
+    },
+    {
+      "name": "KAMPONG GLAM PK",
+      "category": "Park",
+      "latitude": 1.302669,
+      "longitude": 103.863183
+    },
+    {
+      "name": "KANDIS GARDEN",
+      "category": "Park",
+      "latitude": 1.456192,
+      "longitude": 103.835645
+    },
+    {
+      "name": "KATONG PK",
+      "category": "Park",
+      "latitude": 1.296304,
+      "longitude": 103.886944
+    },
+    {
+      "name": "KEMUNING PK",
+      "category": "Park",
+      "latitude": 1.439322,
+      "longitude": 103.827083
+    },
+    {
+      "name": "KENT RIDGE PARK",
+      "category": "Park",
+      "latitude": 1.284794,
+      "longitude": 103.789377
+    },
+    {
+      "name": "KEW AVE PG",
+      "category": "Park",
+      "latitude": 1.321626,
+      "longitude": 103.94845
+    },
+    {
+      "name": "KEW CRESCENT PG",
+      "category": "Park",
+      "latitude": 1.319399,
+      "longitude": 103.948459
+    },
+    {
+      "name": "KEW DR PG",
+      "category": "Park",
+      "latitude": 1.320855,
+      "longitude": 103.951698
+    },
+    {
+      "name": "KHEAM HOCK PARK",
+      "category": "Park",
+      "latitude": 1.330419,
+      "longitude": 103.819233
+    },
+    {
+      "name": "KIM PONG PARK",
+      "category": "Park",
+      "latitude": 1.283629,
+      "longitude": 103.829763
+    },
+    {
+      "name": "KIM SENG PK",
+      "category": "Park",
+      "latitude": 1.292629,
+      "longitude": 103.834288
+    },
+    {
+      "name": "KING'S DOCK PARK",
+      "category": "Park",
+      "latitude": 1.264021,
+      "longitude": 103.81744
+    },
+    {
+      "name": "KING'S DR PG",
+      "category": "Park",
+      "latitude": 1.319092,
+      "longitude": 103.806055
+    },
+    {
+      "name": "KING'S RD PARK",
+      "category": "Park",
+      "latitude": 1.316888,
+      "longitude": 103.804897
+    },
+    {
+      "name": "KOON SENG PARK",
+      "category": "Park",
+      "latitude": 1.311021,
+      "longitude": 103.902851
+    },
+    {
+      "name": "KRANJI COASTAL NATURE PARK",
+      "category": "Park",
+      "latitude": 1.443472,
+      "longitude": 103.734926
+    },
+    {
+      "name": "KRANJI MARSHES",
+      "category": "Park",
+      "latitude": 1.419451,
+      "longitude": 103.730382
+    },
+    {
+      "name": "KRANJI RESERVOIR PARK A",
+      "category": "Park",
+      "latitude": 1.439033,
+      "longitude": 103.742658
+    },
+    {
+      "name": "KRANJI RESERVOIR PARK B",
+      "category": "Park",
+      "latitude": 1.439692,
+      "longitude": 103.737688
+    },
+    {
+      "name": "LABRADOR NATURE PARK",
+      "category": "Park",
+      "latitude": 1.268646,
+      "longitude": 103.800522
+    },
+    {
+      "name": "LABRADOR NATURE RESERVE",
+      "category": "Park",
+      "latitude": 1.266438,
+      "longitude": 103.802588
+    },
+    {
+      "name": "LABRADOR VILLA PARK",
+      "category": "Park",
+      "latitude": 1.271301,
+      "longitude": 103.80133
+    },
+    {
+      "name": "LAKESIDE GROVE FITNESS CORNER",
+      "category": "Park",
+      "latitude": 1.339733,
+      "longitude": 103.717071
+    },
+    {
+      "name": "LAKESIDE GROVE PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.340151,
+      "longitude": 103.71856
+    },
+    {
+      "name": "LEBAN PARK",
+      "category": "Park",
+      "latitude": 1.372526,
+      "longitude": 103.829292
+    },
+    {
+      "name": "LEGUNDI PK",
+      "category": "Park",
+      "latitude": 1.441251,
+      "longitude": 103.822071
+    },
+    {
+      "name": "LENGKONG ENAM PARK",
+      "category": "Park",
+      "latitude": 1.327437,
+      "longitude": 103.914738
+    },
+    {
+      "name": "LENTOR GREEN PG",
+      "category": "Park",
+      "latitude": 1.385356,
+      "longitude": 103.837046
+    },
+    {
+      "name": "LENTOR GROVE PG",
+      "category": "Park",
+      "latitude": 1.386367,
+      "longitude": 103.838381
+    },
+    {
+      "name": "LENTOR RD PG",
+      "category": "Park",
+      "latitude": 1.388302,
+      "longitude": 103.837578
+    },
+    {
+      "name": "LENTOR STREET PG",
+      "category": "Park",
+      "latitude": 1.39013,
+      "longitude": 103.834336
+    },
+    {
+      "name": "LENTOR VALE PG",
+      "category": "Park",
+      "latitude": 1.388042,
+      "longitude": 103.83609
+    },
+    {
+      "name": "LENTOR WALK PG",
+      "category": "Park",
+      "latitude": 1.388707,
+      "longitude": 103.83839
+    },
+    {
+      "name": "LILAC DR PG",
+      "category": "Park",
+      "latitude": 1.381132,
+      "longitude": 103.861149
+    },
+    {
+      "name": "LIMAU GARDEN PG",
+      "category": "Park",
+      "latitude": 1.322521,
+      "longitude": 103.950676
+    },
+    {
+      "name": "LIMAU VILLAS PG",
+      "category": "Park",
+      "latitude": 1.323872,
+      "longitude": 103.950514
+    },
+    {
+      "name": "LORONG 40 GEYLANG PG",
+      "category": "Park",
+      "latitude": 1.313643,
+      "longitude": 103.889367
+    },
+    {
+      "name": "LORONG KEMUNCHUP PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.360392,
+      "longitude": 103.760934
+    },
+    {
+      "name": "LORONG MARICAN PARK",
+      "category": "Park",
+      "latitude": 1.323884,
+      "longitude": 103.907932
+    },
+    {
+      "name": "LORONG MARZUKI PARK",
+      "category": "Park",
+      "latitude": 1.323801,
+      "longitude": 103.908357
+    },
+    {
+      "name": "LORONG MELAYU PARK",
+      "category": "Park",
+      "latitude": 1.324008,
+      "longitude": 103.909372
+    },
+    {
+      "name": "LORONG ONG LYE PARK",
+      "category": "Park",
+      "latitude": 1.347745,
+      "longitude": 103.878676
+    },
+    {
+      "name": "LORONG SARINA INTERIM PK",
+      "category": "Park",
+      "latitude": 1.320161,
+      "longitude": 103.90608
+    },
+    {
+      "name": "LORONG TANGGAM PK",
+      "category": "Park",
+      "latitude": 1.398948,
+      "longitude": 103.873732
+    },
+    {
+      "name": "LOWER PEIRCE RESERVOIR PARK",
+      "category": "Park",
+      "latitude": 1.36923,
+      "longitude": 103.826548
+    },
+    {
+      "name": "LOWER SELETAR RESERVOIR PARK",
+      "category": "Park",
+      "latitude": 1.407533,
+      "longitude": 103.828928
+    },
+    {
+      "name": "LOYANG VIEW PG",
+      "category": "Park",
+      "latitude": 1.363145,
+      "longitude": 103.966003
+    },
+    {
+      "name": "LUCKY GARDENS PG",
+      "category": "Park",
+      "latitude": 1.319187,
+      "longitude": 103.941428
+    },
+    {
+      "name": "LUXUS HILLS PARK",
+      "category": "Park",
+      "latitude": 1.379322,
+      "longitude": 103.874669
+    },
+    {
+      "name": "MACPHERSON LINEAR PK",
+      "category": "Park",
+      "latitude": 1.333057,
+      "longitude": 103.881891
+    },
+    {
+      "name": "MACRITCHIE RESERVOIR PK",
+      "category": "Park",
+      "latitude": 1.343388,
+      "longitude": 103.836186
+    },
+    {
+      "name": "MALCOLM PK",
+      "category": "Park",
+      "latitude": 1.322562,
+      "longitude": 103.826518
+    },
+    {
+      "name": "MAPLE LANE PARK",
+      "category": "Park",
+      "latitude": 1.330441,
+      "longitude": 103.79279
+    },
+    {
+      "name": "MAR THOMA ROAD PARK",
+      "category": "Park",
+      "latitude": 1.327379,
+      "longitude": 103.862069
+    },
+    {
+      "name": "MARIAM WALK PG",
+      "category": "Park",
+      "latitude": 1.359539,
+      "longitude": 103.968547
+    },
+    {
+      "name": "MARIAM WAY PG",
+      "category": "Park",
+      "latitude": 1.361882,
+      "longitude": 103.966233
+    },
+    {
+      "name": "MARINE PARADE RD PK",
+      "category": "Park",
+      "latitude": 1.304916,
+      "longitude": 103.908068
+    },
+    {
+      "name": "MARKET STREET PARK",
+      "category": "Park",
+      "latitude": 1.283535,
+      "longitude": 103.8503
+    },
+    {
+      "name": "MARSILING PARK",
+      "category": "Park",
+      "latitude": 1.437561,
+      "longitude": 103.76985
+    },
+    {
+      "name": "MAYFAIR PK",
+      "category": "Park",
+      "latitude": 1.341547,
+      "longitude": 103.780882
+    },
+    {
+      "name": "MAYFLOWER CRESCENT PG",
+      "category": "Park",
+      "latitude": 1.372749,
+      "longitude": 103.839523
+    },
+    {
+      "name": "MEI HWAN CRESCENT PG",
+      "category": "Park",
+      "latitude": 1.35291,
+      "longitude": 103.861759
+    },
+    {
+      "name": "MEI HWAN DR PG",
+      "category": "Park",
+      "latitude": 1.353348,
+      "longitude": 103.863418
+    },
+    {
+      "name": "MENG SUAN INTERIM PARK",
+      "category": "Park",
+      "latitude": 1.402995,
+      "longitude": 103.815345
+    },
+    {
+      "name": "MERA TERRACE PG",
+      "category": "Park",
+      "latitude": 1.347403,
+      "longitude": 103.963538
+    },
+    {
+      "name": "MERAGI RD PG",
+      "category": "Park",
+      "latitude": 1.344061,
+      "longitude": 103.96007
+    },
+    {
+      "name": "MEYER RD PG",
+      "category": "Park",
+      "latitude": 1.298596,
+      "longitude": 103.894197
+    },
+    {
+      "name": "MIMOSA RD PG",
+      "category": "Park",
+      "latitude": 1.38418,
+      "longitude": 103.863049
+    },
+    {
+      "name": "MIMOSA TERRACE PG",
+      "category": "Park",
+      "latitude": 1.383945,
+      "longitude": 103.860402
+    },
+    {
+      "name": "MIMOSA WALK PG",
+      "category": "Park",
+      "latitude": 1.383117,
+      "longitude": 103.861432
+    },
+    {
+      "name": "MOUNT EMILY PK",
+      "category": "Park",
+      "latitude": 1.304285,
+      "longitude": 103.847666
+    },
+    {
+      "name": "MOUNT FABER PARK",
+      "category": "Park",
+      "latitude": 1.270519,
+      "longitude": 103.819363
+    },
+    {
+      "name": "MOUNT SINAI PLAIN PG",
+      "category": "Park",
+      "latitude": 1.315894,
+      "longitude": 103.781106
+    },
+    {
+      "name": "MT BATTEN RD/OLD AIRPORT RD OS",
+      "category": "Park",
+      "latitude": 1.305826,
+      "longitude": 103.883332
+    },
+    {
+      "name": "MUGLISTON PK PG",
+      "category": "Park",
+      "latitude": 1.385442,
+      "longitude": 103.877929
+    },
+    {
+      "name": "NAMLY PK",
+      "category": "Park",
+      "latitude": 1.323361,
+      "longitude": 103.796563
+    },
+    {
+      "name": "NATIVE PLANT CENTRE",
+      "category": "Park",
+      "latitude": 1.417346,
+      "longitude": 103.727512
+    },
+    {
+      "name": "NERAM CRESCENT PG",
+      "category": "Park",
+      "latitude": 1.385574,
+      "longitude": 103.865742
+    },
+    {
+      "name": "NIM CRESCENT OS",
+      "category": "Park",
+      "latitude": 1.382994,
+      "longitude": 103.866826
+    },
+    {
+      "name": "NIM MEADOW PARK",
+      "category": "Park",
+      "latitude": 1.378674,
+      "longitude": 103.863385
+    },
+    {
+      "name": "NORTH BRIDGE GARDEN",
+      "category": "Park",
+      "latitude": 1.30407,
+      "longitude": 103.862226
+    },
+    {
+      "name": "NOVENA PK",
+      "category": "Park",
+      "latitude": 1.322298,
+      "longitude": 103.842829
+    },
+    {
+      "name": "NOVENA RISE PK",
+      "category": "Park",
+      "latitude": 1.324951,
+      "longitude": 103.84295
+    },
+    {
+      "name": "OASIS@MULBERRY PK",
+      "category": "Park",
+      "latitude": 1.332907,
+      "longitude": 103.878395
+    },
+    {
+      "name": "OLD UPPER ALJUNIED ROAD",
+      "category": "Park",
+      "latitude": 1.339497,
+      "longitude": 103.871995
+    },
+    {
+      "name": "ONAN ROAD GREEN SPACE",
+      "category": "Park",
+      "latitude": 1.310092,
+      "longitude": 103.900712
+    },
+    {
+      "name": "ONE-NORTH PARK",
+      "category": "Park",
+      "latitude": 1.299366,
+      "longitude": 103.790735
+    },
+    {
+      "name": "OPERA ESTATE FOOTBALL FIELD",
+      "category": "Park",
+      "latitude": 1.320084,
+      "longitude": 103.924459
+    },
+    {
+      "name": "ORCHARD FOUNTAIN CORNER",
+      "category": "Park",
+      "latitude": 1.3016,
+      "longitude": 103.837604
+    },
+    {
+      "name": "ORCHID VILLAGE PG",
+      "category": "Park",
+      "latitude": 1.335734,
+      "longitude": 103.801766
+    },
+    {
+      "name": "PANDAN RESERVOIR FITNESS CORNER",
+      "category": "Park",
+      "latitude": 1.31752,
+      "longitude": 103.748748
+    },
+    {
+      "name": "PARK AT SEMBAWANG ALLEY",
+      "category": "Park",
+      "latitude": 1.448727,
+      "longitude": 103.819046
+    },
+    {
+      "name": "PARLIAMENT PROMENADE",
+      "category": "Park",
+      "latitude": 1.287402,
+      "longitude": 103.850905
+    },
+    {
+      "name": "PARRY AVE INTERIM PK",
+      "category": "Park",
+      "latitude": 1.363567,
+      "longitude": 103.88092
+    },
+    {
+      "name": "PARRY RD PG",
+      "category": "Park",
+      "latitude": 1.365816,
+      "longitude": 103.877631
+    },
+    {
+      "name": "PASIR PANJANG NURSERY",
+      "category": "Park",
+      "latitude": 1.282565,
+      "longitude": 103.795018
+    },
+    {
+      "name": "PASIR PANJANG PARK",
+      "category": "Park",
+      "latitude": 1.27495,
+      "longitude": 103.79235
+    },
+    {
+      "name": "PASIR RIS PK",
+      "category": "Park",
+      "latitude": 1.382063,
+      "longitude": 103.951138
+    },
+    {
+      "name": "PASIR RIS TOWN PK",
+      "category": "Park",
+      "latitude": 1.372109,
+      "longitude": 103.95225
+    },
+    {
+      "name": "PAVILION PARK PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.372048,
+      "longitude": 103.751851
+    },
+    {
+      "name": "PAVILION PLAYGROUND II",
+      "category": "Park",
+      "latitude": 1.368382,
+      "longitude": 103.753448
+    },
+    {
+      "name": "PAYA LEBAR CRESCENT OS",
+      "category": "Park",
+      "latitude": 1.349001,
+      "longitude": 103.883599
+    },
+    {
+      "name": "PAYA LEBAR ROAD PARK",
+      "category": "Park",
+      "latitude": 1.332861,
+      "longitude": 103.888589
+    },
+    {
+      "name": "PEARL'S HILL CITY PK",
+      "category": "Park",
+      "latitude": 1.284518,
+      "longitude": 103.838728
+    },
+    {
+      "name": "PEBBLE GARDEN",
+      "category": "Park",
+      "latitude": 1.450646,
+      "longitude": 103.829493
+    },
+    {
+      "name": "PEK KIO PARK",
+      "category": "Park",
+      "latitude": 1.316333,
+      "longitude": 103.849408
+    },
+    {
+      "name": "PEMIMPIN PLACE PG",
+      "category": "Park",
+      "latitude": 1.353338,
+      "longitude": 103.84274
+    },
+    {
+      "name": "PENANG RD OS",
+      "category": "Park",
+      "latitude": 1.300238,
+      "longitude": 103.841495
+    },
+    {
+      "name": "PESARI WALK PG",
+      "category": "Park",
+      "latitude": 1.324436,
+      "longitude": 103.953986
+    },
+    {
+      "name": "PHOENIX PARK",
+      "category": "Park",
+      "latitude": 1.375979,
+      "longitude": 103.757199
+    },
+    {
+      "name": "PK VILLAS TERRACE PG",
+      "category": "Park",
+      "latitude": 1.369029,
+      "longitude": 103.879884
+    },
+    {
+      "name": "PLATINA RD PG",
+      "category": "Park",
+      "latitude": 1.427602,
+      "longitude": 103.826119
+    },
+    {
+      "name": "POH HUAT RD PG",
+      "category": "Park",
+      "latitude": 1.366997,
+      "longitude": 103.881589
+    },
+    {
+      "name": "PULAU SEKUDU",
+      "category": "Park",
+      "latitude": 1.403982,
+      "longitude": 103.988063
+    },
+    {
+      "name": "PULAU UBIN AND CHEK JAWA",
+      "category": "Park",
+      "latitude": 1.41378,
+      "longitude": 103.965408
+    },
+    {
+      "name": "PULAU UNUM",
+      "category": "Park",
+      "latitude": 1.432997,
+      "longitude": 104.053736
+    },
+    {
+      "name": "PUNGGOL HERITAGE TRAIL PHASE 1",
+      "category": "Park",
+      "latitude": 1.413737,
+      "longitude": 103.909817
+    },
+    {
+      "name": "PUNGGOL HERITAGE TRAIL PHASE 2 (INTERIM BOUNDARY)",
+      "category": "Park",
+      "latitude": 1.419808,
+      "longitude": 103.910078
+    },
+    {
+      "name": "PUNGGOL PK",
+      "category": "Park",
+      "latitude": 1.376882,
+      "longitude": 103.898285
+    },
+    {
+      "name": "PUNGGOL WATERWAY PK",
+      "category": "Park",
+      "latitude": 1.409413,
+      "longitude": 103.908515
+    },
+    {
+      "name": "RAFFLES PLACE PK",
+      "category": "Park",
+      "latitude": 1.283861,
+      "longitude": 103.851344
+    },
+    {
+      "name": "RAIL CORRIDOR",
+      "category": "Park",
+      "latitude": 1.284124,
+      "longitude": 103.80643
+    },
+    {
+      "name": "RAILWAY CORRIDOR RIFLE RANGE CONNECTOR",
+      "category": "Park",
+      "latitude": 1.341546,
+      "longitude": 103.779372
+    },
+    {
+      "name": "REALTY PARK",
+      "category": "Park",
+      "latitude": 1.368206,
+      "longitude": 103.890128
+    },
+    {
+      "name": "RICHARDS AVE PK",
+      "category": "Park",
+      "latitude": 1.360926,
+      "longitude": 103.88213
+    },
+    {
+      "name": "RIFLE RANGE NATURE PARK",
+      "category": "Park",
+      "latitude": 1.347467,
+      "longitude": 103.784005
+    },
+    {
+      "name": "ROWELL RD OS",
+      "category": "Park",
+      "latitude": 1.308432,
+      "longitude": 103.854855
+    },
+    {
+      "name": "SARACA RD PG",
+      "category": "Park",
+      "latitude": 1.386689,
+      "longitude": 103.858637
+    },
+    {
+      "name": "SAVOY PK PG",
+      "category": "Park",
+      "latitude": 1.333415,
+      "longitude": 103.769927
+    },
+    {
+      "name": "SBG LC ARBO/PRC/PRU",
+      "category": "Park",
+      "latitude": 1.321832,
+      "longitude": 103.817895
+    },
+    {
+      "name": "SBG LC ZONE 1 (TNC)",
+      "category": "Park",
+      "latitude": 1.310875,
+      "longitude": 103.815159
+    },
+    {
+      "name": "SBG LC ZONE 2 (CC/BTC)",
+      "category": "Park",
+      "latitude": 1.31854,
+      "longitude": 103.815789
+    },
+    {
+      "name": "SBG LC ZONE 3 (NOG/PV)",
+      "category": "Park",
+      "latitude": 1.313378,
+      "longitude": 103.814291
+    },
+    {
+      "name": "SEA BREEZE AVENUE PARK",
+      "category": "Park",
+      "latitude": 1.33866,
+      "longitude": 103.952189
+    },
+    {
+      "name": "SEA BREEZE GARDEN PARK",
+      "category": "Park",
+      "latitude": 1.337873,
+      "longitude": 103.950426
+    },
+    {
+      "name": "SELETAR TERRACE PG",
+      "category": "Park",
+      "latitude": 1.381526,
+      "longitude": 103.868825
+    },
+    {
+      "name": "SEMBAWANG HOT SPRING PARK",
+      "category": "Park",
+      "latitude": 1.434315,
+      "longitude": 103.822666
+    },
+    {
+      "name": "SEMBAWANG PK",
+      "category": "Park",
+      "latitude": 1.461479,
+      "longitude": 103.836288
+    },
+    {
+      "name": "SENGKANG RIVERSIDE PK",
+      "category": "Park",
+      "latitude": 1.399318,
+      "longitude": 103.884174
+    },
+    {
+      "name": "SENNETT AVE LINEAR PK",
+      "category": "Park",
+      "latitude": 1.318101,
+      "longitude": 103.936258
+    },
+    {
+      "name": "SENNETT AVE OS",
+      "category": "Park",
+      "latitude": 1.318776,
+      "longitude": 103.939332
+    },
+    {
+      "name": "SENNETT AVE PG",
+      "category": "Park",
+      "latitude": 1.316953,
+      "longitude": 103.936272
+    },
+    {
+      "name": "SERENADE WALK PG",
+      "category": "Park",
+      "latitude": 1.379782,
+      "longitude": 103.834649
+    },
+    {
+      "name": "SG API API PK",
+      "category": "Park",
+      "latitude": 1.378883,
+      "longitude": 103.946001
+    },
+    {
+      "name": "SHANGRI-LA PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.371157,
+      "longitude": 103.832453
+    },
+    {
+      "name": "SHELFORD RD PG",
+      "category": "Park",
+      "latitude": 1.328367,
+      "longitude": 103.810439
+    },
+    {
+      "name": "SIAN TUAN INTERIM PARK",
+      "category": "Park",
+      "latitude": 1.338595,
+      "longitude": 103.786188
+    },
+    {
+      "name": "SIANG KUANG AVE INTERIM PK",
+      "category": "Park",
+      "latitude": 1.329832,
+      "longitude": 103.873048
+    },
+    {
+      "name": "SIGLAP LINEAR PK (JLN B'WAN-UPP EC RD)",
+      "category": "Park",
+      "latitude": 1.314481,
+      "longitude": 103.927361
+    },
+    {
+      "name": "SIGLAP LINEAR PK (UPP EC RD-M PARADE)",
+      "category": "Park",
+      "latitude": 1.311315,
+      "longitude": 103.928385
+    },
+    {
+      "name": "SILAT AVENUE PARK",
+      "category": "Park",
+      "latitude": 1.276123,
+      "longitude": 103.829958
+    },
+    {
+      "name": "SISTERS' ISLAND MARINE PARK",
+      "category": "Park",
+      "latitude": 1.214083,
+      "longitude": 103.833944
+    },
+    {
+      "name": "SIXTH AVE PG",
+      "category": "Park",
+      "latitude": 1.322436,
+      "longitude": 103.791281
+    },
+    {
+      "name": "SOMME RD PG",
+      "category": "Park",
+      "latitude": 1.311508,
+      "longitude": 103.858141
+    },
+    {
+      "name": "SOO CHOW WALK PG",
+      "category": "Park",
+      "latitude": 1.353648,
+      "longitude": 103.831991
+    },
+    {
+      "name": "SPRINGLEAF AVE PG",
+      "category": "Park",
+      "latitude": 1.401098,
+      "longitude": 103.822705
+    },
+    {
+      "name": "SPRINGLEAF GARDEN PG",
+      "category": "Park",
+      "latitude": 1.39812,
+      "longitude": 103.822322
+    },
+    {
+      "name": "SPRINGLEAF NATURE PARK",
+      "category": "Park",
+      "latitude": 1.40008,
+      "longitude": 103.819975
+    },
+    {
+      "name": "SPRINGSIDE PK",
+      "category": "Park",
+      "latitude": 1.405643,
+      "longitude": 103.820902
+    },
+    {
+      "name": "ST ANNE'S WOOD PG",
+      "category": "Park",
+      "latitude": 1.391581,
+      "longitude": 103.903746
+    },
+    {
+      "name": "ST MICHAEL'S FC",
+      "category": "Park",
+      "latitude": 1.326471,
+      "longitude": 103.865112
+    },
+    {
+      "name": "ST MICHAEL'S PG",
+      "category": "Park",
+      "latitude": 1.326194,
+      "longitude": 103.864861
+    },
+    {
+      "name": "ST. NICHOLAS VIEW PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.371724,
+      "longitude": 103.832808
+    },
+    {
+      "name": "STRATTON WALK PG",
+      "category": "Park",
+      "latitude": 1.379199,
+      "longitude": 103.866852
+    },
+    {
+      "name": "SUN PLAZA PK",
+      "category": "Park",
+      "latitude": 1.358509,
+      "longitude": 103.943441
+    },
+    {
+      "name": "SUNBIRD CIRCLE PG",
+      "category": "Park",
+      "latitude": 1.33905,
+      "longitude": 103.958262
+    },
+    {
+      "name": "SUNGEI BULOH SOUTHERN EXTENSION",
+      "category": "Park",
+      "latitude": 1.434982,
+      "longitude": 103.720606
+    },
+    {
+      "name": "SUNGEI BULOH WETLAND RESERVE",
+      "category": "Park",
+      "latitude": 1.444709,
+      "longitude": 103.724553
+    },
+    {
+      "name": "SUNRISE CLOSE PG",
+      "category": "Park",
+      "latitude": 1.387114,
+      "longitude": 103.857492
+    },
+    {
+      "name": "SUNRISE DR PG I",
+      "category": "Park",
+      "latitude": 1.388208,
+      "longitude": 103.857427
+    },
+    {
+      "name": "SUNRISE DR PG II",
+      "category": "Park",
+      "latitude": 1.39032,
+      "longitude": 103.855122
+    },
+    {
+      "name": "SUNRISE PLACE PG",
+      "category": "Park",
+      "latitude": 1.386943,
+      "longitude": 103.8566
+    },
+    {
+      "name": "SUNRISE TERRACE OS",
+      "category": "Park",
+      "latitude": 1.388227,
+      "longitude": 103.856123
+    },
+    {
+      "name": "SUNRISE WAY PG",
+      "category": "Park",
+      "latitude": 1.387666,
+      "longitude": 103.856684
+    },
+    {
+      "name": "SUNSET HEIGHTS OS",
+      "category": "Park",
+      "latitude": 1.327986,
+      "longitude": 103.768896
+    },
+    {
+      "name": "SUNSET WAY PG",
+      "category": "Park",
+      "latitude": 1.326832,
+      "longitude": 103.766427
+    },
+    {
+      "name": "SUNSET WAY PK",
+      "category": "Park",
+      "latitude": 1.327704,
+      "longitude": 103.764773
+    },
+    {
+      "name": "SURIN AVE NEIGHBOURHOOD PK",
+      "category": "Park",
+      "latitude": 1.355631,
+      "longitude": 103.884058
+    },
+    {
+      "name": "TAI HWAN TERRACE PG",
+      "category": "Park",
+      "latitude": 1.356387,
+      "longitude": 103.860372
+    },
+    {
+      "name": "TAI KENG GARDENS PG",
+      "category": "Park",
+      "latitude": 1.346198,
+      "longitude": 103.885013
+    },
+    {
+      "name": "TAI KENG PLACE PG",
+      "category": "Park",
+      "latitude": 1.345047,
+      "longitude": 103.884846
+    },
+    {
+      "name": "TAMAN DAMAI INTERIM PARK",
+      "category": "Park",
+      "latitude": 1.328825,
+      "longitude": 103.72379
+    },
+    {
+      "name": "TAMAN JURONG OASIS INTERIM PARK",
+      "category": "Park",
+      "latitude": 1.336298,
+      "longitude": 103.718979
+    },
+    {
+      "name": "TAMAN KEMBANGAN PG",
+      "category": "Park",
+      "latitude": 1.325003,
+      "longitude": 103.914402
+    },
+    {
+      "name": "TAMAN MAS MERAH PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.308631,
+      "longitude": 103.764677
+    },
+    {
+      "name": "TAMAN PERMATA PK",
+      "category": "Park",
+      "latitude": 1.350069,
+      "longitude": 103.834995
+    },
+    {
+      "name": "TAMARIND RD PG",
+      "category": "Park",
+      "latitude": 1.389686,
+      "longitude": 103.860193
+    },
+    {
+      "name": "TAMPINES BOULEVARD PARK",
+      "category": "Park",
+      "latitude": 1.362406,
+      "longitude": 103.944304
+    },
+    {
+      "name": "TAMPINES ECO GREEN PK",
+      "category": "Park",
+      "latitude": 1.363702,
+      "longitude": 103.948371
+    },
+    {
+      "name": "TANAH MERAH PG",
+      "category": "Park",
+      "latitude": 1.328866,
+      "longitude": 103.94697
+    },
+    {
+      "name": "TANAH PUTEH PK",
+      "category": "Park",
+      "latitude": 1.31572,
+      "longitude": 103.931304
+    },
+    {
+      "name": "TANJONG KATONG RD SOUTH PG",
+      "category": "Park",
+      "latitude": 1.300796,
+      "longitude": 103.897243
+    },
+    {
+      "name": "TANJONG PAGAR PK",
+      "category": "Park",
+      "latitude": 1.276561,
+      "longitude": 103.846626
+    },
+    {
+      "name": "TAVISTOCK AVE PK",
+      "category": "Park",
+      "latitude": 1.370103,
+      "longitude": 103.865407
+    },
+    {
+      "name": "TEACHER'S ESTATE PARK",
+      "category": "Park",
+      "latitude": 1.38473,
+      "longitude": 103.833016
+    },
+    {
+      "name": "TEACHER`S ESTATE PG",
+      "category": "Park",
+      "latitude": 1.382327,
+      "longitude": 103.82911
+    },
+    {
+      "name": "TELOK AYER GREEN",
+      "category": "Park",
+      "latitude": 1.281438,
+      "longitude": 103.847588
+    },
+    {
+      "name": "TELOK AYER PK",
+      "category": "Park",
+      "latitude": 1.278145,
+      "longitude": 103.846601
+    },
+    {
+      "name": "TELOK BLANGAH HILL PARK",
+      "category": "Park",
+      "latitude": 1.278662,
+      "longitude": 103.810254
+    },
+    {
+      "name": "TELOK KURAU LORONG N PK",
+      "category": "Park",
+      "latitude": 1.310336,
+      "longitude": 103.912801
+    },
+    {
+      "name": "TELOK KURAU PK",
+      "category": "Park",
+      "latitude": 1.316193,
+      "longitude": 103.913963
+    },
+    {
+      "name": "TENGAH LINEAR WOODS",
+      "category": "Park",
+      "latitude": 1.359389,
+      "longitude": 103.738992
+    },
+    {
+      "name": "THE FOOTHILLS FORT CANNING PK",
+      "category": "Park",
+      "latitude": 1.292049,
+      "longitude": 103.845797
+    },
+    {
+      "name": "THE INGLEWOOD PG",
+      "category": "Park",
+      "latitude": 1.361073,
+      "longitude": 103.830056
+    },
+    {
+      "name": "THOMSON GREEN PG",
+      "category": "Park",
+      "latitude": 1.378716,
+      "longitude": 103.832501
+    },
+    {
+      "name": "THOMSON NATURE PARK",
+      "category": "Park",
+      "latitude": 1.383543,
+      "longitude": 103.822193
+    },
+    {
+      "name": "THOMSON PK",
+      "category": "Park",
+      "latitude": 1.354317,
+      "longitude": 103.83437
+    },
+    {
+      "name": "THOMSON RD PG",
+      "category": "Park",
+      "latitude": 1.31628,
+      "longitude": 103.84373
+    },
+    {
+      "name": "THOMSON WALK PG",
+      "category": "Park",
+      "latitude": 1.376068,
+      "longitude": 103.832485
+    },
+    {
+      "name": "THONG SOON GREEN PG",
+      "category": "Park",
+      "latitude": 1.400046,
+      "longitude": 103.818399
+    },
+    {
+      "name": "THRIFT DR OS",
+      "category": "Park",
+      "latitude": 1.343873,
+      "longitude": 103.883195
+    },
+    {
+      "name": "TIONG BAHRU PK",
+      "category": "Park",
+      "latitude": 1.288031,
+      "longitude": 103.824924
+    },
+    {
+      "name": "TOA PAYOH TOWN PK",
+      "category": "Park",
+      "latitude": 1.330558,
+      "longitude": 103.847954
+    },
+    {
+      "name": "TOH CLOSE INTERIM PARK",
+      "category": "Park",
+      "latitude": 1.364048,
+      "longitude": 103.969982
+    },
+    {
+      "name": "TRAS LINK PK",
+      "category": "Park",
+      "latitude": 1.276481,
+      "longitude": 103.843794
+    },
+    {
+      "name": "TURNHOUSE PK",
+      "category": "Park",
+      "latitude": 1.389893,
+      "longitude": 103.978974
+    },
+    {
+      "name": "UNIVERSITY RD PK",
+      "category": "Park",
+      "latitude": 1.325456,
+      "longitude": 103.817675
+    },
+    {
+      "name": "UPPER PAYA LEBAR INTERIM PARK",
+      "category": "Park",
+      "latitude": 1.343568,
+      "longitude": 103.882463
+    },
+    {
+      "name": "UPPER PEIRCE RESERVOIR PARK",
+      "category": "Park",
+      "latitude": 1.373259,
+      "longitude": 103.812169
+    },
+    {
+      "name": "UPPER SELETAR RESERVOIR PARK",
+      "category": "Park",
+      "latitude": 1.401265,
+      "longitude": 103.807443
+    },
+    {
+      "name": "UPPER SERANGOON PARK",
+      "category": "Park",
+      "latitude": 1.351637,
+      "longitude": 103.875226
+    },
+    {
+      "name": "VENUS GREEN",
+      "category": "Park",
+      "latitude": 1.358657,
+      "longitude": 103.827262
+    },
+    {
+      "name": "VICTORIA PARK PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.321955,
+      "longitude": 103.801823
+    },
+    {
+      "name": "VILLA VERDE PK",
+      "category": "Park",
+      "latitude": 1.392685,
+      "longitude": 103.752592
+    },
+    {
+      "name": "VILLA VERDE PK EXTENSION",
+      "category": "Park",
+      "latitude": 1.388993,
+      "longitude": 103.754127
+    },
+    {
+      "name": "WAR MEMORIAL PK",
+      "category": "Park",
+      "latitude": 1.292862,
+      "longitude": 103.854831
+    },
+    {
+      "name": "WARINGIN PK PG",
+      "category": "Park",
+      "latitude": 1.322992,
+      "longitude": 103.919257
+    },
+    {
+      "name": "WATERBOAT HOUSE GARDEN",
+      "category": "Park",
+      "latitude": 1.287359,
+      "longitude": 103.853475
+    },
+    {
+      "name": "WATTEN HEIGHTS PG",
+      "category": "Park",
+      "latitude": 1.331509,
+      "longitude": 103.808183
+    },
+    {
+      "name": "WEST COAST GREEN PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.315905,
+      "longitude": 103.756174
+    },
+    {
+      "name": "WEST COAST PARK",
+      "category": "Park",
+      "latitude": 1.296142,
+      "longitude": 103.762962
+    },
+    {
+      "name": "WEST COAST PLACE PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.314282,
+      "longitude": 103.758491
+    },
+    {
+      "name": "WESTVILLE PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.353599,
+      "longitude": 103.69954
+    },
+    {
+      "name": "WESTWOOD FAMILY PARK",
+      "category": "Park",
+      "latitude": 1.352953,
+      "longitude": 103.697097
+    },
+    {
+      "name": "WESTWOOD PARK PLAYGROUND",
+      "category": "Park",
+      "latitude": 1.351846,
+      "longitude": 103.701037
+    },
+    {
+      "name": "WILKINSON INTERIM PK",
+      "category": "Park",
+      "latitude": 1.301605,
+      "longitude": 103.887305
+    },
+    {
+      "name": "WINDSOR NATURE PARK",
+      "category": "Park",
+      "latitude": 1.356667,
+      "longitude": 103.821198
+    },
+    {
+      "name": "WOODLANDS HEALING GARDEN",
+      "category": "Park",
+      "latitude": 1.425159,
+      "longitude": 103.792741
+    },
+    {
+      "name": "WOODLANDS TOWN PK EAST",
+      "category": "Park",
+      "latitude": 1.436841,
+      "longitude": 103.779423
+    },
+    {
+      "name": "WOODLANDS WATERFRONT PK",
+      "category": "Park",
+      "latitude": 1.453364,
+      "longitude": 103.781324
+    },
+    {
+      "name": "YARROW PARK",
+      "category": "Park",
+      "latitude": 1.315463,
+      "longitude": 103.921485
+    },
+    {
+      "name": "YIO CHU KANG GARDENS PG",
+      "category": "Park",
+      "latitude": 1.380648,
+      "longitude": 103.837514
+    },
+    {
+      "name": "YISHUN NEIGHBOURHOOD PK",
+      "category": "Park",
+      "latitude": 1.437792,
+      "longitude": 103.835028
+    },
+    {
+      "name": "YISHUN PK",
+      "category": "Park",
+      "latitude": 1.424635,
+      "longitude": 103.842969
+    },
+    {
+      "name": "YISHUN POND PK",
+      "category": "Park",
+      "latitude": 1.427527,
+      "longitude": 103.840519
+    },
+    {
+      "name": "YOUTH OLYMPIC PK",
+      "category": "Park",
+      "latitude": 1.288962,
+      "longitude": 103.860486
+    },
+    {
+      "name": "YUNNAN PARK",
+      "category": "Park",
+      "latitude": 1.337614,
+      "longitude": 103.692987
+    },
+    {
+      "name": "ZHENGHUA NATURE PARK",
+      "category": "Park",
+      "latitude": 1.38568,
+      "longitude": 103.773484
+    },
+    {
+      "name": "112 Katong",
+      "category": "Shopping Mall",
+      "latitude": 1.305207,
+      "longitude": 103.905046
+    },
+    {
+      "name": "313@Somerset",
+      "category": "Shopping Mall",
+      "latitude": 1.301014,
+      "longitude": 103.838361
+    },
+    {
+      "name": "AMK Hub",
+      "category": "Shopping Mall",
+      "latitude": 1.369389,
+      "longitude": 103.848478
+    },
+    {
+      "name": "ANCHORPOINT SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.288615,
+      "longitude": 103.80501
+    },
+    {
+      "name": "Ang Mo Kio Hub",
+      "category": "Shopping Mall",
+      "latitude": 1.369389,
+      "longitude": 103.848478
+    },
+    {
+      "name": "BALESTIER HILL SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.325896,
+      "longitude": 103.842935
+    },
+    {
+      "name": "BEDOK MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.324736,
+      "longitude": 103.929256
+    },
+    {
+      "name": "BISHAN NORTH SHOPPING MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.358144,
+      "longitude": 103.844756
+    },
+    {
+      "name": "BOON LAY SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.346336,
+      "longitude": 103.71243
+    },
+    {
+      "name": "BUKIT TIMAH SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.343165,
+      "longitude": 103.776031
+    },
+    {
+      "name": "Balestier Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.325725,
+      "longitude": 103.850395
+    },
+    {
+      "name": "Balestier Point",
+      "category": "Shopping Mall",
+      "latitude": 1.322812,
+      "longitude": 103.852026
+    },
+    {
+      "name": "Bedok Point",
+      "category": "Shopping Mall",
+      "latitude": 1.330548,
+      "longitude": 103.947778
+    },
+    {
+      "name": "Bras Basah Complex",
+      "category": "Shopping Mall",
+      "latitude": 1.296815,
+      "longitude": 103.853619
+    },
+    {
+      "name": "Bugis Junction",
+      "category": "Shopping Mall",
+      "latitude": 1.299113,
+      "longitude": 103.855411
+    },
+    {
+      "name": "Bukit Panjang Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.37992,
+      "longitude": 103.764357
+    },
+    {
+      "name": "CITY SQUARE MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.311421,
+      "longitude": 103.856624
+    },
+    {
+      "name": "CITYLINK MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.292778,
+      "longitude": 103.854174
+    },
+    {
+      "name": "CLEMENTI AVENUE 2 SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.313514,
+      "longitude": 103.770861
+    },
+    {
+      "name": "Causeway Point",
+      "category": "Shopping Mall",
+      "latitude": 1.43607,
+      "longitude": 103.785982
+    },
+    {
+      "name": "Central Mall",
+      "category": "Shopping Mall",
+      "latitude": 1.372862,
+      "longitude": 103.847645
+    },
+    {
+      "name": "Century Square",
+      "category": "Shopping Mall",
+      "latitude": 1.352368,
+      "longitude": 103.943812
+    },
+    {
+      "name": "Changi City Point",
+      "category": "Shopping Mall",
+      "latitude": 1.334036,
+      "longitude": 103.962918
+    },
+    {
+      "name": "Chinatown Point",
+      "category": "Shopping Mall",
+      "latitude": 1.284999,
+      "longitude": 103.844697
+    },
+    {
+      "name": "City Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.314787,
+      "longitude": 103.893472
+    },
+    {
+      "name": "Compass One",
+      "category": "Shopping Mall",
+      "latitude": 1.392053,
+      "longitude": 103.895071
+    },
+    {
+      "name": "Coronation Shopping Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.323835,
+      "longitude": 103.81
+    },
+    {
+      "name": "DAIRY FARM MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.365571,
+      "longitude": 103.775049
+    },
+    {
+      "name": "DEPOT HEIGHTS SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.280845,
+      "longitude": 103.810293
+    },
+    {
+      "name": "DJIT SUN MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.372862,
+      "longitude": 103.847645
+    },
+    {
+      "name": "DJITSUN MALL BEDOK",
+      "category": "Shopping Mall",
+      "latitude": 1.32612,
+      "longitude": 103.929554
+    },
+    {
+      "name": "Downtown East",
+      "category": "Shopping Mall",
+      "latitude": 1.379127,
+      "longitude": 103.955445
+    },
+    {
+      "name": "EASTLINK MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.354357,
+      "longitude": 103.944305
+    },
+    {
+      "name": "EASTPOINT MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.342706,
+      "longitude": 103.953025
+    },
+    {
+      "name": "ELIAS MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.378602,
+      "longitude": 103.941978
+    },
+    {
+      "name": "ESPLANADE MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.289648,
+      "longitude": 103.856267
+    },
+    {
+      "name": "FAJAR SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.38358,
+      "longitude": 103.770769
+    },
+    {
+      "name": "FAR EAST SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.305506,
+      "longitude": 103.829985
+    },
+    {
+      "name": "FORUM THE SHOPPING MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.306098,
+      "longitude": 103.828679
+    },
+    {
+      "name": "Far East Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.307177,
+      "longitude": 103.833793
+    },
+    {
+      "name": "Far East Square",
+      "category": "Shopping Mall",
+      "latitude": 1.283383,
+      "longitude": 103.848376
+    },
+    {
+      "name": "Fu Lu Shou Complex",
+      "category": "Shopping Mall",
+      "latitude": 1.301513,
+      "longitude": 103.854497
+    },
+    {
+      "name": "GEK POH SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.348744,
+      "longitude": 103.697732
+    },
+    {
+      "name": "GOLDHILL SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.318494,
+      "longitude": 103.843248
+    },
+    {
+      "name": "GRANTRAL MALL @ CLEMENTI",
+      "category": "Shopping Mall",
+      "latitude": 1.31427,
+      "longitude": 103.765147
+    },
+    {
+      "name": "GREENRIDGE SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.385406,
+      "longitude": 103.766228
+    },
+    {
+      "name": "GROUND PLAZA (MARINA BAY LINK MALL)",
+      "category": "Shopping Mall",
+      "latitude": 1.279921,
+      "longitude": 103.854773
+    },
+    {
+      "name": "Goldhill Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.317832,
+      "longitude": 103.843487
+    },
+    {
+      "name": "Great World City",
+      "category": "Shopping Mall",
+      "latitude": 1.293423,
+      "longitude": 103.832022
+    },
+    {
+      "name": "HEARTLAND MALL-KOVAN",
+      "category": "Shopping Mall",
+      "latitude": 1.359542,
+      "longitude": 103.885167
+    },
+    {
+      "name": "HILLION MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.378431,
+      "longitude": 103.762843
+    },
+    {
+      "name": "HOLLAND ROAD SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.310277,
+      "longitude": 103.795371
+    },
+    {
+      "name": "HOUGANG GREEN SHOPPING MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.379245,
+      "longitude": 103.887832
+    },
+    {
+      "name": "HOUGANG MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.372491,
+      "longitude": 103.893774
+    },
+    {
+      "name": "Harbourfront Centre",
+      "category": "Shopping Mall",
+      "latitude": 1.263776,
+      "longitude": 103.818562
+    },
+    {
+      "name": "Heartland Mall",
+      "category": "Shopping Mall",
+      "latitude": 1.359542,
+      "longitude": 103.885167
+    },
+    {
+      "name": "ICB SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.354584,
+      "longitude": 103.87779
+    },
+    {
+      "name": "IMM Building",
+      "category": "Shopping Mall",
+      "latitude": 1.334875,
+      "longitude": 103.746895
+    },
+    {
+      "name": "ION Orchard",
+      "category": "Shopping Mall",
+      "latitude": 1.30398,
+      "longitude": 103.832032
+    },
+    {
+      "name": "Icon Village",
+      "category": "Shopping Mall",
+      "latitude": 1.275083,
+      "longitude": 103.84451
+    },
+    {
+      "name": "International Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.275887,
+      "longitude": 103.845924
+    },
+    {
+      "name": "JELITA MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.317546,
+      "longitude": 103.785851
+    },
+    {
+      "name": "JEM",
+      "category": "Shopping Mall",
+      "latitude": 1.333293,
+      "longitude": 103.743279
+    },
+    {
+      "name": "Jewel Changi Airport",
+      "category": "Shopping Mall",
+      "latitude": 1.360341,
+      "longitude": 103.989078
+    },
+    {
+      "name": "Junction 10",
+      "category": "Shopping Mall",
+      "latitude": 1.380337,
+      "longitude": 103.760168
+    },
+    {
+      "name": "Junction 8",
+      "category": "Shopping Mall",
+      "latitude": 1.350481,
+      "longitude": 103.84876
+    },
+    {
+      "name": "Jurong Point Shopping Centre",
+      "category": "Shopping Mall",
+      "latitude": 1.334845,
+      "longitude": 103.720462
+    },
+    {
+      "name": "KALLANG WAVE MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.303075,
+      "longitude": 103.87315
+    },
+    {
+      "name": "KANG KAR MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.371735,
+      "longitude": 103.894235
+    },
+    {
+      "name": "KATONG SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.304097,
+      "longitude": 103.901516
+    },
+    {
+      "name": "KEAT HONG SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.377366,
+      "longitude": 103.744394
+    },
+    {
+      "name": "KEBUN BARU MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.366826,
+      "longitude": 103.839861
+    },
+    {
+      "name": "KINEX",
+      "category": "Shopping Mall",
+      "latitude": 1.314618,
+      "longitude": 103.894738
+    },
+    {
+      "name": "Katong Village",
+      "category": "Shopping Mall",
+      "latitude": 1.305225,
+      "longitude": 103.905102
+    },
+    {
+      "name": "LIMBANG SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.392068,
+      "longitude": 103.743102
+    },
+    {
+      "name": "LOT ONE, SHOPPERS' MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.384975,
+      "longitude": 103.745012
+    },
+    {
+      "name": "Lucky Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.304506,
+      "longitude": 103.833962
+    },
+    {
+      "name": "MACPHERSON MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.331771,
+      "longitude": 103.879295
+    },
+    {
+      "name": "MARINA BAY LINK MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.280238,
+      "longitude": 103.85337
+    },
+    {
+      "name": "Marina Square",
+      "category": "Shopping Mall",
+      "latitude": 1.291855,
+      "longitude": 103.858578
+    },
+    {
+      "name": "Nex Mall",
+      "category": "Shopping Mall",
+      "latitude": 1.350889,
+      "longitude": 103.872116
+    },
+    {
+      "name": "Ngee Ann City",
+      "category": "Shopping Mall",
+      "latitude": 1.302242,
+      "longitude": 103.835182
+    },
+    {
+      "name": "Northpoint City",
+      "category": "Shopping Mall",
+      "latitude": 1.429698,
+      "longitude": 103.835776
+    },
+    {
+      "name": "ORCHARD SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.3015,
+      "longitude": 103.837888
+    },
+    {
+      "name": "Orchard Central",
+      "category": "Shopping Mall",
+      "latitude": 1.300839,
+      "longitude": 103.839435
+    },
+    {
+      "name": "Orchard Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.301257,
+      "longitude": 103.84115
+    },
+    {
+      "name": "PARKLANE SHOPPING MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.300645,
+      "longitude": 103.849449
+    },
+    {
+      "name": "PASIR RIS MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.373824,
+      "longitude": 103.948749
+    },
+    {
+      "name": "PINERY MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.343292,
+      "longitude": 103.93867
+    },
+    {
+      "name": "PIONEER MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.341692,
+      "longitude": 103.697175
+    },
+    {
+      "name": "PLQ MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.317561,
+      "longitude": 103.892837
+    },
+    {
+      "name": "Pacific Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.306547,
+      "longitude": 103.832128
+    },
+    {
+      "name": "Parkway Parade",
+      "category": "Shopping Mall",
+      "latitude": 1.30107,
+      "longitude": 103.905279
+    },
+    {
+      "name": "Paya Lebar Quarter",
+      "category": "Shopping Mall",
+      "latitude": 1.317709,
+      "longitude": 103.893415
+    },
+    {
+      "name": "Plaza Singapura",
+      "category": "Shopping Mall",
+      "latitude": 1.300748,
+      "longitude": 103.845048
+    },
+    {
+      "name": "QUEENSWAY SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.287595,
+      "longitude": 103.803397
+    },
+    {
+      "name": "RIVERVALE MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.392198,
+      "longitude": 103.904472
+    },
+    {
+      "name": "Raffles City",
+      "category": "Shopping Mall",
+      "latitude": 1.293894,
+      "longitude": 103.85312
+    },
+    {
+      "name": "Robertson Walk",
+      "category": "Shopping Mall",
+      "latitude": 1.291739,
+      "longitude": 103.841194
+    },
+    {
+      "name": "Roxy Square",
+      "category": "Shopping Mall",
+      "latitude": 1.304326,
+      "longitude": 103.904051
+    },
+    {
+      "name": "SEMBAWANG SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.441825,
+      "longitude": 103.824845
+    },
+    {
+      "name": "SENGKANG GRAND MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.382982,
+      "longitude": 103.892721
+    },
+    {
+      "name": "SIGLAP SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.312875,
+      "longitude": 103.923949
+    },
+    {
+      "name": "SINGAPORE SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.298153,
+      "longitude": 103.844111
+    },
+    {
+      "name": "SUNTEC CITY MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.295932,
+      "longitude": 103.859014
+    },
+    {
+      "name": "Shaw House",
+      "category": "Shopping Mall",
+      "latitude": 1.30581,
+      "longitude": 103.831507
+    },
+    {
+      "name": "Shaw Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.324974,
+      "longitude": 103.851427
+    },
+    {
+      "name": "Sim Lim Square",
+      "category": "Shopping Mall",
+      "latitude": 1.303024,
+      "longitude": 103.853038
+    },
+    {
+      "name": "Singapore Post Centre",
+      "category": "Shopping Mall",
+      "latitude": 1.318997,
+      "longitude": 103.894895
+    },
+    {
+      "name": "Square 2",
+      "category": "Shopping Mall",
+      "latitude": 1.320705,
+      "longitude": 103.844161
+    },
+    {
+      "name": "Sun Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.448195,
+      "longitude": 103.819502
+    },
+    {
+      "name": "Sunshine Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.300348,
+      "longitude": 103.851046
+    },
+    {
+      "name": "Suntec City",
+      "category": "Shopping Mall",
+      "latitude": 1.29486,
+      "longitude": 103.860334
+    },
+    {
+      "name": "TAMAN JURONG SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.334845,
+      "longitude": 103.720462
+    },
+    {
+      "name": "TAMPINES MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.352527,
+      "longitude": 103.944699
+    },
+    {
+      "name": "TANGLIN MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.304843,
+      "longitude": 103.823853
+    },
+    {
+      "name": "TECK WHYE SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.380048,
+      "longitude": 103.752484
+    },
+    {
+      "name": "THE CLEMENTI MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.314896,
+      "longitude": 103.764423
+    },
+    {
+      "name": "THE FLOW MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.304574,
+      "longitude": 103.904203
+    },
+    {
+      "name": "THE RAIL MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.357811,
+      "longitude": 103.768081
+    },
+    {
+      "name": "THE SELETAR MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.39147,
+      "longitude": 103.876126
+    },
+    {
+      "name": "THE WOODLEIGH MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.338731,
+      "longitude": 103.87167
+    },
+    {
+      "name": "Tampines 1",
+      "category": "Shopping Mall",
+      "latitude": 1.352228,
+      "longitude": 103.952437
+    },
+    {
+      "name": "Tampines Junction",
+      "category": "Shopping Mall",
+      "latitude": 1.352336,
+      "longitude": 103.941943
+    },
+    {
+      "name": "Tanjong Katong Complex",
+      "category": "Shopping Mall",
+      "latitude": 1.316394,
+      "longitude": 103.894359
+    },
+    {
+      "name": "The Centrepoint",
+      "category": "Shopping Mall",
+      "latitude": 1.302491,
+      "longitude": 103.840146
+    },
+    {
+      "name": "Thomson Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.354669,
+      "longitude": 103.83092
+    },
+    {
+      "name": "Tiong Bahru Plaza",
+      "category": "Shopping Mall",
+      "latitude": 1.286459,
+      "longitude": 103.827015
+    },
+    {
+      "name": "Toa Payoh HDB Hub",
+      "category": "Shopping Mall",
+      "latitude": 1.332055,
+      "longitude": 103.848508
+    },
+    {
+      "name": "UE Square",
+      "category": "Shopping Mall",
+      "latitude": 1.292087,
+      "longitude": 103.842729
+    },
+    {
+      "name": "UPPER SERANGOON SHOPPING CENTRE",
+      "category": "Shopping Mall",
+      "latitude": 1.353481,
+      "longitude": 103.878828
+    },
+    {
+      "name": "Valley Point",
+      "category": "Shopping Mall",
+      "latitude": 1.293801,
+      "longitude": 103.842145
+    },
+    {
+      "name": "Velocity @ Novena Square",
+      "category": "Shopping Mall",
+      "latitude": 1.319789,
+      "longitude": 103.844034
+    },
+    {
+      "name": "Vivocity",
+      "category": "Shopping Mall",
+      "latitude": 1.264293,
+      "longitude": 103.822305
+    },
+    {
+      "name": "WEST MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.350021,
+      "longitude": 103.749216
+    },
+    {
+      "name": "WISTERIA MALL",
+      "category": "Shopping Mall",
+      "latitude": 1.417953,
+      "longitude": 103.841269
+    },
+    {
+      "name": "Waterway Point",
+      "category": "Shopping Mall",
+      "latitude": 1.406536,
+      "longitude": 103.901988
+    },
+    {
+      "name": "Westgate",
+      "category": "Shopping Mall",
+      "latitude": 1.334158,
+      "longitude": 103.742766
+    },
+    {
+      "name": "Wheelock Place",
+      "category": "Shopping Mall",
+      "latitude": 1.304676,
+      "longitude": 103.830642
+    },
+    {
+      "name": "White Sands",
+      "category": "Shopping Mall",
+      "latitude": 1.365636,
+      "longitude": 103.960862
+    },
+    {
+      "name": "Wisma Atria",
+      "category": "Shopping Mall",
+      "latitude": 1.303705,
+      "longitude": 103.833206
+    },
+    {
+      "name": "Yew Tee Point",
+      "category": "Shopping Mall",
+      "latitude": 1.39804,
+      "longitude": 103.747198
+    },
+    {
+      "name": "orchardgateway",
+      "category": "Shopping Mall",
+      "latitude": 1.300489,
+      "longitude": 103.839325
+    },
+    {
+      "name": "ADMIRALTY MRT STATION",
+      "category": "MRT",
+      "latitude": 1.440407,
+      "longitude": 103.800857
+    },
+    {
+      "name": "ALJUNIED MRT STATION",
+      "category": "MRT",
+      "latitude": 1.316363,
+      "longitude": 103.882485
+    },
+    {
+      "name": "ANG MO KIO MRT STATION",
+      "category": "MRT",
+      "latitude": 1.369618,
+      "longitude": 103.849676
+    },
+    {
+      "name": "BAKAU LRT STATION",
+      "category": "MRT",
+      "latitude": 1.388013,
+      "longitude": 103.905464
+    },
+    {
+      "name": "BANGKIT LRT STATION",
+      "category": "MRT",
+      "latitude": 1.379853,
+      "longitude": 103.772591
+    },
+    {
+      "name": "BARTLEY MRT STATION",
+      "category": "MRT",
+      "latitude": 1.342875,
+      "longitude": 103.879582
+    },
+    {
+      "name": "BAYFRONT MRT STATION",
+      "category": "MRT",
+      "latitude": 1.282089,
+      "longitude": 103.859205
+    },
+    {
+      "name": "BAYSHORE MRT STATION",
+      "category": "MRT",
+      "latitude": 1.312815,
+      "longitude": 103.941583
+    },
+    {
+      "name": "BEAUTY WORLD MRT STATION",
+      "category": "MRT",
+      "latitude": 1.341087,
+      "longitude": 103.775732
+    },
+    {
+      "name": "BEDOK MRT STATION",
+      "category": "MRT",
+      "latitude": 1.323971,
+      "longitude": 103.929412
+    },
+    {
+      "name": "BEDOK NORTH MRT STATION",
+      "category": "MRT",
+      "latitude": 1.334522,
+      "longitude": 103.918514
+    },
+    {
+      "name": "BEDOK RESERVOIR MRT STATION",
+      "category": "MRT",
+      "latitude": 1.336451,
+      "longitude": 103.933187
+    },
+    {
+      "name": "BENCOOLEN MRT STATION",
+      "category": "MRT",
+      "latitude": 1.298365,
+      "longitude": 103.849892
+    },
+    {
+      "name": "BENDEMEER MRT STATION",
+      "category": "MRT",
+      "latitude": 1.313667,
+      "longitude": 103.863147
+    },
+    {
+      "name": "BISHAN MRT STATION",
+      "category": "MRT",
+      "latitude": 1.350863,
+      "longitude": 103.848692
+    },
+    {
+      "name": "BOON KENG MRT STATION",
+      "category": "MRT",
+      "latitude": 1.319086,
+      "longitude": 103.861371
+    },
+    {
+      "name": "BOON LAY MRT STATION",
+      "category": "MRT",
+      "latitude": 1.338476,
+      "longitude": 103.705718
+    },
+    {
+      "name": "BOTANIC GARDENS MRT STATION",
+      "category": "MRT",
+      "latitude": 1.32261,
+      "longitude": 103.815446
+    },
+    {
+      "name": "BRADDELL MRT STATION",
+      "category": "MRT",
+      "latitude": 1.340828,
+      "longitude": 103.846759
+    },
+    {
+      "name": "BRAS BASAH MRT STATION",
+      "category": "MRT",
+      "latitude": 1.297001,
+      "longitude": 103.850526
+    },
+    {
+      "name": "BRIGHT HILL MRT STATION",
+      "category": "MRT",
+      "latitude": 1.363167,
+      "longitude": 103.832869
+    },
+    {
+      "name": "BUANGKOK MRT STATION",
+      "category": "MRT",
+      "latitude": 1.38303,
+      "longitude": 103.893173
+    },
+    {
+      "name": "BUGIS MRT STATION",
+      "category": "MRT",
+      "latitude": 1.299914,
+      "longitude": 103.856562
+    },
+    {
+      "name": "BUKIT BATOK MRT STATION",
+      "category": "MRT",
+      "latitude": 1.349219,
+      "longitude": 103.749699
+    },
+    {
+      "name": "BUKIT GOMBAK MRT STATION",
+      "category": "MRT",
+      "latitude": 1.359032,
+      "longitude": 103.751962
+    },
+    {
+      "name": "BUKIT PANJANG LRT STATION",
+      "category": "MRT",
+      "latitude": 1.377959,
+      "longitude": 103.763054
+    },
+    {
+      "name": "BUKIT PANJANG MRT STATION",
+      "category": "MRT",
+      "latitude": 1.379285,
+      "longitude": 103.761231
+    },
+    {
+      "name": "BUONA VISTA MRT STATION",
+      "category": "MRT",
+      "latitude": 1.306929,
+      "longitude": 103.790659
+    },
+    {
+      "name": "CALDECOTT MRT STATION",
+      "category": "MRT",
+      "latitude": 1.337487,
+      "longitude": 103.840035
+    },
+    {
+      "name": "CANBERRA MRT STATION",
+      "category": "MRT",
+      "latitude": 1.443227,
+      "longitude": 103.829712
+    },
+    {
+      "name": "CANTONMENT MRT STATION",
+      "category": "MRT",
+      "latitude": 1.273048,
+      "longitude": 103.836977
+    },
+    {
+      "name": "CASHEW MRT STATION",
+      "category": "MRT",
+      "latitude": 1.369833,
+      "longitude": 103.764234
+    },
+    {
+      "name": "CHANGI AIRPORT MRT STATION",
+      "category": "MRT",
+      "latitude": 1.356781,
+      "longitude": 103.988291
+    },
+    {
+      "name": "CHENG LIM LRT STATION",
+      "category": "MRT",
+      "latitude": 1.39628,
+      "longitude": 103.893803
+    },
+    {
+      "name": "CHINATOWN MRT STATION",
+      "category": "MRT",
+      "latitude": 1.284642,
+      "longitude": 103.844073
+    },
+    {
+      "name": "CHINESE GARDEN MRT STATION",
+      "category": "MRT",
+      "latitude": 1.341996,
+      "longitude": 103.732785
+    },
+    {
+      "name": "CHOA CHU KANG LRT STATION",
+      "category": "MRT",
+      "latitude": 1.38499,
+      "longitude": 103.744608
+    },
+    {
+      "name": "CHOA CHU KANG MRT STATION",
+      "category": "MRT",
+      "latitude": 1.385425,
+      "longitude": 103.744416
+    },
+    {
+      "name": "CITY HALL MRT STATION",
+      "category": "MRT",
+      "latitude": 1.293206,
+      "longitude": 103.852441
+    },
+    {
+      "name": "CLARKE QUAY MRT STATION",
+      "category": "MRT",
+      "latitude": 1.288616,
+      "longitude": 103.846565
+    },
+    {
+      "name": "CLEMENTI MRT STATION",
+      "category": "MRT",
+      "latitude": 1.314771,
+      "longitude": 103.765372
+    },
+    {
+      "name": "COMMONWEALTH MRT STATION",
+      "category": "MRT",
+      "latitude": 1.302373,
+      "longitude": 103.798379
+    },
+    {
+      "name": "COMPASSVALE LRT STATION",
+      "category": "MRT",
+      "latitude": 1.394431,
+      "longitude": 103.900662
+    },
+    {
+      "name": "CORAL EDGE LRT STATION",
+      "category": "MRT",
+      "latitude": 1.393828,
+      "longitude": 103.91268
+    },
+    {
+      "name": "COVE LRT STATION",
+      "category": "MRT",
+      "latitude": 1.399214,
+      "longitude": 103.906052
+    },
+    {
+      "name": "DAKOTA MRT STATION",
+      "category": "MRT",
+      "latitude": 1.308455,
+      "longitude": 103.888643
+    },
+    {
+      "name": "DAMAI LRT STATION",
+      "category": "MRT",
+      "latitude": 1.405165,
+      "longitude": 103.908703
+    },
+    {
+      "name": "DHOBY GHAUT MRT STATION",
+      "category": "MRT",
+      "latitude": 1.299411,
+      "longitude": 103.845502
+    },
+    {
+      "name": "DOVER MRT STATION",
+      "category": "MRT",
+      "latitude": 1.311554,
+      "longitude": 103.778385
+    },
+    {
+      "name": "DOWNTOWN MRT STATION",
+      "category": "MRT",
+      "latitude": 1.279553,
+      "longitude": 103.852771
+    },
+    {
+      "name": "ESPLANADE MRT STATION",
+      "category": "MRT",
+      "latitude": 1.293194,
+      "longitude": 103.85568
+    },
+    {
+      "name": "EUNOS MRT STATION",
+      "category": "MRT",
+      "latitude": 1.319537,
+      "longitude": 103.902897
+    },
+    {
+      "name": "EXPO MRT STATION",
+      "category": "MRT",
+      "latitude": 1.33518,
+      "longitude": 103.962394
+    },
+    {
+      "name": "FAJAR LRT STATION",
+      "category": "MRT",
+      "latitude": 1.384465,
+      "longitude": 103.770676
+    },
+    {
+      "name": "FARMWAY LRT STATION",
+      "category": "MRT",
+      "latitude": 1.397167,
+      "longitude": 103.889261
+    },
+    {
+      "name": "FARRER PARK MRT STATION",
+      "category": "MRT",
+      "latitude": 1.312161,
+      "longitude": 103.854337
+    },
+    {
+      "name": "FARRER ROAD MRT STATION",
+      "category": "MRT",
+      "latitude": 1.317523,
+      "longitude": 103.807677
+    },
+    {
+      "name": "FERNVALE LRT STATION",
+      "category": "MRT",
+      "latitude": 1.392158,
+      "longitude": 103.876262
+    },
+    {
+      "name": "FORT CANNING MRT STATION",
+      "category": "MRT",
+      "latitude": 1.292618,
+      "longitude": 103.844298
+    },
+    {
+      "name": "GARDENS BY THE BAY MRT STATION",
+      "category": "MRT",
+      "latitude": 1.279167,
+      "longitude": 103.867903
+    },
+    {
+      "name": "GEYLANG BAHRU MRT STATION",
+      "category": "MRT",
+      "latitude": 1.321335,
+      "longitude": 103.871675
+    },
+    {
+      "name": "GREAT WORLD MRT STATION",
+      "category": "MRT",
+      "latitude": 1.294296,
+      "longitude": 103.833092
+    },
+    {
+      "name": "GUL CIRCLE MRT STATION",
+      "category": "MRT",
+      "latitude": 1.318935,
+      "longitude": 103.65994
+    },
+    {
+      "name": "HARBOURFRONT MRT STATION",
+      "category": "MRT",
+      "latitude": 1.265411,
+      "longitude": 103.8215
+    },
+    {
+      "name": "HAVELOCK MRT STATION",
+      "category": "MRT",
+      "latitude": 1.288438,
+      "longitude": 103.833734
+    },
+    {
+      "name": "HAW PAR VILLA MRT STATION",
+      "category": "MRT",
+      "latitude": 1.283055,
+      "longitude": 103.782006
+    },
+    {
+      "name": "HILLVIEW MRT STATION",
+      "category": "MRT",
+      "latitude": 1.362279,
+      "longitude": 103.767398
+    },
+    {
+      "name": "HOLLAND VILLAGE MRT STATION",
+      "category": "MRT",
+      "latitude": 1.311,
+      "longitude": 103.795887
+    },
+    {
+      "name": "HOUGANG MRT STATION",
+      "category": "MRT",
+      "latitude": 1.371432,
+      "longitude": 103.892464
+    },
+    {
+      "name": "HUME MRT STATION",
+      "category": "MRT",
+      "latitude": 1.354946,
+      "longitude": 103.768674
+    },
+    {
+      "name": "JALAN BESAR MRT STATION",
+      "category": "MRT",
+      "latitude": 1.305179,
+      "longitude": 103.85527
+    },
+    {
+      "name": "JELAPANG LRT STATION",
+      "category": "MRT",
+      "latitude": 1.386833,
+      "longitude": 103.764677
+    },
+    {
+      "name": "JOO KOON MRT STATION",
+      "category": "MRT",
+      "latitude": 1.327729,
+      "longitude": 103.678582
+    },
+    {
+      "name": "JURONG EAST MRT STATION",
+      "category": "MRT",
+      "latitude": 1.333211,
+      "longitude": 103.742365
+    },
+    {
+      "name": "KADALOOR LRT STATION",
+      "category": "MRT",
+      "latitude": 1.39961,
+      "longitude": 103.916452
+    },
+    {
+      "name": "KAKI BUKIT MRT STATION",
+      "category": "MRT",
+      "latitude": 1.335117,
+      "longitude": 103.909276
+    },
+    {
+      "name": "KALLANG MRT STATION",
+      "category": "MRT",
+      "latitude": 1.311661,
+      "longitude": 103.871659
+    },
+    {
+      "name": "KANGKAR LRT STATION",
+      "category": "MRT",
+      "latitude": 1.38392,
+      "longitude": 103.902212
+    },
+    {
+      "name": "KATONG PARK MRT STATION",
+      "category": "MRT",
+      "latitude": 1.297959,
+      "longitude": 103.886081
+    },
+    {
+      "name": "KEAT HONG LRT STATION",
+      "category": "MRT",
+      "latitude": 1.378465,
+      "longitude": 103.749227
+    },
+    {
+      "name": "KEMBANGAN MRT STATION",
+      "category": "MRT",
+      "latitude": 1.321038,
+      "longitude": 103.91292
+    },
+    {
+      "name": "KENT RIDGE MRT STATION",
+      "category": "MRT",
+      "latitude": 1.293487,
+      "longitude": 103.784575
+    },
+    {
+      "name": "KEPPEL MRT STATION",
+      "category": "MRT",
+      "latitude": 1.270387,
+      "longitude": 103.83011
+    },
+    {
+      "name": "KHATIB MRT STATION",
+      "category": "MRT",
+      "latitude": 1.417404,
+      "longitude": 103.832937
+    },
+    {
+      "name": "KING ALBERT PARK MRT STATION",
+      "category": "MRT",
+      "latitude": 1.335757,
+      "longitude": 103.783796
+    },
+    {
+      "name": "KOVAN MRT STATION",
+      "category": "MRT",
+      "latitude": 1.35998,
+      "longitude": 103.884827
+    },
+    {
+      "name": "KRANJI MRT STATION",
+      "category": "MRT",
+      "latitude": 1.424961,
+      "longitude": 103.762053
+    },
+    {
+      "name": "KUPANG LRT STATION",
+      "category": "MRT",
+      "latitude": 1.398221,
+      "longitude": 103.881139
+    },
+    {
+      "name": "LABRADOR PARK MRT STATION",
+      "category": "MRT",
+      "latitude": 1.272107,
+      "longitude": 103.802356
+    },
+    {
+      "name": "LAKESIDE MRT STATION",
+      "category": "MRT",
+      "latitude": 1.344123,
+      "longitude": 103.721079
+    },
+    {
+      "name": "LAVENDER MRT STATION",
+      "category": "MRT",
+      "latitude": 1.307394,
+      "longitude": 103.862847
+    },
+    {
+      "name": "LAYAR LRT STATION",
+      "category": "MRT",
+      "latitude": 1.392085,
+      "longitude": 103.880151
+    },
+    {
+      "name": "LENTOR MRT STATION",
+      "category": "MRT",
+      "latitude": 1.384739,
+      "longitude": 103.836552
+    },
+    {
+      "name": "LITTLE INDIA MRT STATION",
+      "category": "MRT",
+      "latitude": 1.306748,
+      "longitude": 103.849279
+    },
+    {
+      "name": "LORONG CHUAN MRT STATION",
+      "category": "MRT",
+      "latitude": 1.351589,
+      "longitude": 103.863926
+    },
+    {
+      "name": "MACPHERSON MRT STATION",
+      "category": "MRT",
+      "latitude": 1.325871,
+      "longitude": 103.889558
+    },
+    {
+      "name": "MARINA BAY MRT STATION",
+      "category": "MRT",
+      "latitude": 1.275451,
+      "longitude": 103.855131
+    },
+    {
+      "name": "MARINA SOUTH MRT STATION",
+      "category": "MRT",
+      "latitude": 1.27402,
+      "longitude": 103.862211
+    },
+    {
+      "name": "MARINA SOUTH PIER MRT STATION",
+      "category": "MRT",
+      "latitude": 1.270984,
+      "longitude": 103.862955
+    },
+    {
+      "name": "MARINE PARADE MRT STATION",
+      "category": "MRT",
+      "latitude": 1.303777,
+      "longitude": 103.906844
+    },
+    {
+      "name": "MARINE TERRACE MRT STATION",
+      "category": "MRT",
+      "latitude": 1.306694,
+      "longitude": 103.915074
+    },
+    {
+      "name": "MARSILING MRT STATION",
+      "category": "MRT",
+      "latitude": 1.432693,
+      "longitude": 103.77411
+    },
+    {
+      "name": "MARYMOUNT MRT STATION",
+      "category": "MRT",
+      "latitude": 1.348423,
+      "longitude": 103.839573
+    },
+    {
+      "name": "MATTAR MRT STATION",
+      "category": "MRT",
+      "latitude": 1.326857,
+      "longitude": 103.88324
+    },
+    {
+      "name": "MAXWELL MRT STATION",
+      "category": "MRT",
+      "latitude": 1.280715,
+      "longitude": 103.843992
+    },
+    {
+      "name": "MAYFLOWER MRT STATION",
+      "category": "MRT",
+      "latitude": 1.37204,
+      "longitude": 103.836766
+    },
+    {
+      "name": "MERIDIAN LRT STATION",
+      "category": "MRT",
+      "latitude": 1.396901,
+      "longitude": 103.908918
+    },
+    {
+      "name": "MOUNTBATTEN MRT STATION",
+      "category": "MRT",
+      "latitude": 1.306399,
+      "longitude": 103.882923
+    },
+    {
+      "name": "NAPIER MRT STATION",
+      "category": "MRT",
+      "latitude": 1.30664,
+      "longitude": 103.819495
+    },
+    {
+      "name": "NEWTON MRT STATION",
+      "category": "MRT",
+      "latitude": 1.312764,
+      "longitude": 103.838114
+    },
+    {
+      "name": "NIBONG LRT STATION",
+      "category": "MRT",
+      "latitude": 1.411842,
+      "longitude": 103.900303
+    },
+    {
+      "name": "NICOLL HIGHWAY MRT STATION",
+      "category": "MRT",
+      "latitude": 1.299915,
+      "longitude": 103.863829
+    },
+    {
+      "name": "NOVENA MRT STATION",
+      "category": "MRT",
+      "latitude": 1.320495,
+      "longitude": 103.843865
+    },
+    {
+      "name": "OASIS LRT STATION",
+      "category": "MRT",
+      "latitude": 1.402305,
+      "longitude": 103.9127
+    },
+    {
+      "name": "ONE-NORTH MRT STATION",
+      "category": "MRT",
+      "latitude": 1.299794,
+      "longitude": 103.787546
+    },
+    {
+      "name": "ORCHARD BOULEVARD MRT STATION",
+      "category": "MRT",
+      "latitude": 1.303044,
+      "longitude": 103.823767
+    },
+    {
+      "name": "ORCHARD MRT STATION",
+      "category": "MRT",
+      "latitude": 1.303789,
+      "longitude": 103.83186
+    },
+    {
+      "name": "OUTRAM PARK MRT STATION",
+      "category": "MRT",
+      "latitude": 1.280728,
+      "longitude": 103.839077
+    },
+    {
+      "name": "PASIR PANJANG MRT STATION",
+      "category": "MRT",
+      "latitude": 1.276003,
+      "longitude": 103.79203
+    },
+    {
+      "name": "PASIR RIS MRT STATION",
+      "category": "MRT",
+      "latitude": 1.372864,
+      "longitude": 103.949235
+    },
+    {
+      "name": "PAYA LEBAR MRT STATION",
+      "category": "MRT",
+      "latitude": 1.317721,
+      "longitude": 103.892441
+    },
+    {
+      "name": "PENDING LRT STATION",
+      "category": "MRT",
+      "latitude": 1.376297,
+      "longitude": 103.771328
+    },
+    {
+      "name": "PETIR LRT STATION",
+      "category": "MRT",
+      "latitude": 1.377603,
+      "longitude": 103.766793
+    },
+    {
+      "name": "PHOENIX LRT STATION",
+      "category": "MRT",
+      "latitude": 1.378614,
+      "longitude": 103.758252
+    },
+    {
+      "name": "PIONEER MRT STATION",
+      "category": "MRT",
+      "latitude": 1.337588,
+      "longitude": 103.697142
+    },
+    {
+      "name": "POTONG PASIR MRT STATION",
+      "category": "MRT",
+      "latitude": 1.331672,
+      "longitude": 103.869001
+    },
+    {
+      "name": "PRINCE EDWARD ROAD MRT STATION",
+      "category": "MRT",
+      "latitude": 1.273235,
+      "longitude": 103.846218
+    },
+    {
+      "name": "PROMENADE MRT STATION",
+      "category": "MRT",
+      "latitude": 1.293226,
+      "longitude": 103.860349
+    },
+    {
+      "name": "PUNGGOL COAST MRT STATION",
+      "category": "MRT",
+      "latitude": 1.414963,
+      "longitude": 103.910107
+    },
+    {
+      "name": "PUNGGOL LRT STATION",
+      "category": "MRT",
+      "latitude": 1.404369,
+      "longitude": 103.901957
+    },
+    {
+      "name": "PUNGGOL MRT STATION",
+      "category": "MRT",
+      "latitude": 1.405263,
+      "longitude": 103.902452
+    },
+    {
+      "name": "PUNGGOL POINT LRT STATION",
+      "category": "MRT",
+      "latitude": 1.416789,
+      "longitude": 103.906756
+    },
+    {
+      "name": "QUEENSTOWN MRT STATION",
+      "category": "MRT",
+      "latitude": 1.294852,
+      "longitude": 103.805893
+    },
+    {
+      "name": "RAFFLES PLACE MRT STATION",
+      "category": "MRT",
+      "latitude": 1.283704,
+      "longitude": 103.851415
+    },
+    {
+      "name": "RANGGUNG LRT STATION",
+      "category": "MRT",
+      "latitude": 1.384141,
+      "longitude": 103.897273
+    },
+    {
+      "name": "REDHILL MRT STATION",
+      "category": "MRT",
+      "latitude": 1.289428,
+      "longitude": 103.817122
+    },
+    {
+      "name": "RENJONG LRT STATION",
+      "category": "MRT",
+      "latitude": 1.386756,
+      "longitude": 103.890424
+    },
+    {
+      "name": "RIVIERA LRT STATION",
+      "category": "MRT",
+      "latitude": 1.394442,
+      "longitude": 103.916099
+    },
+    {
+      "name": "ROCHOR MRT STATION",
+      "category": "MRT",
+      "latitude": 1.303809,
+      "longitude": 103.85274
+    },
+    {
+      "name": "RUMBIA LRT STATION",
+      "category": "MRT",
+      "latitude": 1.391377,
+      "longitude": 103.906062
+    },
+    {
+      "name": "SAM KEE LRT STATION",
+      "category": "MRT",
+      "latitude": 1.409765,
+      "longitude": 103.904915
+    },
+    {
+      "name": "SAMUDERA LRT STATION",
+      "category": "MRT",
+      "latitude": 1.415886,
+      "longitude": 103.902137
+    },
+    {
+      "name": "SEGAR LRT STATION",
+      "category": "MRT",
+      "latitude": 1.387812,
+      "longitude": 103.76941
+    },
+    {
+      "name": "SEMBAWANG MRT STATION",
+      "category": "MRT",
+      "latitude": 1.448922,
+      "longitude": 103.820015
+    },
+    {
+      "name": "SENGKANG MRT STATION",
+      "category": "MRT",
+      "latitude": 1.391719,
+      "longitude": 103.895489
+    },
+    {
+      "name": "SENJA LRT STATION",
+      "category": "MRT",
+      "latitude": 1.382875,
+      "longitude": 103.762326
+    },
+    {
+      "name": "SERANGOON MRT STATION",
+      "category": "MRT",
+      "latitude": 1.350262,
+      "longitude": 103.873297
+    },
+    {
+      "name": "SHENTON WAY MRT STATION",
+      "category": "MRT",
+      "latitude": 1.277471,
+      "longitude": 103.850936
+    },
+    {
+      "name": "SIGLAP MRT STATION",
+      "category": "MRT",
+      "latitude": 1.309854,
+      "longitude": 103.929979
+    },
+    {
+      "name": "SIMEI MRT STATION",
+      "category": "MRT",
+      "latitude": 1.342662,
+      "longitude": 103.953819
+    },
+    {
+      "name": "SIXTH AVENUE MRT STATION",
+      "category": "MRT",
+      "latitude": 1.331151,
+      "longitude": 103.796707
+    },
+    {
+      "name": "SOMERSET MRT STATION",
+      "category": "MRT",
+      "latitude": 1.300368,
+      "longitude": 103.83884
+    },
+    {
+      "name": "SOO TECK LRT STATION",
+      "category": "MRT",
+      "latitude": 1.40513,
+      "longitude": 103.897219
+    },
+    {
+      "name": "SOUTH VIEW LRT STATION",
+      "category": "MRT",
+      "latitude": 1.380318,
+      "longitude": 103.745101
+    },
+    {
+      "name": "SPRINGLEAF MRT STATION",
+      "category": "MRT",
+      "latitude": 1.398097,
+      "longitude": 103.818159
+    },
+    {
+      "name": "STADIUM MRT STATION",
+      "category": "MRT",
+      "latitude": 1.302941,
+      "longitude": 103.875313
+    },
+    {
+      "name": "STEVENS MRT STATION",
+      "category": "MRT",
+      "latitude": 1.320142,
+      "longitude": 103.825788
+    },
+    {
+      "name": "SUMANG LRT STATION",
+      "category": "MRT",
+      "latitude": 1.408428,
+      "longitude": 103.898546
+    },
+    {
+      "name": "TAI SENG MRT STATION",
+      "category": "MRT",
+      "latitude": 1.335436,
+      "longitude": 103.888034
+    },
+    {
+      "name": "TAMPINES EAST MRT STATION",
+      "category": "MRT",
+      "latitude": 1.356143,
+      "longitude": 103.955283
+    },
+    {
+      "name": "TAMPINES MRT STATION",
+      "category": "MRT",
+      "latitude": 1.354317,
+      "longitude": 103.943782
+    },
+    {
+      "name": "TAMPINES WEST MRT STATION",
+      "category": "MRT",
+      "latitude": 1.345315,
+      "longitude": 103.938573
+    },
+    {
+      "name": "TAN KAH KEE MRT STATION",
+      "category": "MRT",
+      "latitude": 1.32574,
+      "longitude": 103.8078
+    },
+    {
+      "name": "TANAH MERAH MRT STATION",
+      "category": "MRT",
+      "latitude": 1.32696,
+      "longitude": 103.945759
+    },
+    {
+      "name": "TANJONG KATONG MRT STATION",
+      "category": "MRT",
+      "latitude": 1.299428,
+      "longitude": 103.897485
+    },
+    {
+      "name": "TANJONG PAGAR MRT STATION",
+      "category": "MRT",
+      "latitude": 1.276506,
+      "longitude": 103.846433
+    },
+    {
+      "name": "TANJONG RHU MRT STATION",
+      "category": "MRT",
+      "latitude": 1.29733,
+      "longitude": 103.87354
+    },
+    {
+      "name": "TECK LEE LRT STATION",
+      "category": "MRT",
+      "latitude": 1.412902,
+      "longitude": 103.906646
+    },
+    {
+      "name": "TECK WHYE LRT STATION",
+      "category": "MRT",
+      "latitude": 1.376564,
+      "longitude": 103.753826
+    },
+    {
+      "name": "TELOK AYER MRT STATION",
+      "category": "MRT",
+      "latitude": 1.282387,
+      "longitude": 103.848344
+    },
+    {
+      "name": "TELOK BLANGAH MRT STATION",
+      "category": "MRT",
+      "latitude": 1.270721,
+      "longitude": 103.809884
+    },
+    {
+      "name": "THANGGAM LRT STATION",
+      "category": "MRT",
+      "latitude": 1.397195,
+      "longitude": 103.875627
+    },
+    {
+      "name": "TIONG BAHRU MRT STATION",
+      "category": "MRT",
+      "latitude": 1.286061,
+      "longitude": 103.827244
+    },
+    {
+      "name": "TOA PAYOH MRT STATION",
+      "category": "MRT",
+      "latitude": 1.332741,
+      "longitude": 103.847285
+    },
+    {
+      "name": "TONGKANG LRT STATION",
+      "category": "MRT",
+      "latitude": 1.38928,
+      "longitude": 103.886023
+    },
+    {
+      "name": "TUAS CRESCENT MRT STATION",
+      "category": "MRT",
+      "latitude": 1.321004,
+      "longitude": 103.649123
+    },
+    {
+      "name": "TUAS LINK MRT STATION",
+      "category": "MRT",
+      "latitude": 1.340683,
+      "longitude": 103.637043
+    },
+    {
+      "name": "TUAS WEST ROAD MRT STATION",
+      "category": "MRT",
+      "latitude": 1.330027,
+      "longitude": 103.639538
+    },
+    {
+      "name": "UBI MRT STATION",
+      "category": "MRT",
+      "latitude": 1.329891,
+      "longitude": 103.899231
+    },
+    {
+      "name": "UPPER CHANGI MRT STATION",
+      "category": "MRT",
+      "latitude": 1.341548,
+      "longitude": 103.961285
+    },
+    {
+      "name": "UPPER THOMSON MRT STATION",
+      "category": "MRT",
+      "latitude": 1.354527,
+      "longitude": 103.832821
+    },
+    {
+      "name": "WOODLANDS MRT STATION",
+      "category": "MRT",
+      "latitude": 1.436187,
+      "longitude": 103.787627
+    },
+    {
+      "name": "WOODLANDS NORTH MRT STATION",
+      "category": "MRT",
+      "latitude": 1.448492,
+      "longitude": 103.785266
+    },
+    {
+      "name": "WOODLANDS SOUTH MRT STATION",
+      "category": "MRT",
+      "latitude": 1.426972,
+      "longitude": 103.793958
+    },
+    {
+      "name": "WOODLEIGH MRT STATION",
+      "category": "MRT",
+      "latitude": 1.338987,
+      "longitude": 103.870834
+    },
+    {
+      "name": "YEW TEE MRT STATION",
+      "category": "MRT",
+      "latitude": 1.397499,
+      "longitude": 103.747267
+    },
+    {
+      "name": "YIO CHU KANG MRT STATION",
+      "category": "MRT",
+      "latitude": 1.381715,
+      "longitude": 103.844809
+    },
+    {
+      "name": "YISHUN MRT STATION",
+      "category": "MRT",
+      "latitude": 1.429384,
+      "longitude": 103.835049
+    }
+  ]
+}

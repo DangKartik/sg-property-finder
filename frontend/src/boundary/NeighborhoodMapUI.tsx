@@ -1,14 +1,35 @@
+import { useMemo, useState } from "react";
 import type { Feature, GeoJsonObject } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
-import { GeoJSON, MapContainer, Polyline, TileLayer, Tooltip } from "react-leaflet";
-import type { CoordinatesDTO, MapDataDTO, RouteDataDTO } from "../types/dto";
+import {
+  CircleMarker,
+  GeoJSON,
+  MapContainer,
+  Polyline,
+  TileLayer,
+  Tooltip,
+} from "react-leaflet";
+import type {
+  AmenityPointDTO,
+  CoordinatesDTO,
+  MapDataDTO,
+  RouteDataDTO,
+} from "../types/dto";
 import { decodePolyline } from "../utils/polyline";
 import { scoreColor } from "../utils/format";
+import {
+  ALL_AMENITY_GROUP_IDS,
+  AMENITY_GROUPS,
+  amenityColor,
+  filterAmenities,
+} from "../utils/amenities";
 
 export interface NeighborhoodMapUIProps {
   mapData: MapDataDTO | null;
   scores: Record<string, number>;
   selectedSubzoneId: string | null;
+  highlightedSubzoneIds?: string[];
+  amenities?: AmenityPointDTO[];
   route: RouteDataDTO | null;
   routeOrigin: CoordinatesDTO | null;
   routeDestination: CoordinatesDTO | null;
@@ -17,16 +38,34 @@ export interface NeighborhoodMapUIProps {
 
 const SINGAPORE_CENTER: [number, number] = [1.3521, 103.8198];
 
-/** OneMap-backed Leaflet map with a subzone choropleth and route overlay. */
+/** OneMap-backed map with a subzone choropleth, route overlay and selected-subzone amenities. */
 export function NeighborhoodMapUI({
   mapData,
   scores,
   selectedSubzoneId,
+  highlightedSubzoneIds = [],
+  amenities = [],
   route,
   routeOrigin,
   routeDestination,
   onSelect,
 }: NeighborhoodMapUIProps) {
+  const [visibleGroups, setVisibleGroups] = useState<string[]>(
+    ALL_AMENITY_GROUP_IDS,
+  );
+  const visibleAmenities = useMemo(
+    () => filterAmenities(amenities, true, visibleGroups),
+    [amenities, visibleGroups],
+  );
+
+  function toggleGroup(groupId: string) {
+    setVisibleGroups((current) =>
+      current.includes(groupId)
+        ? current.filter((id) => id !== groupId)
+        : [...current, groupId],
+    );
+  }
+
   const center: [number, number] = mapData
     ? [mapData.center.latitude, mapData.center.longitude]
     : SINGAPORE_CENTER;
@@ -50,12 +89,34 @@ export function NeighborhoodMapUI({
         />
         {mapData && (
           <GeoJSON
-            key={`${selectedSubzoneId ?? "none"}-${JSON.stringify(scores)}`}
+            key={`${selectedSubzoneId ?? "none"}-${highlightedSubzoneIds.join(",")}-${JSON.stringify(scores)}`}
             data={mapData.geojson as GeoJsonObject}
-            style={(feature) => styleFeature(feature, scores, selectedSubzoneId)}
+            style={(feature) =>
+              styleFeature(feature, scores, selectedSubzoneId, highlightedSubzoneIds)
+            }
             onEachFeature={(feature, layer) => bindFeature(feature, layer, onSelect)}
           />
         )}
+        {visibleAmenities.map((amenity, index) => {
+          const color = amenityColor(amenity.category);
+          return (
+            <CircleMarker
+              key={`${amenity.category}-${amenity.name}-${index}`}
+              center={[amenity.latitude, amenity.longitude]}
+              radius={3.2}
+              pathOptions={{
+                color,
+                fillColor: color,
+                fillOpacity: 0.78,
+                weight: 1,
+              }}
+            >
+              <Tooltip direction="top" offset={[0, -3]}>
+                {amenity.name} · {amenity.category}
+              </Tooltip>
+            </CircleMarker>
+          );
+        })}
         {routePositions.length > 1 && (
           <Polyline
             positions={routePositions}
@@ -71,6 +132,29 @@ export function NeighborhoodMapUI({
           </Polyline>
         )}
       </MapContainer>
+      {amenities.length > 0 && (
+        <details className="amenity-controls">
+          <summary>Nearby amenities</summary>
+          <div className="amenity-group-list">
+            {AMENITY_GROUPS.map((group) => (
+              <label className="amenity-toggle" key={group.id}>
+                <input
+                  type="checkbox"
+                  checked={visibleGroups.includes(group.id)}
+                  onChange={() => toggleGroup(group.id)}
+                />
+                <span
+                  className="amenity-dot"
+                  style={{ backgroundColor: group.color }}
+                  aria-hidden="true"
+                />
+                {group.label}
+              </label>
+            ))}
+          </div>
+          <p className="amenity-count">{visibleAmenities.length} points shown</p>
+        </details>
+      )}
       <div className="map-legend" aria-label="Suitability score legend">
         <span>Score</span>
         <span className="legend-swatch" style={{ backgroundColor: "#dc2626" }} /> 0–29
@@ -86,15 +170,18 @@ function styleFeature(
   feature: Feature | undefined,
   scores: Record<string, number>,
   selectedId: string | null,
+  highlightedIds: string[],
 ): PathOptions {
   const code = (feature?.properties as { subzoneCode?: string } | undefined)?.subzoneCode;
   const score = code ? scores[code] : undefined;
   const selected = code === selectedId;
+  const highlighted = code ? highlightedIds.includes(code) : false;
   return {
     fillColor: scoreColor(score),
-    fillOpacity: score === undefined ? 0.18 : selected ? 0.82 : 0.55,
-    color: selected ? "#0f172a" : "#ffffff",
-    weight: selected ? 3 : 1,
+    fillOpacity:
+      score === undefined ? 0.18 : selected ? 0.82 : highlighted ? 0.78 : 0.55,
+    color: selected ? "#0f172a" : highlighted ? "#f59e0b" : "#ffffff",
+    weight: selected ? 3 : highlighted ? 2.5 : 1,
     opacity: 0.9,
   };
 }

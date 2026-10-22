@@ -50,23 +50,23 @@ def buildDefaultCriterionCatalog() -> CriterionCatalog:
     definitions = [
         CriterionDefinition(
             "PRICE", "Housing affordability", "SGD", CriterionDirection.MINIMIZE,
-            None, 0.20, 200_000.0, 1_500_000.0,
+            None, 5.0, 200_000.0, 1_500_000.0,
         ),
         CriterionDefinition(
             "COMMUTE_TIME", "Commute duration", "minutes", CriterionDirection.MINIMIZE,
-            None, 0.20, 0.0, 90.0,
+            None, 5.0, 0.0, 90.0,
         ),
         CriterionDefinition(
             "SCHOOL_PROXIMITY", "School access", "count", CriterionDirection.MAXIMIZE,
-            1000, 0.20, 0.0, 4.0,
+            1000, 5.0, 0.0, 4.0,
         ),
         CriterionDefinition(
             "GREEN_COVERAGE", "Green coverage", "percent", CriterionDirection.MAXIMIZE,
-            500, 0.20, 0.0, 100.0,
+            500, 5.0, 0.0, 100.0,
         ),
         CriterionDefinition(
             "AMENITIES_DENSITY", "Amenity access", "count", CriterionDirection.MAXIMIZE,
-            None, 0.20, 0.0, 10.0,
+            None, 5.0, 0.0, 10.0,
         ),
     ]
     return CriterionCatalog({definition.criterionId: definition for definition in definitions})

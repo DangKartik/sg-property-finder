@@ -104,17 +104,29 @@ class OneMapApiAdapter:
             token = self.getAccessToken()
             return self._getJson(url, params, token)
 
-    def searchAddress(self, query: str) -> list[AddressMatch]:
-        """Return detailed address matches for user confirmation."""
-        payload = self._authorizedJson(
+    def searchPlaces(self, query: str, pageNum: int = 1) -> dict[str, Any]:
+        """Return the raw OneMap search payload for one result page.
+
+        Args:
+            query: Postal code, address or place name.
+            pageNum: One-based result page.
+
+        Returns:
+            dict[str, Any]: The raw OneMap search response.
+        """
+        return self._authorizedJson(
             "/api/common/elastic/search",
             {
                 "searchVal": query,
                 "returnGeom": "Y",
                 "getAddrDetails": "Y",
-                "pageNum": 1,
+                "pageNum": pageNum,
             },
         )
+
+    def searchAddress(self, query: str) -> list[AddressMatch]:
+        """Return detailed address matches for user confirmation."""
+        payload = self.searchPlaces(query)
         matches: list[AddressMatch] = []
         for result in payload.get("results", []) or []:
             try:

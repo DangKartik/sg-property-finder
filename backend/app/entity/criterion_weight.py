@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 @dataclass
 class CriterionWeight:
-    """Stereotype: Entity. The importance a user assigns to one criterion."""
+    """Stereotype: Entity. A 1–10 importance rating for one criterion."""
 
     criterionId: str
     weightValue: float

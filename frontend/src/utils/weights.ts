@@ -1,62 +1,60 @@
-export function rescaleWeights(
-  current: Record<string, number>,
-  changedId: string,
-  rawValue: number,
+import type { ProfileDTO } from "../types/dto";
+
+export const MIN_IMPORTANCE = 1;
+export const MAX_IMPORTANCE = 10;
+export const DEFAULT_IMPORTANCE = 5;
+
+/** Clamp a user rating to the 1–10 importance scale. */
+export function clampImportance(value: number): number {
+  if (!Number.isFinite(value)) {
+    return DEFAULT_IMPORTANCE;
+  }
+  return Math.max(MIN_IMPORTANCE, Math.min(MAX_IMPORTANCE, Math.round(value)));
+}
+
+/**
+ * Build the UI's importance ratings from a saved profile.
+ *
+ * Legacy profiles used 0–100 percentages that summed to 100. They are detected
+ * and converted proportionally to the 1–10 scale so existing plans still load.
+ */
+export function importanceFromProfile(
+  weights: Array<{ criterionId: string; weightValue: number }>,
   criterionIds: string[],
 ): Record<string, number> {
-  const value = Math.max(0, Math.min(100, Number(rawValue)));
-  const others = criterionIds.filter((id) => id !== changedId);
-  const result: Record<string, number> = { ...current, [changedId]: value };
+  const configured = new Map(
+    weights.map((weight) => [weight.criterionId, weight.weightValue]),
+  );
+  const values = criterionIds.map(
+    (criterionId) => configured.get(criterionId) ?? DEFAULT_IMPORTANCE,
+  );
+  const total = values.reduce((sum, value) => sum + Math.max(0, value), 0);
+  const isLegacy =
+    values.some((value) => value > MAX_IMPORTANCE) ||
+    total > criterionIds.length * MAX_IMPORTANCE;
 
-  if (others.length === 0) {
-    return { [changedId]: 100 };
-  }
-
-  const remaining = 100 - value;
-  const otherTotal = others.reduce((sum, id) => sum + Math.max(0, current[id] ?? 0), 0);
-
-  if (otherTotal <= 0) {
-    const each = remaining / others.length;
-    others.forEach((id) => {
-      result[id] = round1(each);
-    });
-  } else {
-    others.forEach((id) => {
-      result[id] = round1((Math.max(0, current[id] ?? 0) / otherTotal) * remaining);
-    });
-  }
-
-  // Correct rounding drift so the displayed sliders always total exactly 100.
-  const total = criterionIds.reduce((sum, id) => sum + (result[id] ?? 0), 0);
-  const drift = round1(100 - total);
-  if (Math.abs(drift) >= 0.1) {
-    const lastOther = others[others.length - 1];
-    result[lastOther] = round1(Math.max(0, (result[lastOther] ?? 0) + drift));
-  }
-  result[changedId] = round1(result[changedId]);
-  return result;
-}
-
-export function round1(value: number): number {
-  return Math.round(value * 10) / 10;
-}
-
-export function weightsToRecord(
-  weights: Array<{ criterionId: string; weightValue: number }>,
-  criteriaIds: string[],
-): Record<string, number> {
-  const record: Record<string, number> = {};
-  criteriaIds.forEach((id) => {
-    record[id] = 0;
+  const ratings: Record<string, number> = {};
+  criterionIds.forEach((criterionId, index) => {
+    const value = values[index];
+    ratings[criterionId] = isLegacy && total > 0
+      ? clampImportance((Math.max(0, value) / total) * MAX_IMPORTANCE)
+      : clampImportance(value);
   });
-  weights.forEach((weight) => {
-    if (id_in(record, weight.criterionId)) {
-      record[weight.criterionId] = weight.weightValue;
-    }
-  });
-  return record;
+  return ratings;
 }
 
-function id_in(record: Record<string, number>, id: string): boolean {
-  return Object.prototype.hasOwnProperty.call(record, id);
+/** Normalise legacy 0–100 weights before persisting a profile. */
+export function normalizeProfileWeights(profile: ProfileDTO): ProfileDTO {
+  if (!profile.criteriaWeights || profile.criteriaWeights.length === 0) {
+    return profile;
+  }
+  const criterionIds = profile.criteriaWeights.map((weight) => weight.criterionId);
+  const ratings = importanceFromProfile(profile.criteriaWeights, criterionIds);
+  return {
+    ...profile,
+    criteriaWeights: profile.criteriaWeights.map((weight) => ({
+      ...weight,
+      weightValue: ratings[weight.criterionId] ?? DEFAULT_IMPORTANCE,
+    })),
+  };
 }

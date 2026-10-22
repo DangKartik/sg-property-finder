@@ -12,6 +12,7 @@ import { ProfileFormUI } from "./boundary/ProfileFormUI";
 import { ProfileSelectorUI } from "./boundary/ProfileSelectorUI";
 import { ResultsListUI } from "./boundary/ResultsListUI";
 import type {
+  AmenityPointDTO,
   CoordinatesDTO,
   CriterionDefinitionDTO,
   DataStatusMapDTO,
@@ -21,6 +22,7 @@ import type {
   RouteDataDTO,
 } from "./types/dto";
 import { formatDate } from "./utils/format";
+import { nearbyAmenities } from "./utils/amenities";
 
 const profileCatalog = new ProfileCatalog();
 const profileControl = new ProfileControl(profileCatalog, api);
@@ -38,7 +40,9 @@ export default function App() {
   const [showForm, setShowForm] = useState(false);
   const [recommendations, setRecommendations] = useState<RecommendationSetDTO | null>(null);
   const [mapData, setMapData] = useState<MapDataDTO | null>(null);
+  const [amenities, setAmenities] = useState<AmenityPointDTO[]>([]);
   const [selectedSubzoneId, setSelectedSubzoneId] = useState<string | null>(null);
+  const [sharedSubzoneIds, setSharedSubzoneIds] = useState<string[]>([]);
   const [factsheetCode, setFactsheetCode] = useState<string | null>(null);
   const [comparisonIds, setComparisonIds] = useState<string[]>([]);
   const [comparisonOpen, setComparisonOpen] = useState(false);
@@ -46,6 +50,7 @@ export default function App() {
   const [notification, setNotification] = useState<NotificationState | null>(null);
   const [route, setRoute] = useState<RouteDataDTO | null>(null);
   const [busy, setBusy] = useState(false);
+  const [refreshingData, setRefreshingData] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [dataStatus, setDataStatus] = useState<DataStatusMapDTO | null>(null);
 
@@ -71,6 +76,14 @@ export default function App() {
     [mapData, selectedSubzoneId],
   );
 
+  const focusedAmenities = useMemo(
+    () =>
+      selectedSubzoneId && mapData
+        ? nearbyAmenities(amenities, featureCenter(mapData, selectedSubzoneId))
+        : [],
+    [amenities, mapData, selectedSubzoneId],
+  );
+
   const refreshProfiles = useCallback(async () => {
     try {
       const loaded = await profileCatalog.loadFromLocalStorage();
@@ -90,6 +103,7 @@ export default function App() {
         const result = requireData(envelope);
         setRecommendations(result);
         setSelectedSubzoneId(null);
+        setSharedSubzoneIds([]);
         setComparisonIds([]);
         setRoute(null);
       } catch (error) {
@@ -104,23 +118,100 @@ export default function App() {
     [notify],
   );
 
+  const handleRefreshData = useCallback(async () => {
+    setRefreshingData(true);
+    try {
+      const envelope = await api.refreshData();
+      const statuses = requireData(envelope);
+      setDataStatus(statuses);
+      const amenitiesEnvelope = await api.getAmenities().catch(() => null);
+      if (amenitiesEnvelope?.success && amenitiesEnvelope.data) {
+        setAmenities(amenitiesEnvelope.data);
+      }
+      if (activeProfile) {
+        await runRanking(activeProfile);
+      }
+      notify(
+        "Data refreshed",
+        "Subzone and HDB snapshots have been refreshed from data.gov.sg.",
+      );
+    } catch (error) {
+      notify(
+        "Data refresh failed",
+        error instanceof Error
+          ? error.message
+          : "The backend could not refresh its datasets.",
+      );
+    } finally {
+      setRefreshingData(false);
+    }
+  }, [activeProfile, notify, runRanking]);
+
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
-        const [criteriaEnvelope, mapEnvelope, statusEnvelope, loadedProfiles] = await Promise.all([
+        const sharePayload = new URLSearchParams(window.location.search).get("share");
+        const [
+          criteriaEnvelope,
+          mapEnvelope,
+          amenitiesEnvelope,
+          statusEnvelope,
+          loadedProfiles,
+          shareEnvelope,
+        ] = await Promise.all([
           api.getCriteria(),
           api.generateMapData(),
+          api.getAmenities().catch(() => null),
           api.getStatus().catch(() => null),
           profileCatalog.loadFromLocalStorage().catch(() => [] as ProfileDTO[]),
+          sharePayload
+            ? api.decodeShare(sharePayload).catch(() => null)
+            : Promise.resolve(null),
         ]);
         if (!mounted) return;
         setCriteria(requireData(criteriaEnvelope));
         setMapData(requireData(mapEnvelope));
+        if (amenitiesEnvelope?.success && amenitiesEnvelope.data) {
+          setAmenities(amenitiesEnvelope.data);
+        }
         if (statusEnvelope?.success && statusEnvelope.data) {
           setDataStatus(statusEnvelope.data);
         }
         setProfiles(loadedProfiles);
+
+        if (shareEnvelope?.success && shareEnvelope.data) {
+          const scenario = shareEnvelope.data;
+          const savedProfileId = await profileCatalog.saveToLocalStorage(scenario.profile);
+          const savedProfiles = await profileCatalog.loadFromLocalStorage();
+          if (!mounted) return;
+          const savedProfile =
+            savedProfiles.find((profile) => profile.profileId === savedProfileId) ?? {
+              ...scenario.profile,
+              profileId: savedProfileId,
+            };
+          setProfiles(savedProfiles);
+          setActiveProfileId(savedProfileId);
+          setShowForm(false);
+          setEditingProfile(null);
+          await runRanking(savedProfile);
+          if (!mounted) return;
+          setSharedSubzoneIds(scenario.subzoneCodes);
+          setComparisonIds(scenario.subzoneCodes.slice(0, 4));
+          setSelectedSubzoneId(scenario.subzoneCodes[0] ?? null);
+          const url = new URL(window.location.href);
+          url.searchParams.delete("share");
+          window.history.replaceState({}, "", url.toString());
+          return;
+        }
+
+        if (sharePayload && (!shareEnvelope || !shareEnvelope.success)) {
+          notify(
+            "Invalid share link",
+            shareEnvelope?.error?.message ?? "The shared scenario could not be loaded.",
+          );
+        }
+
         if (loadedProfiles.length > 0) {
           const first = loadedProfiles[0];
           setActiveProfileId(first.profileId);
@@ -364,9 +455,35 @@ export default function App() {
                   {dataStatus.hdb.isStale ? " · stale fallback" : ""}
                 </p>
               )}
+              {dataStatus?.amenities ? (
+                <p className="muted">
+                  Amenities snapshot: {dataStatus.amenities.recordCount.toLocaleString("en-SG")} points
+                  {dataStatus.amenities.isStale ? " · stale fallback" : ""}
+                </p>
+              ) : amenities.length > 0 ? (
+                <p className="muted">
+                  Amenities: {amenities.length.toLocaleString("en-SG")} points available
+                </p>
+              ) : null}
               {subzoneStatus?.isStale && (
                 <p className="warning-text">Snapshot is older than the configured refresh window.</p>
               )}
+              <div className="data-refresh-row">
+                <button
+                  className="button small"
+                  onClick={() => void handleRefreshData()}
+                  disabled={refreshingData || busy}
+                >
+                  {refreshingData ? "Refreshing…" : "Refresh data"}
+                </button>
+                {refreshingData && (
+                  <span className="muted">Fetching subzone and HDB snapshots…</span>
+                )}
+              </div>
+              <p className="hint">
+                Refreshes subzone and HDB snapshots from data.gov.sg. Amenity data
+                is rebuilt with <code>make amenities</code>.
+              </p>
             </section>
           </aside>
 
@@ -375,6 +492,8 @@ export default function App() {
               mapData={mapData}
               scores={scores}
               selectedSubzoneId={selectedSubzoneId}
+              highlightedSubzoneIds={sharedSubzoneIds}
+              amenities={focusedAmenities}
               route={route}
               routeOrigin={activeProfile?.anchorCoordinates ?? null}
               routeDestination={routeDestination}

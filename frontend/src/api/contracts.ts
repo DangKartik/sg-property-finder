@@ -1,5 +1,6 @@
 import type {
   AddressMatchDTO,
+  AmenityPointDTO,
   ApiEnvelope,
   ComparisonResultDTO,
   CoordinatesDTO,
@@ -10,6 +11,7 @@ import type {
   RecommendationSetDTO,
   ReportResponseDTO,
   RouteDataDTO,
+  ShareScenarioDTO,
   ValidationResultDTO,
   DataStatusMapDTO,
 } from "../types/dto";
@@ -69,6 +71,19 @@ export interface RankingApi {
   generateRankedRecommendations(
     profile: ProfileDTO,
   ): Promise<ApiEnvelope<RecommendationSetDTO>>;
+}
+
+/**
+ * Stereotype: API contract.
+ * Amenity points used by the map overlay layers.
+ */
+export interface AmenitiesApi {
+  /**
+   * Load all amenity points.
+   * @returns Envelope containing amenity points.
+   * @throws When the API request fails.
+   */
+  getAmenities(): Promise<ApiEnvelope<AmenityPointDTO[]>>;
 }
 
 /**
@@ -142,9 +157,30 @@ export interface ReportApi {
   ): Promise<ApiEnvelope<ReportResponseDTO>>;
 }
 
-/** Freshness/status API for the future IndexedDB cache layer. */
+/**
+ * Stereotype: API contract.
+ * Decodes a shareable scenario payload into a profile and subzone selection.
+ */
+export interface ShareApi {
+  /**
+   * Decode a `?share=` payload.
+   * @param share URL-safe base64 share payload.
+   * @returns Envelope containing the profile and shared subzone codes.
+   * @throws When the payload is invalid or the request fails.
+   */
+  decodeShare(share: string): Promise<ApiEnvelope<ShareScenarioDTO>>;
+}
+
+/** Freshness/status API for the IndexedDB cache layer. */
 export interface DataStatusApi {
   getStatus(): Promise<ApiEnvelope<DataStatusMapDTO>>;
+
+  /**
+   * Force a live data.gov.sg refresh of subzone and HDB snapshots.
+   * @returns Envelope containing refreshed dataset statuses.
+   * @throws When the refresh request fails.
+   */
+  refreshData(): Promise<ApiEnvelope<DataStatusMapDTO>>;
 }
 
 /**

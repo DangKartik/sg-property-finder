@@ -4,9 +4,10 @@ Phase 1 skeleton plus Phase 2 backend implementation for the neighbourhood
 recommender. This folder is separate from `Lab4/Skeleton Code`.
 
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
-PDF and REST endpoints are implemented and covered by 70 `unittest` tests. The
-React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison
-and PDF export.
+PDF and REST endpoints are implemented and covered by 85 `unittest` tests. The
+React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison,
+enriched PDF export (ReportLab), share-link import, IndexedDB API caching,
+data-refresh controls and selection-driven amenity markers, with 21 Vitest tests.
 
 ## Structure
 
@@ -17,6 +18,7 @@ revised-skeleton/
 ├── .env.example
 ├── .gitignore
 ├── scripts/
+│   ├── build_amenities.py
 │   ├── clean.py
 │   ├── dev.py
 │   └── test_backend.py
@@ -113,10 +115,14 @@ revised-skeleton/
         │   ├── ProfileFormUI.tsx
         │   ├── ProfileSelectorUI.tsx
         │   └── ResultsListUI.tsx
-        ├── container/ProfileCatalog.ts
+        ├── container/
+        │   ├── ApiCache.ts
+        │   └── ProfileCatalog.ts
         ├── control/ProfileControl.ts
+        ├── test/setup.ts
         ├── types/dto.ts
         └── utils/
+            ├── amenities.ts
             ├── format.ts
             ├── polyline.ts
             └── weights.ts
@@ -134,6 +140,7 @@ revised-skeleton/
 | `ExportReportUI` | `frontend/src/boundary/ExportReportUI.tsx` | Uses a secure download URL, not a server path. |
 | `NotificationModalUI` | `frontend/src/boundary/NotificationModalUI.tsx` | React component. |
 | `ProfileCatalog` | `frontend/src/container/ProfileCatalog.ts` | Dexie/IndexedDB-backed; async API. |
+| `ApiCache` | `frontend/src/container/ApiCache.ts` | Dexie/IndexedDB API envelope cache with ETag/TTL metadata. |
 | `ProfileControl` | `frontend/src/control/ProfileControl.ts` | Client-side CRUD over Dexie + backend validation. |
 | `SystemStartupControl` | `backend/app/control/system_startup_control.py` | Loads the subzone registry/cache. |
 | `InputValidationControl` | `backend/app/control/input_validation_control.py` | Authoritative validation. |
@@ -142,7 +149,7 @@ revised-skeleton/
 | `CommuteControl` | `backend/app/control/commute_control.py` | OneMap routing. |
 | `NeighborhoodDetailsControl` | `backend/app/control/neighborhood_details_control.py` | Aggregates amenity/env/pricing/commute data. |
 | `RetrievalControl` | `backend/app/control/retrieval_control.py` | Abstract template-method base; returns warnings. |
-| `AmenityRetrievalControl` | `backend/app/control/amenity_retrieval_control.py` | Returns `RetrievalResult[list[AmenityInfo]]`. |
+| `AmenityRetrievalControl` | `backend/app/control/amenity_retrieval_control.py` | Returns per-subzone `AmenityInfo` and all points via `getAllAmenities()`. |
 | `EnvironmentRetrievalControl` | `backend/app/control/environment_retrieval_control.py` | Returns `RetrievalResult[EnvironmentInfo]`. |
 | `HousePricingRetrievalControl` | `backend/app/control/house_pricing_retrieval_control.py` | Returns `RetrievalResult[dict[str, HousePricing]]`. |
 | `ReportControl` | `backend/app/control/report_control.py` | Stateless PDF generation. |
@@ -237,8 +244,9 @@ Other targets:
 ```powershell
 make backend    # FastAPI only
 make frontend   # Vite only
-make test       # backend unittest suite
-make build      # frontend type-check + production build
+make test          # backend unittest suite
+make test-frontend # frontend Vitest suite
+make build         # frontend type-check + production build
 make clean
 make help
 ```
@@ -278,10 +286,22 @@ cd Lab4/revised-skeleton/frontend
 npm run build
 ```
 
+Run frontend tests with:
+
+```bash
+cd Lab4/revised-skeleton/frontend
+npm test
+```
+
 `.env` is ignored by Git. `backend/app/config.py` loads it through
 `Settings.fromEnv()`. OneMap currently uses email/password token authentication;
 `ONEMAP_EMAIL` and `ONEMAP_PASSWORD` are therefore required in addition to the
 requested `ONEMAP_API_KEY` placeholder.
+
+## Handover
+
+See `PROJECT_STATUS.md` for the full completed/not-completed task list, context,
+run instructions, known gaps and recommended next steps.
 
 ## Implementation status
 
@@ -291,14 +311,16 @@ requested `ONEMAP_API_KEY` placeholder.
   commute service, MCDA scoring, factsheet aggregation, PDF/share URLs and REST
   handlers).
 - **Frontend:** implemented (React 18 + TypeScript + Vite, Leaflet/React-Leaflet,
-  Dexie/IndexedDB, responsive UI, comparison matrix and PDF export).
+  Dexie/IndexedDB profiles and API cache, selection-driven amenity markers, responsive UI,
+  comparison matrix, share-link import and PDF export).
 - **Data assets:** URA subzones, HDB resale prices, town mapping, regional
-  environment baselines and the CBD commute matrix are populated.
-  `DatasetService` refreshes subzone/HDB snapshots from data.gov.sg when older
-  than 24 hours; live PM2.5/UVI/forecast already come from real-time APIs.
-  `/api/v1/data/status` and cache headers provide the contract for the future
-  IndexedDB cache layer. `amenities.json` is still required for the amenity
-  score; the app degrades gracefully with a warning until it is supplied.
+  environment baselines, the CBD commute matrix and a 1,172-point amenities
+  snapshot are populated. `DatasetService` refreshes subzone/HDB snapshots from
+  data.gov.sg when older than 24 hours; live PM2.5/UVI/forecast already come
+  from real-time APIs. `ApiCache` uses `/api/v1/data/status` and cache headers
+  for IndexedDB response caching. Amenities are generated from data.gov.sg
+  school/park/MRT/polyclinic datasets plus OneMap hospital/mall layers and LTA
+  major-mall names; run `make amenities` to rebuild the snapshot.
 
 Run the backend tests from `Lab4/revised-skeleton/backend`:
 

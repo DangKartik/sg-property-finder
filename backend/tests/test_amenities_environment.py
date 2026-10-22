@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -27,6 +28,7 @@ class AmenityTests(unittest.TestCase):
     def test_counts_are_calculated_with_configured_radii(self) -> None:
         result = self.control.retrieveIndicators("TAMPINES01")
         indicators = result.data
+        self.assertTrue(indicators.amenityDataAvailable)
         self.assertEqual(indicators.parkCount500m, 1)
         self.assertEqual(indicators.primarySchoolCount1km, 1)
         self.assertEqual(indicators.secondarySchoolCount1km, 1)
@@ -45,6 +47,40 @@ class AmenityTests(unittest.TestCase):
         result = self.control.retrieveAmenityInfo("UNKNOWN")
         self.assertEqual(result.data, [])
         self.assertTrue(result.warnings)
+
+    def test_local_rebuild_updates_snapshot_and_indicators(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "amenities.json"
+            shutil.copy(FIXTURES / "amenities.json", path)
+            registry = load_registry()
+            control = AmenityRetrievalControl(
+                DataGovSgAdapter(),
+                DataAvailabilityNotifier(),
+                amenitiesPath=path,
+                subzoneRegistry=registry,
+            )
+            status = control.rebuildFromLocalSources()
+            self.assertEqual(status.recordCount, 15)
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            self.assertIn("rebuiltAt", payload["metadata"])
+            self.assertIn("TAMPINES01", payload["aggregates"])
+            self.assertTrue(
+                control.retrieveIndicators("TAMPINES01").data.amenityDataAvailable
+            )
+
+    def test_missing_source_marks_amenity_indicators_unavailable(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "amenities.json"
+            path.write_text("{not valid json", encoding="utf-8")
+            control = AmenityRetrievalControl(
+                DataGovSgAdapter(),
+                DataAvailabilityNotifier(),
+                amenitiesPath=path,
+                subzoneRegistry=self.registry,
+            )
+            result = control.retrieveIndicators("TAMPINES01")
+            self.assertFalse(result.data.amenityDataAvailable)
+            self.assertTrue(result.warnings)
 
 
 class EnvironmentTests(unittest.TestCase):

@@ -27,6 +27,21 @@ class CommuteError(RuntimeError):
     """Raised when a commute estimate cannot be produced."""
 
 
+# Fallback speeds used only when live routing is unavailable or a matrix entry
+# is missing. They are deliberately conservative urban averages.
+_FALLBACK_SPEED_KMH = {
+    TransitMode.PUBLIC_TRANSIT: 20.0,
+    TransitMode.DRIVING: 30.0,
+    TransitMode.WALKING: 4.8,
+}
+_FALLBACK_OVERHEAD_MINUTES = {
+    TransitMode.PUBLIC_TRANSIT: 10.0,
+    TransitMode.DRIVING: 5.0,
+    TransitMode.WALKING: 0.0,
+}
+_MAX_LIVE_CONCURRENCY = 12
+
+
 class CommuteControl:
     """Stereotype: Control. Retrieves matrix and live OneMap commute estimates."""
 
@@ -68,11 +83,14 @@ class CommuteControl:
         mode: TransitMode,
         departureTime: datetime | None = None,
         destinationSubzoneCode: str | None = None,
+        warnings: list[Any] | None = None,
     ) -> CommuteEstimate:
         """Return a commute estimate for one destination.
 
-        The matrix is used when the origin is near the CBD and the destination
-        subzone is present. Otherwise OneMap is called.
+        The precomputed matrix is used only for public transport when the origin
+        is near the CBD. Driving and walking always use live OneMap routing, with
+        a straight-line fallback when routing fails. A missing public-transport
+        matrix entry also uses the fallback.
         """
         departure = departureTime or nextWeekdayPeak()
         key = _cacheKey(origin, destination, mode, departure, destinationSubzoneCode)
@@ -80,17 +98,40 @@ class CommuteControl:
         if cached is not None:
             return cached
 
-        if destinationSubzoneCode and self.isNearCbd(origin):
+        if (
+            destinationSubzoneCode
+            and self.isNearCbd(origin)
+            and mode is TransitMode.PUBLIC_TRANSIT
+        ):
             matrix_estimate = self._matrixEstimate(destinationSubzoneCode, mode)
             if matrix_estimate is not None:
                 self.cache[key] = matrix_estimate
                 return matrix_estimate
+            estimate = self._straightLineEstimate(origin, destination, mode, departure)
+            if warnings is not None:
+                warnings.append(
+                    self._fallbackWarning(
+                        destinationSubzoneCode,
+                        mode,
+                        "Commute matrix entry missing",
+                    )
+                )
+            return estimate
 
         try:
-            payload = self.oneMapAdapter.getRoutingData(origin, destination, mode, departure)
-        except Exception as exc:
-            raise CommuteError("OneMap routing failed") from exc
-        estimate = self._parseRoute(payload, mode, departure)
+            estimate = self._liveEstimate(origin, destination, mode, departure)
+        except CommuteError:
+            estimate = self._straightLineEstimate(origin, destination, mode, departure)
+            if warnings is not None:
+                warnings.append(
+                    self._fallbackWarning(
+                        destinationSubzoneCode,
+                        mode,
+                        "OneMap routing failed",
+                    )
+                )
+            return estimate
+
         self.cache[key] = estimate
         return estimate
 
@@ -101,6 +142,7 @@ class CommuteControl:
         mode: TransitMode,
         departureTime: datetime | None = None,
         destinationSubzoneCode: str | None = None,
+        warnings: list[Any] | None = None,
     ) -> CommuteEstimate:
         """Async variant that prefers the adapter's httpx routing method."""
         departure = departureTime or nextWeekdayPeak()
@@ -109,27 +151,40 @@ class CommuteControl:
         if cached is not None:
             return cached
 
-        if destinationSubzoneCode and self.isNearCbd(origin):
+        if (
+            destinationSubzoneCode
+            and self.isNearCbd(origin)
+            and mode is TransitMode.PUBLIC_TRANSIT
+        ):
             matrix_estimate = self._matrixEstimate(destinationSubzoneCode, mode)
             if matrix_estimate is not None:
                 self.cache[key] = matrix_estimate
                 return matrix_estimate
+            estimate = self._straightLineEstimate(origin, destination, mode, departure)
+            if warnings is not None:
+                warnings.append(
+                    self._fallbackWarning(
+                        destinationSubzoneCode,
+                        mode,
+                        "Commute matrix entry missing",
+                    )
+                )
+            return estimate
 
         try:
-            async_method = getattr(self.oneMapAdapter, "getRoutingDataAsync", None)
-            if async_method is not None:
-                payload = await async_method(origin, destination, mode, departure)
-            else:
-                payload = await asyncio.to_thread(
-                    self.oneMapAdapter.getRoutingData,
-                    origin,
-                    destination,
-                    mode,
-                    departure,
+            estimate = await self._liveEstimateAsync(origin, destination, mode, departure)
+        except CommuteError:
+            estimate = self._straightLineEstimate(origin, destination, mode, departure)
+            if warnings is not None:
+                warnings.append(
+                    self._fallbackWarning(
+                        destinationSubzoneCode,
+                        mode,
+                        "OneMap routing failed",
+                    )
                 )
-        except Exception as exc:
-            raise CommuteError("OneMap routing failed") from exc
-        estimate = self._parseRoute(payload, mode, departure)
+            return estimate
+
         self.cache[key] = estimate
         return estimate
 
@@ -143,51 +198,89 @@ class CommuteControl:
     ) -> RetrievalResult[dict[str, CommuteEstimate]]:
         """Return commute estimates for a candidate set.
 
-        Near the CBD, the precomputed matrix is used for every subzone. For a
-        custom workplace, the nearest `topK` subzones are routed in parallel.
+        Near the CBD, public transport uses the precomputed matrix and falls
+        back to a straight-line estimate for missing entries. Driving and walking
+        never use the public-transport matrix: every subzone is routed live, with
+        a straight-line fallback if OneMap fails. For a custom workplace, the
+        nearest `topK` subzones are routed live.
         """
         departure = departureTime or nextWeekdayPeak()
-        warnings = []
-        if self.isNearCbd(origin):
-            estimates = {}
+        warnings: list[Any] = []
+        near_cbd = self.isNearCbd(origin)
+
+        if near_cbd and mode is TransitMode.PUBLIC_TRANSIT:
+            estimates: dict[str, CommuteEstimate] = {}
             for subzone in subzones:
                 estimate = self._matrixEstimate(subzone.subzoneCode, mode)
-                if estimate is not None:
-                    estimates[subzone.subzoneCode] = estimate
-                else:
-                    warnings.append(self._warning(subzone.subzoneCode, "Commute matrix entry missing"))
+                if estimate is None:
+                    estimate = self._straightLineEstimate(
+                        origin,
+                        subzone.centroid,
+                        mode,
+                        departure,
+                    )
+                    warnings.append(
+                        self._fallbackWarning(
+                            subzone.subzoneCode,
+                            mode,
+                            "Commute matrix entry missing",
+                        )
+                    )
+                estimates[subzone.subzoneCode] = estimate
             return RetrievalResult(estimates, warnings)
 
-        ranked = sorted(
-            subzones,
-            key=lambda subzone: haversineKm(
-                origin.latitude,
-                origin.longitude,
-                subzone.centroid.latitude,
-                subzone.centroid.longitude,
-            ),
-        )[:topK]
+        ranked = (
+            list(subzones)
+            if near_cbd
+            else sorted(
+                subzones,
+                key=lambda subzone: haversineKm(
+                    origin.latitude,
+                    origin.longitude,
+                    subzone.centroid.latitude,
+                    subzone.centroid.longitude,
+                ),
+            )[:topK]
+        )
 
-        async def one(subzone: Subzone) -> tuple[str, CommuteEstimate | None]:
-            try:
-                estimate = await self.retrieveCommuteAsync(
-                    origin,
-                    subzone.centroid,
-                    mode,
-                    departure,
-                    subzone.subzoneCode,
-                )
-                return subzone.subzoneCode, estimate
-            except Exception:
-                return subzone.subzoneCode, None
+        semaphore = asyncio.Semaphore(_MAX_LIVE_CONCURRENCY)
+
+        async def one(
+            subzone: Subzone,
+        ) -> tuple[str, CommuteEstimate, Any | None]:
+            async with semaphore:
+                try:
+                    estimate = await self._cachedLiveEstimateAsync(
+                        origin,
+                        subzone.centroid,
+                        mode,
+                        departure,
+                        subzone.subzoneCode,
+                    )
+                    return subzone.subzoneCode, estimate, None
+                except Exception:
+                    estimate = self._straightLineEstimate(
+                        origin,
+                        subzone.centroid,
+                        mode,
+                        departure,
+                    )
+                    return (
+                        subzone.subzoneCode,
+                        estimate,
+                        self._fallbackWarning(
+                            subzone.subzoneCode,
+                            mode,
+                            "OneMap routing failed",
+                        ),
+                    )
 
         results = await asyncio.gather(*(one(subzone) for subzone in ranked))
-        estimates: dict[str, CommuteEstimate] = {}
-        for code, estimate in results:
-            if estimate is None:
-                warnings.append(self._warning(code, "OneMap routing failed for this subzone"))
-            else:
-                estimates[code] = estimate
+        estimates = {}
+        for code, estimate, warning in results:
+            estimates[code] = estimate
+            if warning is not None:
+                warnings.append(warning)
         return RetrievalResult(estimates, warnings)
 
     def retrieveCommutesSync(
@@ -206,6 +299,8 @@ class CommuteControl:
         raise CommuteError("retrieveCommutesSync cannot run inside an active event loop")
 
     def _matrixEstimate(self, subzoneCode: str, mode: TransitMode) -> CommuteEstimate | None:
+        if mode is not TransitMode.PUBLIC_TRANSIT:
+            return None
         entry = self.matrix.get(subzoneCode)
         if entry is None:
             return None
@@ -222,6 +317,101 @@ class CommuteControl:
             travelMode=mode,
             departureTime=nextWeekdayPeak(),
             routeGeometry=None,
+        )
+
+    def _liveEstimate(
+        self,
+        origin: Coordinates,
+        destination: Coordinates,
+        mode: TransitMode,
+        departure: datetime,
+    ) -> CommuteEstimate:
+        """Call OneMap synchronously and parse the route."""
+        try:
+            payload = self.oneMapAdapter.getRoutingData(origin, destination, mode, departure)
+        except Exception as exc:
+            raise CommuteError("OneMap routing failed") from exc
+        return self._parseRoute(payload, mode, departure)
+
+    async def _liveEstimateAsync(
+        self,
+        origin: Coordinates,
+        destination: Coordinates,
+        mode: TransitMode,
+        departure: datetime,
+    ) -> CommuteEstimate:
+        """Call OneMap asynchronously (httpx when available) and parse the route."""
+        try:
+            async_method = getattr(self.oneMapAdapter, "getRoutingDataAsync", None)
+            if async_method is not None:
+                payload = await async_method(origin, destination, mode, departure)
+            else:
+                payload = await asyncio.to_thread(
+                    self.oneMapAdapter.getRoutingData,
+                    origin,
+                    destination,
+                    mode,
+                    departure,
+                )
+        except Exception as exc:
+            raise CommuteError("OneMap routing failed") from exc
+        return self._parseRoute(payload, mode, departure)
+
+    async def _cachedLiveEstimateAsync(
+        self,
+        origin: Coordinates,
+        destination: Coordinates,
+        mode: TransitMode,
+        departure: datetime,
+        subzoneCode: str | None,
+    ) -> CommuteEstimate:
+        """Return a cached live estimate or fetch and cache a new one."""
+        key = _cacheKey(origin, destination, mode, departure, subzoneCode)
+        cached = self.cache.get(key)
+        if cached is not None:
+            return cached
+        estimate = await self._liveEstimateAsync(origin, destination, mode, departure)
+        self.cache[key] = estimate
+        return estimate
+
+    @staticmethod
+    def _straightLineEstimate(
+        origin: Coordinates,
+        destination: Coordinates,
+        mode: TransitMode,
+        departure: datetime,
+    ) -> CommuteEstimate:
+        """Estimate a commute from straight-line distance and a mode speed."""
+        distance_km = haversineKm(
+            origin.latitude,
+            origin.longitude,
+            destination.latitude,
+            destination.longitude,
+        )
+        speed_kmh = _FALLBACK_SPEED_KMH[mode]
+        overhead = _FALLBACK_OVERHEAD_MINUTES[mode]
+        duration = max(1, math.ceil((distance_km / speed_kmh) * 60.0 + overhead))
+        return CommuteEstimate(
+            durationMinutes=duration,
+            distanceKm=round(distance_km, 3),
+            transferCount=0,
+            travelMode=mode,
+            departureTime=departure,
+            routeGeometry=None,
+        )
+
+    def _fallbackWarning(
+        self,
+        subzoneCode: str | None,
+        mode: TransitMode,
+        reason: str,
+    ):
+        """Build the warning attached to an estimated commute."""
+        return self._warning(
+            subzoneCode,
+            f"{reason}; using straight-line {mode.value.lower()} estimate",
+            code=DataAvailabilityCode.ESTIMATED_COMMUTE_FALLBACK,
+            source="Spatial estimate",
         )
 
     @staticmethod
@@ -259,7 +449,13 @@ class CommuteControl:
             routeGeometry=payload.get("route_geometry"),
         )
 
-    def _warning(self, subzoneCode: str, message: str):
+    def _warning(
+        self,
+        subzoneCode: str | None,
+        message: str,
+        code: DataAvailabilityCode = DataAvailabilityCode.PARTIAL_DATA,
+        source: str = "OneMap",
+    ):
         if self.notifier is None:
             from app.control.data_availability_notifier import DataAvailabilityNotifier
 
@@ -267,8 +463,8 @@ class CommuteControl:
         return self.notifier.notifyDataUnavailable(
             "COMMUTE",
             subzoneCode,
-            DataAvailabilityCode.PARTIAL_DATA,
-            source="OneMap",
+            code,
+            source=source,
             isRetryable=True,
             message=message,
         )

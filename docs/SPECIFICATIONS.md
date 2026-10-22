@@ -5,16 +5,18 @@ require a product decision and are also listed in `OPEN_ISSUES.md`.
 
 ## 1. Criterion catalogue
 
-| ID | Name | Unit | Direction | Fixed domain | Radius / basis | Default weight |
+| ID | Name | Unit | Direction | Fixed domain | Radius / basis | Default importance |
 | --- | --- | --- | --- | --- | --- | --- |
-| `PRICE` | Housing affordability | SGD (median) | MINIMIZE | 200,000–1,500,000 | Selected flat types, 12-month window | 0.20 |
-| `COMMUTE_TIME` | Commute duration | minutes | MINIMIZE | 0–90 | Workplace / CBD, fixed departure | 0.20 |
-| `SCHOOL_PROXIMITY` | School access | count | MAXIMIZE | 0–4 | 1.0 km | 0.20 |
-| `GREEN_COVERAGE` | Green coverage | percent | MAXIMIZE | 0–100 | 500 m buffer | 0.20 |
-| `AMENITIES_DENSITY` | Amenity access | count | MAXIMIZE | 0–10 | Malls 1 km, polyclinics/hospitals 2 km, MRT/LRT 800 m | 0.20 |
+| `PRICE` | Housing affordability | SGD (median) | MINIMIZE | 200,000–1,500,000 | Selected flat types, 12-month window | 5 |
+| `COMMUTE_TIME` | Commute duration | minutes | MINIMIZE | 0–90 | Workplace / CBD, fixed departure | 5 |
+| `SCHOOL_PROXIMITY` | School access | count | MAXIMIZE | 0–4 | 1.0 km | 5 |
+| `GREEN_COVERAGE` | Green coverage | percent | MAXIMIZE | 0–100 | 500 m buffer | 5 |
+| `AMENITIES_DENSITY` | Amenity access | count | MAXIMIZE | 0–10 | Malls 1 km, polyclinics/hospitals 2 km, MRT/LRT 800 m | 5 |
 
-The default weights above are an assumption for the first version; the user can
-override every weight. `CriterionWeight.criterionId` must match this catalogue.
+The default importance above is an assumption for the first version. The user
+rates every criterion from **1 (not important) to 10 (very important)**;
+ratings do not need to sum to 100. `CriterionWeight.criterionId` must match this
+catalogue.
 
 ## 2. Normalisation and scoring
 
@@ -31,11 +33,16 @@ Minimisation:  S = (max - clamp(X, min, max)) / (max - min)
 - Values outside the fixed domain are clamped.
 - If `max == min`, the criterion is misconfigured; the implementation returns
   `S = 0.0` for safety.
-- Available weights are renormalised:
+- User importance ratings `Ri` are in `[1, 10]`. Relative weights are computed
+  inside the scoring strategy:
 
 ```text
+Wi = Ri / sum(Rj for all active criteria j)
 W'i = Wi / sum(Wj for available criteria j)
 ```
+
+The first normalisation makes the active weights sum to `1.0`; the second
+handles missing criteria by renormalising only over available criteria.
 
 - `CriterionScore.normalisedScore` is `S` in `[0, 1]`.
 - `CriterionScore.weight` is `W'i` in `[0, 1]`.
@@ -51,7 +58,8 @@ W'i = Wi / sum(Wj for available criteria j)
 - A valid zero (for example, zero malls within 1 km) is a real observation and
   is scored as zero; it must not trigger weight renormalisation.
 - `DataAvailabilityWarning.code` distinguishes `MISSING_SOURCE_DATA`,
-  `VALID_ZERO`, `STALE_CACHE` and `PARTIAL_DATA`.
+  `VALID_ZERO`, `STALE_CACHE`, `PARTIAL_DATA` and
+  `ESTIMATED_COMMUTE_FALLBACK`.
 - If a stale cache is used, keep the cached value and attach a warning; do not
   silently present it as fresh.
 
@@ -63,21 +71,25 @@ Sort descending by `totalScore`, then ascending by:
 2. median price per square metre;
 3. `subzoneCode` (deterministic final tie-break).
 
+`RecommendationSet.items` is capped at the **top 20** after sorting; results
+outside the top 20 are discarded and their warnings are omitted. The comparison
+endpoint uses the full internal ranking so subzones outside the top 20 can still
+be compared.
+
 ## 3. Budget semantics
 
 - `budgetMax` is a hard filter.
 - A subzone is eligible when at least one selected flat type has a median price
   at or below `budgetMax`.
 - Pricing uses a 12-month rolling window of HDB resale transactions.
-- A minimum of 5 transactions is required for a direct price estimate.
-- If fewer than 5 transactions exist, use the broader HDB town median and set
-  `HousePricing.isTownProxy = true`.
+- Pricing always uses the **HDB town median**; `HousePricing.isTownProxy` is
+  always `true`.
 - If no price data exists for any selected flat type, the subzone is excluded
   and a `MISSING_SOURCE_DATA` warning is returned.
 
-**Frozen data decision:** the published HDB resale dataset is keyed by HDB town,
-not URA subzone. The application accepts this limitation: without an optional
-`subzone_code` column, the town median is used and `isTownProxy` is `true`. The
+**Frozen data decision (22 October 2026):** the published HDB resale dataset is
+keyed by HDB town, not URA subzone. The application deliberately keeps the
+town-level median proxy and does not build a block-to-subzone mapping. The
 UI/PDF labels this as a **Town-Level Median Proxy**.
 
 ## 4. Static vs live environment data
@@ -111,22 +123,28 @@ affect suitability scores. This preserves deterministic rankings.
   - Shopping malls: 1.0 km;
   - MRT/LRT stations: 800 m.
 - **CBD anchor:** Raffles Place MRT centroid, `1.2830, 103.8513` (WGS84).
-- Distances to polygon features use the nearest point on the polygon boundary;
-  distances to point features use the point coordinate.
+- **Amenity count method:** buffer-distance density. Every amenity point within
+  the fixed radius of the subzone representative point is counted. Park polygons
+  are converted to a single `representative_point()` when the amenities snapshot
+  is generated, so counts use that point coordinate.
 
 ## 6. Commute strategy and latency
 
 - **Default departure:** next weekday at 08:30 SGT.
-- **Precomputed matrix:** all ~332 subzone representative points to four business
-  districts (Raffles Place, Jurong East, One-North, Changi Business Park).
+- **Precomputed matrix:** public-transport travel times for 319/332 subzone
+  representative points to Raffles Place. The matrix is never used for driving
+  or walking.
 - **Cache TTL:** 7 days. The cache key must include workplace/geohash, mode,
   departure date and departure window; a 7-day TTL alone is insufficient because
   OneMap PT results depend on the date/time.
-- **Custom workplace:** live OneMap routing only for a top-50 shortlist selected
-  by straight-line distance from the workplace.
-- **Failure:** fall back to the last cached route and attach a `STALE_CACHE`
-  warning; if no cache exists, return the ranking without the commute criterion
-  and renormalise weights.
+- **Custom workplace:** live OneMap routing for a top-50 shortlist selected by
+  straight-line distance from the workplace. Subzones outside the shortlist stay
+  in the ranking with the commute criterion treated as missing/reweighted.
+- **Driving/walking near the CBD:** always live OneMap routing, never the PT
+  matrix.
+- **Failure / missing matrix entry:** use a straight-line distance estimate,
+  keep the subzone eligible for ranking, and attach a
+  `DataAvailabilityWarning` with code `ESTIMATED_COMMUTE_FALLBACK`.
 
 **SLA risk:** the first ranking for a new workplace may still exceed 5 seconds if
 50 OneMap calls are made. Pre-warm popular workplaces or reduce the shortlist;
@@ -173,10 +191,12 @@ All endpoints return the standard envelope:
 | `GET` | `/api/v1/health` | — | service status |
 | `GET` | `/api/v1/ready` | — | data/cache readiness |
 | `GET` | `/api/v1/criteria` | - | `CriterionDefinition[]` |
+| `GET` | `/api/v1/amenities` | - | amenity points for the map |
 | `GET` | `/api/v1/data/status` | - | dataset freshness metadata |
-| `POST` | `/api/v1/data/refresh` | - | force live data.gov.sg refresh |
+| `POST` | `/api/v1/data/refresh` | - | force live data.gov.sg refresh and local amenity rebuild |
 | `POST` | `/api/v1/address/search` | `{ "query": "..." }` | `AddressMatch[]` |
 | `POST` | `/api/v1/profiles/validate` | `ProfileDTO` | `ValidationResult` |
+| `POST` | `/api/v1/share/decode` | `{ "share": "..." }` | `{ profile, subzoneCodes }` |
 | `POST` | `/api/v1/commute/overlay` | origin, destination, mode | `RouteData` |
 | `POST` | `/api/v1/recommendations` | `ProfileDTO` | `RecommendationSet` |
 | `GET` | `/api/v1/subzones/{code}/factsheet` | profile context (OPEN-10) | `NeighborhoodDetailDTO` |
@@ -205,6 +225,7 @@ reportId, generatedTime, downloadUrl, expiresAt,
 fileName, contentType, sizeBytes
 ```
 
+- Rendering uses **ReportLab Platypus** only; WeasyPrint is not used.
 - Download URLs expire after 15 minutes.
 - The server file path is never returned to the browser.
 - The report includes the profile weights, per-criterion `CriterionScore` rows,

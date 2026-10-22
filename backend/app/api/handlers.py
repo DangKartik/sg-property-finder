@@ -163,17 +163,35 @@ def criteria(context: AppContext) -> ApiEnvelope[Any]:
     return ok(context.scoringStrategy.criterionCatalog.getAllCriteria())
 
 
+def amenities(context: AppContext) -> ApiEnvelope[Any]:
+    """Return all amenity points for the map overlay."""
+    result = context.amenityControl.getAllAmenities()
+    return ok(result.data, result.warnings)
+
+
 def dataStatus(context: AppContext) -> ApiEnvelope[Any]:
     """Return live/snapshot freshness metadata for the frontend cache layer."""
-    return ok(context.datasetService.status())
+    statuses = context.datasetService.status()
+    try:
+        statuses["amenities"] = context.amenityControl.status()
+    except Exception:
+        pass
+    return ok(statuses)
 
 
 def refreshData(context: AppContext) -> ApiEnvelope[Any]:
-    """Force a live data.gov.sg refresh and return the resulting statuses."""
+    """Refresh live datasets and rebuild amenities from the local POI snapshot."""
     try:
         statuses = context.datasetService.refresh()
     except Exception:
         return fail("DATA_REFRESH_FAILED", "Unable to refresh data.gov.sg datasets.", {"retryable": True})
+    try:
+        statuses["amenities"] = context.amenityControl.rebuildFromLocalSources()
+    except Exception as exc:
+        status = context.amenityControl.status()
+        status.isStale = True
+        status.lastError = str(exc)
+        statuses["amenities"] = status
     return ok(statuses)
 
 
@@ -193,6 +211,30 @@ def decodeShare(share: str) -> tuple[dict[str, Any], list[str]]:
     if not isinstance(payload, dict):
         raise ValueError("Invalid share payload")
     return payload.get("profile", {}), list(payload.get("subzones", []))
+
+
+def decodeShareLink(share: str, context: AppContext) -> ApiEnvelope[Any]:
+    """Decode a share link into a ProfileDTO and selected subzone codes."""
+    if not share or not share.strip():
+        return fail("INVALID_SHARE_LINK", "A share payload is required.")
+    try:
+        profile_payload, subzone_codes = decodeShare(share.strip())
+    except ValueError as exc:
+        return fail("INVALID_SHARE_LINK", str(exc))
+    if not isinstance(profile_payload, dict) or not profile_payload:
+        return fail("INVALID_SHARE_LINK", "The share link does not contain a profile.")
+    try:
+        profile = profileDtoFromDict(profile_payload)
+    except ValueError as exc:
+        return fail("INVALID_SHARE_LINK", str(exc))
+    codes = list(
+        dict.fromkeys(
+            str(code).strip()
+            for code in subzone_codes
+            if str(code).strip()
+        )
+    )
+    return ok({"profile": profile, "subzoneCodes": codes})
 
 
 def health() -> ApiEnvelope[Any]:

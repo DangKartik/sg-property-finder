@@ -33,7 +33,8 @@ export type DataAvailabilityCodeDTO =
   | "MISSING_SOURCE_DATA"
   | "VALID_ZERO"
   | "STALE_CACHE"
-  | "PARTIAL_DATA";
+  | "PARTIAL_DATA"
+  | "ESTIMATED_COMMUTE_FALLBACK";
 
 /** Whether a criterion is minimised or maximised. */
 export type CriterionDirectionDTO = "MINIMIZE" | "MAXIMIZE";
@@ -46,7 +47,7 @@ export interface CriterionDefinitionDTO {
   direction: CriterionDirectionDTO;
   /** Buffer radius in metres, or null when not spatial. */
   bufferM: number | null;
-  /** Default weight in [0, 1], or null when no product default is set. */
+  /** Default importance rating in [1, 10], or null when no default is set. */
   defaultWeight: number | null;
 }
 
@@ -87,6 +88,12 @@ export interface ProfileDTO {
   lastUpdatedTime: string | null;
 }
 
+/** Decoded shareable scenario returned by the backend. */
+export interface ShareScenarioDTO {
+  profile: ProfileDTO;
+  subzoneCodes: string[];
+}
+
 /** One field-level validation error. */
 export interface ValidationErrorDTO {
   field: string;
@@ -110,6 +117,14 @@ export interface DataAvailabilityWarningDTO {
   source: string;
   message: string;
   asOf: string | null;
+}
+
+/** Amenity point returned for the map overlay. */
+export interface AmenityPointDTO {
+  name: string;
+  category: string;
+  latitude: number;
+  longitude: number;
 }
 
 /** Amenity and its distance from the subzone anchor. */
