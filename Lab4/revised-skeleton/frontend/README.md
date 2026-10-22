@@ -43,7 +43,8 @@ different origin, set `VITE_API_BASE_URL` to the backend origin when building.
 - Factsheet modal with multi-flat-type pricing, town-proxy note, amenities,
   environment and data warnings.
 - Comparison matrix with a two-subzone guard.
-- PDF export (ReportLab) with binary download and shareable scenario URL.
+- PDF export (ReportLab) with weights, criterion scores, data dates, caveats,
+  binary download and shareable scenario URL.
 - Data panel refresh button that refreshes snapshots, clears the API cache and
   reruns the active ranking.
 - Vitest/jsdom/Testing Library suite with 21 tests.

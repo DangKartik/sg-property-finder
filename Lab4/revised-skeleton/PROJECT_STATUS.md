@@ -5,7 +5,7 @@
 - **Application folder:** `Lab4/revised-skeleton/`
 - **Current branch:** `main`
 - **Last commit:** `af953b5` (data refresh UI and ReportLab-only PDFs)
-- **Working tree:** 1–10 relative importance ratings and selection-driven amenity markers are added; not yet committed
+- **Working tree:** 1–10 relative importance ratings, selection-driven amenity markers and enriched ReportLab report content are added; not yet committed
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -89,7 +89,7 @@ make dev
 ```powershell
 make backend    # FastAPI only
 make frontend   # Vite only
-make test       # backend unittest suite (83 tests)
+make test       # backend unittest suite (84 tests)
 make test-frontend # frontend Vitest suite (21 tests)
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
@@ -296,6 +296,9 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - pricing town-proxy note.
 - `ReportControl`:
   - ReportLab Platypus rendering only,
+  - profile importance ratings and relative weights,
+  - per-subzone criterion score tables,
+  - data dates and explicit data-quality caveats,
   - short-lived temp report store,
   - secure download metadata,
   - shareable scenario URL.
@@ -382,7 +385,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 
 ### 4.4 Testing and verification
 
-- **83 backend tests pass** via `make test`.
+- **84 backend tests pass** via `make test`.
 - **21 frontend Vitest tests pass** via `npm test`.
 - Frontend tests cover format/polyline helpers, amenity filtering/colours,
   `ApiCache` persistence/pruning, client cache reuse/stale fallback and top-20
@@ -480,7 +483,8 @@ Supporting scripts:
   `POST /api/v1/data/refresh`, clears `ApiCache`, updates the status display and
   reruns the active ranking.
 - **PDF generation:** ReportLab Platypus only; WeasyPrint, its requirement and
-  Docker native dependencies were removed.
+  Docker native dependencies were removed. The report includes profile
+  importance weights, per-subzone criterion scores, data dates and caveats.
 
 ---
 
@@ -511,10 +515,10 @@ Supporting scripts:
 
 ### 5.2 Data limitations
 
-4. **HDB pricing is town-level.**
+4. **HDB pricing is town-level — accepted decision (22 October 2026).**
    - The real HDB dataset has no subzone code.
-   - Every price is therefore labelled `isTownProxy=true` and displayed as “Town-Level Median Proxy”.
-   - A true subzone median would require a block-to-subzone mapping/geocoding pipeline.
+   - Every price is labelled `isTownProxy=true` and displayed as “Town-Level Median Proxy”.
+   - No block-to-subzone mapping will be built; town-level pricing is the frozen product choice.
 
 5. **Environment baselines are deterministic user-provided values.**
    - `environment_baselines.json` contains regional green/PM2.5 values.
@@ -639,7 +643,7 @@ Supporting scripts:
 - **OneMap tiles** use `https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png`.
 - **PDF generation**: `ReportControl` uses ReportLab Platypus directly; WeasyPrint is no longer imported or installed.
 - **Data payloads can be large:** `/api/v1/subzones/geometry` returns the full 332-subzone FeatureCollection.
-- **No commit was made for the current update.** The 1–10 importance-rating and selection-driven amenity-marker changes are in the working tree; ReportLab-only PDFs and the data-refresh UI were committed in `af953b5`.
+- **No commit was made for the current update.** The 1–10 importance-rating, selection-driven amenity-marker and enriched-ReportLab changes are in the working tree; ReportLab-only PDFs and the data-refresh UI were committed in `af953b5`.
 
 ---
 
@@ -664,7 +668,7 @@ Supporting scripts:
 | `backend/app/control/report_control.py` | PDF/share URL generation |
 | `backend/app/api/handlers.py` | Transport-agnostic REST handlers |
 | `scripts/build_amenities.py` | data.gov.sg + OneMap amenity snapshot builder |
-| `backend/tests/` | 83 unit/integration tests |
+| `backend/tests/` | 84 unit/integration tests |
 
 ### Frontend
 
@@ -710,8 +714,7 @@ Supporting scripts:
    - cold/warm OneMap routing benchmark,
    - full Dialog Map E2E checklist.
 3. **Add CI/CD, HTTPS/CORS production configuration, and a shared report store** if deploying beyond a single process.
-4. Consider a curated HDB block-to-subzone mapping if true subzone-level pricing is required.
-5. Optionally extend frontend tests to the App/share-import and map-layer flows.
+4. Optionally extend frontend tests to the App/share-import and map-layer flows.
 
 ---
 
@@ -719,7 +722,7 @@ Supporting scripts:
 
 | Check | Result |
 | --- | --- |
-| `make test` | **83 tests OK** |
+| `make test` | **84 tests OK** |
 | `npm test` | **21 frontend tests OK** |
 | `make build` / `npm run build` | **Passed** |
 | Live Uvicorn health/ready | **Passed**, 332 subzones |
@@ -729,6 +732,7 @@ Supporting scripts:
 | OneMap address search/routing | **Passed** |
 | data.gov.sg live refresh | **Passed**, 332 subzones + 243,176 HDB rows in ~5.2s |
 | Amenities snapshot | **Passed**, 1,172 points generated; sample counts nonzero |
+| HDB town proxy | **Passed**, all 300 current pricing rows use `isTownProxy=true` |
 | Amenities-missing fallback | **Passed**, school/amenity criteria excluded and reweighted |
 | Commute mode gating | **Passed**, driving/walking no longer read the PT matrix |
 | Missing matrix fallback | **Passed**, 13 warnings attached; subzones remain ranked |
@@ -737,7 +741,7 @@ Supporting scripts:
 | Comparison outside top 20 | **Passed**, comparison requests the full internal ranking |
 | API cache | **Passed**, repeated GETs use IndexedDB; stale fallback works |
 | Data refresh UI | **Passed**, calls `/data/refresh`, clears cache and reranks |
-| ReportLab-only PDF | **Passed**, no WeasyPrint import/requirement |
+| ReportLab-only PDF | **Passed**, includes weights, criterion scores, dates and caveats |
 | Amenity map layers | **Passed**, markers hidden until selection; nearby points only |
 | Mall coverage | **Passed**, 143 mall points including major-mall supplements |
 | ReportLab PDF | **Passed** (only renderer) |

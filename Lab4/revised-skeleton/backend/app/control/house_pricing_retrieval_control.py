@@ -50,7 +50,6 @@ class HousePricingRetrievalControl(RetrievalControl):
         self._requestedAsOf = asOf
         self._rowsCache = TTLCache(maxsize=4, ttl=300)
         self._byTown: dict[tuple[str, str], list[dict[str, Any]]] = {}
-        self._bySubzone: dict[tuple[str, str], list[dict[str, Any]]] = {}
         self._resolvedAsOf: date | None = None
 
     def fetchData(self, resourceId: str) -> RawResponse:
@@ -119,51 +118,20 @@ class HousePricingRetrievalControl(RetrievalControl):
                 for (town, flat_type), _ in self._byTown.items()
                 if town == subzone.townName.upper()
             }
-            | {
-                flat_type
-                for (code, flat_type), _ in self._bySubzone.items()
-                if code == subzoneCode
-            }
         )
         requested = [str(t).strip().upper() for t in (flatTypes or available_types) if str(t).strip()]
         pricing: dict[str, HousePricing] = {}
 
         for flat_type in requested:
-            subzone_rows = [
-                row
-                for row in self._bySubzone.get((subzoneCode, flat_type), [])
-                if window_start <= _parseMonth(row.get("month")) <= as_of
-            ]
-            if len(subzone_rows) >= 5:
-                pricing[flat_type] = self._aggregate(subzone_rows, flat_type, as_of, False)
-                continue
-
+            # The product decision is to keep the HDB-town median proxy. The
+            # published dataset has no subzone key, and subzone-level pricing is
+            # not part of the current scope.
             town_rows = [
                 row
                 for row in self._byTown.get((subzone.townName.upper(), flat_type), [])
                 if window_start <= _parseMonth(row.get("month")) <= as_of
             ]
             if town_rows:
-                if len(subzone_rows) > 0:
-                    warning_code = DataAvailabilityCode.PARTIAL_DATA
-                    message = (
-                        f"{flat_type} has only {len(subzone_rows)} subzone transactions; "
-                        f"using the {subzone.townName} town proxy"
-                    )
-                else:
-                    warning_code = DataAvailabilityCode.PARTIAL_DATA
-                    message = (
-                        f"No {flat_type} subzone transactions; using the "
-                        f"{subzone.townName} town proxy"
-                    )
-                warnings.append(
-                    self.handleMissingData(
-                        "HDB_RESALE",
-                        subzoneCode,
-                        warning_code,
-                        message=message,
-                    )
-                )
                 pricing[flat_type] = self._aggregate(town_rows, flat_type, as_of, True)
                 continue
 
@@ -194,7 +162,6 @@ class HousePricingRetrievalControl(RetrievalControl):
     def _buildIndex(self, rows: list[dict[str, Any]]) -> None:
         """Index rows by (town, flat type) and (subzone, flat type)."""
         self._byTown = {}
-        self._bySubzone = {}
         for row in rows:
             flat_type = _rowFlatType(row)
             if not flat_type:
@@ -202,9 +169,6 @@ class HousePricingRetrievalControl(RetrievalControl):
             town = _rowTown(row)
             if town:
                 self._byTown.setdefault((town, flat_type), []).append(row)
-            subzone = _rowSubzone(row)
-            if subzone:
-                self._bySubzone.setdefault((subzone, flat_type), []).append(row)
 
     def _resolveAsOf(self, rows: list[dict[str, Any]]) -> date:
         if self._resolvedAsOf is not None:
@@ -308,10 +272,6 @@ def _addMonths(value: date, months: int) -> date:
     month_index = value.year * 12 + (value.month - 1) + months
     year, month = divmod(month_index, 12)
     return date(year, month + 1, 1)
-
-
-def _rowSubzone(row: dict[str, Any]) -> str:
-    return str(row.get("subzone_code") or row.get("subzoneCode") or "").strip().upper()
 
 
 def _rowTown(row: dict[str, Any]) -> str:

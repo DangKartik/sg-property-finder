@@ -42,7 +42,8 @@ business logic is written.
   relative-normalises them to weights summing to 1.0 before missing-data
   reweighting.
 - PDF rendering is ReportLab-only; WeasyPrint and its native dependencies were
-  removed from the code, requirements and Dockerfile.
+  removed from the code, requirements and Dockerfile. The report includes profile
+  importance weights, per-subzone criterion scores, data dates and caveats.
 - The frontend Data panel now exposes a refresh button that calls
   `POST /api/v1/data/refresh`, clears `ApiCache`, updates freshness status and
   reruns the active ranking.
@@ -67,23 +68,13 @@ The criterion catalogue says schools within **1.5 km**; the geography section sa
 **Action:** confirm 1.0 km, or change both indicator fields and the scoring rule
 to 1.5 km.
 
-### OPEN-02 — HDB prices are not available at subzone level
+### OPEN-02 — HDB prices are not available at subzone level — resolved
 
 The HDB resale dataset is keyed by **HDB town**, flat type and month. The
-specification asks for a subzone median, a minimum of 5 transactions, and a
-town-proxy fallback. Without a block-to-subzone mapping, there is no subzone
-transaction count; every subzone in a town inherits the same town median and
-`isTownProxy` should always be true.
-
-**Options:**
-
-1. Treat the recommendation unit as the HDB town for pricing and label it as a
-   proxy (simplest, defensible).
-2. Build a block-to-subzone mapping by geocoding every HDB block (accurate but
-   expensive).
-3. Use town-level prices and remove the subzone-transaction threshold.
-
-**Action:** choose an option before implementing `HousePricingRetrievalControl`.
+project decision is to keep the **HDB town-level median proxy**: every
+`HousePricing` row is labelled `isTownProxy=true`, and no block-to-subzone
+mapping is planned. The current dataset contains no `subzone_code` column, so
+all pricing rows use the proxy in production.
 
 ### OPEN-03 — “10-year green coverage” is not a ready dataset
 
@@ -230,11 +221,11 @@ planning area used by the app must be mapped, and planning areas without an HDB
 town must be handled explicitly. `Kallang` → `KALLANG/WHAMPOA` is a known
 non-identity mapping.
 
-### OPEN-19 — `isTownProxy` semantics
+### OPEN-19 — `isTownProxy` semantics — resolved
 
-If HDB prices remain town-level, `isTownProxy` should probably default to `true`
-for every subzone. Define whether the flag means “town-level proxy” or
-“insufficient subzone sample”.
+`isTownProxy=true` means “this price is the HDB town-level median proxy”.
+Because the project uses town-level pricing for every subzone, the flag is true
+for all production pricing rows.
 
 ### OPEN-20 — Comparison response size
 

@@ -82,15 +82,14 @@ be compared.
 - A subzone is eligible when at least one selected flat type has a median price
   at or below `budgetMax`.
 - Pricing uses a 12-month rolling window of HDB resale transactions.
-- A minimum of 5 transactions is required for a direct price estimate.
-- If fewer than 5 transactions exist, use the broader HDB town median and set
-  `HousePricing.isTownProxy = true`.
+- Pricing always uses the **HDB town median**; `HousePricing.isTownProxy` is
+  always `true`.
 - If no price data exists for any selected flat type, the subzone is excluded
   and a `MISSING_SOURCE_DATA` warning is returned.
 
-**Frozen data decision:** the published HDB resale dataset is keyed by HDB town,
-not URA subzone. The application accepts this limitation: without an optional
-`subzone_code` column, the town median is used and `isTownProxy` is `true`. The
+**Frozen data decision (22 October 2026):** the published HDB resale dataset is
+keyed by HDB town, not URA subzone. The application deliberately keeps the
+town-level median proxy and does not build a block-to-subzone mapping. The
 UI/PDF labels this as a **Town-Level Median Proxy**.
 
 ## 4. Static vs live environment data

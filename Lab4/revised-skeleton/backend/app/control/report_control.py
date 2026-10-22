@@ -18,6 +18,7 @@ from urllib.parse import urlencode
 
 from app.container.report_store import ReportStore
 from app.entity.pdf_report import PdfReport
+from app.strategy.criterion_catalog import buildDefaultCriterionCatalog
 
 if TYPE_CHECKING:
     from app.control.data_availability_notifier import DataAvailabilityNotifier
@@ -108,6 +109,7 @@ class ReportControl:
 
         styles = getSampleStyleSheet()
         body = styles["BodyText"]
+        subheading = styles["Heading3"]
         small = ParagraphStyle(
             "Small",
             parent=body,
@@ -122,21 +124,94 @@ class ReportControl:
             fontSize=9,
             leading=11,
         )
+        bullet = ParagraphStyle(
+            "Bullet",
+            parent=body,
+            leftIndent=10,
+            bulletIndent=0,
+            spaceAfter=3,
+        )
+
+        catalog = buildDefaultCriterionCatalog()
+        labels = {
+            definition.criterionId: definition.criterionName
+            for definition in catalog.getAllCriteria()
+        }
+        snapshot = recommendations.profileSnapshot or {}
+        profile_name = str(snapshot.get("profileName") or recommendations.profileId)
+        flat_types = snapshot.get("selectedFlatTypes") or []
+        profile_summary = " | ".join(
+            [
+                f"<b>Profile:</b> {html.escape(profile_name)}",
+                f"<b>Budget:</b> {_formatCurrency(snapshot.get('budgetMin'))} to "
+                f"{_formatCurrency(snapshot.get('budgetMax'))}",
+                f"<b>Flat types:</b> "
+                f"{html.escape(', '.join(str(item) for item in flat_types)) or '—'}",
+                f"<b>Workplace:</b> "
+                f"{html.escape(str(snapshot.get('workplaceAddress') or '—'))}",
+                f"<b>Commute:</b> "
+                f"{html.escape(str(snapshot.get('preferredCommuteMode') or '—'))}",
+            ]
+        )
 
         story = [
             Paragraph("Neighbourhood Recommendation Report", styles["Title"]),
             Spacer(1, 6),
             Paragraph(
-                "Profile: "
-                f"{html.escape(recommendations.profileId)} · Generated: "
-                f"{recommendations.generatedTime.isoformat()} · Snapshot: "
-                f"{html.escape(recommendations.dataSnapshotId)}",
+                f"Generated: {_formatTimestamp(recommendations.generatedTime)} | "
+                f"Snapshot: {html.escape(recommendations.dataSnapshotId)} | "
+                f"Data as of: {_formatTimestamp(recommendations.dataAsOf)}",
                 small,
             ),
+            Spacer(1, 8),
+            Paragraph(profile_summary, body),
             Spacer(1, 14),
-            Paragraph("Ranked recommendations", styles["Heading2"]),
+            Paragraph("Profile and weighting", styles["Heading2"]),
         ]
 
+        weight_rows = _weightTableRows(snapshot, labels)
+        if weight_rows:
+            weight_data: list[list[Paragraph]] = [
+                [
+                    Paragraph("Criterion", header),
+                    Paragraph("Importance (1-10)", header),
+                    Paragraph("Relative weight", header),
+                ]
+            ]
+            weight_data.extend(
+                [
+                    [
+                        Paragraph(html.escape(label), body),
+                        Paragraph(importance, body),
+                        Paragraph(normalised, body),
+                    ]
+                    for label, importance, normalised in weight_rows
+                ]
+            )
+            weight_table = Table(weight_data, colWidths=[80 * mm, 42 * mm, 42 * mm])
+            weight_table.setStyle(
+                TableStyle(
+                    [
+                        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e2e8f0")),
+                        ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
+                        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                        ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                        ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                        ("TOPPADDING", (0, 0), (-1, -1), 4),
+                        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                    ]
+                )
+            )
+            story.append(weight_table)
+        else:
+            story.append(
+                Paragraph(
+                    "Importance ratings were not recorded in this recommendation snapshot.",
+                    small,
+                )
+            )
+
+        story.extend([Spacer(1, 16), Paragraph("Ranked recommendations", styles["Heading2"])])
         recommendation_rows: list[list[Paragraph]] = [
             [
                 Paragraph("Rank", header),
@@ -154,7 +229,11 @@ class ReportControl:
             )
         if len(recommendation_rows) == 1:
             recommendation_rows.append(
-                [Paragraph("—", body), Paragraph("No recommendations", body), Paragraph("—", body)]
+                [
+                    Paragraph("—", body),
+                    Paragraph("No recommendations", body),
+                    Paragraph("—", body),
+                ]
             )
         recommendation_table = Table(
             recommendation_rows,
@@ -174,8 +253,11 @@ class ReportControl:
                 ]
             )
         )
-        story.extend([recommendation_table, Spacer(1, 16), Paragraph("Neighbourhood details", styles["Heading2"])])
+        story.append(recommendation_table)
 
+        story.extend(
+            [Spacer(1, 16), Paragraph("Neighbourhood details", styles["Heading2"])]
+        )
         detail_rows: list[list[Paragraph]] = [
             [
                 Paragraph("Subzone", header),
@@ -186,7 +268,9 @@ class ReportControl:
         ]
         for detail in details:
             prices = ", ".join(
-                f"{html.escape(flat)}: ${pricing.averagePrice:,.0f}"
+                f"{html.escape(flat)}: "
+                f"{_formatCurrency(pricing.getMedianPrice() or pricing.averagePrice)}"
+                f"{' (town proxy)' if pricing.isTownProxy else ''}"
                 for flat, pricing in detail.pricing.items()
             )
             detail_rows.append(
@@ -224,16 +308,163 @@ class ReportControl:
                 ]
             )
         )
-        story.extend([detail_table, Spacer(1, 16), Paragraph("Data warnings", styles["Heading2"])])
+        story.append(detail_table)
 
+        items_by_code = {item.subzoneId: item for item in recommendations.getItems()}
+        story.extend(
+            [Spacer(1, 16), Paragraph("Criterion scores", styles["Heading2"])]
+        )
+        for detail in details:
+            story.append(
+                Paragraph(
+                    f"{html.escape(detail.subzoneName)} ({html.escape(detail.subzoneCode)})",
+                    subheading,
+                )
+            )
+            item = items_by_code.get(detail.subzoneCode)
+            if item is None or not item.criterionScores:
+                story.append(
+                    Paragraph(
+                        "Criterion score rows are unavailable because this subzone is "
+                        "outside the returned top-20 ranking or has no scored criteria.",
+                        small,
+                    )
+                )
+                story.append(Spacer(1, 8))
+                continue
+            score_rows: list[list[Paragraph]] = [
+                [
+                    Paragraph("Criterion", header),
+                    Paragraph("Raw", header),
+                    Paragraph("Score (0-100)", header),
+                    Paragraph("Weight", header),
+                    Paragraph("Contribution", header),
+                    Paragraph("Source", header),
+                ]
+            ]
+            for score in item.criterionScores:
+                if score.isMissing:
+                    values = ["—", "—", "—", "—", "Missing"]
+                else:
+                    values = [
+                        f"{score.rawValue:,.2f}",
+                        f"{score.normalisedScore * 100:.1f}",
+                        f"{score.weight * 100:.1f}%",
+                        f"{score.weightedScore * 100:.1f}",
+                        score.source,
+                    ]
+                score_rows.append(
+                    [
+                        Paragraph(
+                            html.escape(labels.get(score.criterionId, score.criterionId)),
+                            body,
+                        ),
+                        Paragraph(values[0], body),
+                        Paragraph(values[1], body),
+                        Paragraph(values[2], body),
+                        Paragraph(values[3], body),
+                        Paragraph(html.escape(values[4]), body),
+                    ]
+                )
+            score_table = Table(
+                score_rows,
+                colWidths=[42 * mm, 20 * mm, 23 * mm, 18 * mm, 23 * mm, 48 * mm],
+                repeatRows=1,
+            )
+            score_table.setStyle(
+                TableStyle(
+                    [
+                        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e2e8f0")),
+                        ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
+                        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                        ("LEFTPADDING", (0, 0), (-1, -1), 5),
+                        ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+                        ("TOPPADDING", (0, 0), (-1, -1), 3),
+                        ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+                    ]
+                )
+            )
+            story.extend([score_table, Spacer(1, 8)])
+
+        story.extend([Spacer(1, 8), Paragraph("Data dates", styles["Heading2"])])
+        date_rows: list[list[Paragraph]] = [
+            [
+                Paragraph("Subzone", header),
+                Paragraph("Factsheet generated", header),
+                Paragraph("Pricing as of", header),
+                Paragraph("Environment as of", header),
+                Paragraph("Commute departure", header),
+            ]
+        ]
+        for detail in details:
+            pricing_dates = sorted(
+                {
+                    _formatTimestamp(pricing.asOf)
+                    for pricing in detail.pricing.values()
+                    if pricing.asOf is not None
+                }
+            )
+            date_rows.append(
+                [
+                    Paragraph(html.escape(detail.subzoneName), body),
+                    Paragraph(_formatTimestamp(detail.generatedTime), body),
+                    Paragraph(", ".join(pricing_dates) or "—", body),
+                    Paragraph(_formatTimestamp(detail.environment.asOf), body),
+                    Paragraph(_formatTimestamp(detail.commute.departureTime), body),
+                ]
+            )
+        date_table = Table(
+            date_rows,
+            colWidths=[38 * mm, 32 * mm, 38 * mm, 34 * mm, 32 * mm],
+            repeatRows=1,
+        )
+        date_table.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e2e8f0")),
+                    ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
+                    ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 5),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 5),
+                    ("TOPPADDING", (0, 0), (-1, -1), 3),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
+                ]
+            )
+        )
+        story.append(date_table)
+
+        story.extend([Spacer(1, 16), Paragraph("Caveats", styles["Heading2"])])
+        caveats = [
+            "Scores combine fixed-domain criterion scores with relative weights "
+            "derived from 1-10 importance ratings normalised to sum to 1.0.",
+            "HDB pricing uses a 12-month rolling median. Entries marked 'town proxy' "
+            "use the HDB-town median because subzone-level transactions are unavailable.",
+            "Environment green-coverage and PM2.5 baselines are deterministic regional "
+            "values, not a verified 10-year NParks time series. Live weather, PM2.5 "
+            "and UVI are display-only.",
+            "Commute estimates use OneMap. Public-transport matrix entries may use a "
+            "straight-line fallback when live routing or a matrix entry is unavailable.",
+            "Amenity counts use buffer-distance density from the subzone representative "
+            "point, not point-in-polygon containment.",
+            "Missing criteria are excluded and the remaining criterion weights are "
+            "renormalised.",
+        ]
+        caveats.extend(
+            detail.pricingNote
+            for detail in details
+            if detail.pricingNote
+        )
+        for message in list(dict.fromkeys(caveats)):
+            story.append(Paragraph(f"• {html.escape(message)}", bullet))
+
+        story.extend([Spacer(1, 12), Paragraph("Data warnings", styles["Heading2"])])
         warnings = recommendations.warnings + [
             warning for detail in details for warning in detail.warnings
         ]
         messages = list(dict.fromkeys(warning.message for warning in warnings))
         if messages:
             for message in messages:
-                story.append(Paragraph(f"• {html.escape(message)}", body))
-                story.append(Spacer(1, 3))
+                story.append(Paragraph(f"• {html.escape(message)}", bullet))
         else:
             story.append(Paragraph("None", body))
 
@@ -257,6 +488,58 @@ class ReportControl:
         )
         document.build(story)
         return buffer.getvalue()
+
+
+def _weightTableRows(
+    snapshot: dict[str, Any],
+    labels: dict[str, str],
+) -> list[tuple[str, str, str]]:
+    """Return (label, importance, relative weight) rows for the report."""
+    entries = snapshot.get("criteriaWeights")
+    if not isinstance(entries, list):
+        return []
+    ratings: list[tuple[str, float]] = []
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        criterion_id = str(entry.get("criterionId") or "").strip()
+        value = _number(entry.get("weightValue"))
+        if criterion_id and value is not None:
+            ratings.append((criterion_id, value))
+    total = sum(max(0.0, value) for _, value in ratings)
+    if not ratings or total <= 0:
+        return []
+    return [
+        (
+            labels.get(criterion_id, criterion_id),
+            f"{value:g}",
+            f"{(max(0.0, value) / total) * 100:.1f}%",
+        )
+        for criterion_id, value in ratings
+    ]
+
+
+def _number(value: Any) -> float | None:
+    """Convert a numeric snapshot value, returning None when invalid."""
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _formatCurrency(value: Any) -> str:
+    """Format a SGD value for the report."""
+    numeric = _number(value)
+    return f"S${numeric:,.0f}" if numeric is not None else "—"
+
+
+def _formatTimestamp(value: Any) -> str:
+    """Format a timestamp for the report."""
+    if value is None:
+        return "—"
+    if isinstance(value, datetime):
+        return value.strftime("%Y-%m-%d %H:%M")
+    return str(value)
 
 
 def _toJsonable(value: Any) -> Any:

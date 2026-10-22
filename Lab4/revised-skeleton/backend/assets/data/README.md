@@ -65,15 +65,10 @@ Required columns:
 month,town,flat_type,resale_price,floor_area_sqm
 ```
 
-Optional:
-
-```text
-subzone_code
-```
-
-Without `subzone_code`, pricing is always a town-level proxy
-(`isTownProxy=true`). With it, the control can use a subzone-level median when at
-least 5 transactions exist.
+Pricing always uses the HDB town median and every row is labelled
+`isTownProxy=true`. A `subzone_code` column is not required and is not used for
+pricing; the project decision is to keep the town-level proxy rather than build
+a block-to-subzone mapping.
 
 ## `amenities.json`
 
