@@ -6,8 +6,8 @@ recommender. This folder is separate from `Lab4/Skeleton Code`.
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
 PDF and REST endpoints are implemented and covered by 81 `unittest` tests. The
 React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison,
-PDF export, share-link import, IndexedDB API caching and amenity map layers, with
-14 Vitest tests.
+PDF export (ReportLab), share-link import, IndexedDB API caching, data-refresh
+controls and amenity map layers, with 15 Vitest tests.
 
 ## Structure
 

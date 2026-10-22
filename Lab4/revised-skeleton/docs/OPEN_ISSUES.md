@@ -38,6 +38,11 @@ business logic is written.
   implemented.
 - Mall coverage was expanded from 66 to 143 points using LTA Carpark Rates
   names and a named major-mall supplement.
+- PDF rendering is ReportLab-only; WeasyPrint and its native dependencies were
+  removed from the code, requirements and Dockerfile.
+- The frontend Data panel now exposes a refresh button that calls
+  `POST /api/v1/data/refresh`, clears `ApiCache`, updates freshness status and
+  reruns the active ranking.
 - Data freshness: `DatasetService` refreshes subzone/HDB snapshots from data.gov.sg
   when older than 24 hours; live environment APIs are already used for display.
 - Frontend caching contract: `/api/v1/data/status` plus `X-Data-As-Of`, `ETag`,

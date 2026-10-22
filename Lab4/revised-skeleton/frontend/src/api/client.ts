@@ -325,6 +325,16 @@ export const api: CriteriaApi &
   async getStatus() {
     return request<DataStatusMapDTO>("/api/v1/data/status");
   },
+
+  async refreshData() {
+    const envelope = await request<DataStatusMapDTO>("/api/v1/data/refresh", {
+      method: "POST",
+    });
+    if (envelope.success) {
+      await apiCache.clear();
+    }
+    return envelope;
+  },
 };
 
 export async function downloadReport(report: PdfReportDTO): Promise<void> {

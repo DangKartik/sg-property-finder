@@ -49,6 +49,7 @@ export default function App() {
   const [notification, setNotification] = useState<NotificationState | null>(null);
   const [route, setRoute] = useState<RouteDataDTO | null>(null);
   const [busy, setBusy] = useState(false);
+  const [refreshingData, setRefreshingData] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [dataStatus, setDataStatus] = useState<DataStatusMapDTO | null>(null);
 
@@ -107,6 +108,31 @@ export default function App() {
     },
     [notify],
   );
+
+  const handleRefreshData = useCallback(async () => {
+    setRefreshingData(true);
+    try {
+      const envelope = await api.refreshData();
+      const statuses = requireData(envelope);
+      setDataStatus(statuses);
+      if (activeProfile) {
+        await runRanking(activeProfile);
+      }
+      notify(
+        "Data refreshed",
+        "Subzone and HDB snapshots have been refreshed from data.gov.sg.",
+      );
+    } catch (error) {
+      notify(
+        "Data refresh failed",
+        error instanceof Error
+          ? error.message
+          : "The backend could not refresh its datasets.",
+      );
+    } finally {
+      setRefreshingData(false);
+    }
+  }, [activeProfile, notify, runRanking]);
 
   useEffect(() => {
     let mounted = true;
@@ -424,6 +450,22 @@ export default function App() {
               {subzoneStatus?.isStale && (
                 <p className="warning-text">Snapshot is older than the configured refresh window.</p>
               )}
+              <div className="data-refresh-row">
+                <button
+                  className="button small"
+                  onClick={() => void handleRefreshData()}
+                  disabled={refreshingData || busy}
+                >
+                  {refreshingData ? "Refreshing…" : "Refresh data"}
+                </button>
+                {refreshingData && (
+                  <span className="muted">Fetching subzone and HDB snapshots…</span>
+                )}
+              </div>
+              <p className="hint">
+                Refreshes subzone and HDB snapshots from data.gov.sg. Amenity data
+                is rebuilt with <code>make amenities</code>.
+              </p>
             </section>
           </aside>
 

@@ -219,6 +219,7 @@ reportId, generatedTime, downloadUrl, expiresAt,
 fileName, contentType, sizeBytes
 ```
 
+- Rendering uses **ReportLab Platypus** only; WeasyPrint is not used.
 - Download URLs expire after 15 minutes.
 - The server file path is never returned to the browser.
 - The report includes the profile weights, per-criterion `CriterionScore` rows,

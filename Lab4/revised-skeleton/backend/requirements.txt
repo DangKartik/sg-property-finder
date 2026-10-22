@@ -13,7 +13,6 @@ cachetools>=5.3
 python-dotenv>=1.0
 
 # Reporting
-weasyprint>=62
 reportlab>=4
 
 # Tests

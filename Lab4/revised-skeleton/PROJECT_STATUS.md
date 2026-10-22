@@ -4,8 +4,8 @@
 - **Repository:** `2006-SCMB-D2`
 - **Application folder:** `Lab4/revised-skeleton/`
 - **Current branch:** `main`
-- **Last commit:** `25b46c2` (top-20 ranking cap)
-- **Working tree:** IndexedDB cache, amenity map layers, frontend tests, mall expansion and comparison-outside-top-20 support added; not yet committed
+- **Last commit:** `54d627e` (IndexedDB cache and frontend tests)
+- **Working tree:** ReportLab-only PDFs and the data-refresh UI are added; not yet committed
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -43,7 +43,7 @@ People choosing where to live in Singapore who want a data-driven comparison of:
 | Spatial processing | Shapely (plus a pure-Python geometry fallback) |
 | HTTP clients | `httpx` for async routing; standard-library `urllib` for some adapters |
 | Caching | `cachetools`-compatible TTL cache |
-| PDF | WeasyPrint when native Pango/GObject is available; ReportLab fallback |
+| PDF | ReportLab (WeasyPrint removed) |
 | Database | **No PostgreSQL.** Profiles live in browser IndexedDB; backend is stateless |
 
 ### External data
@@ -90,7 +90,7 @@ make dev
 make backend    # FastAPI only
 make frontend   # Vite only
 make test       # backend unittest suite (81 tests)
-make test-frontend # frontend Vitest suite (14 tests)
+make test-frontend # frontend Vitest suite (15 tests)
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
 make help
@@ -149,7 +149,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 | Phase 2.2 — adapters, retrieval, caching | **Completed** |
 | Phase 2.3 — commute strategy | **Completed** (matrix + live + estimated fallback) |
 | Phase 2.4 — MCDA scoring/ranking | **Completed** |
-| Phase 2.5 — factsheets, PDF, share URLs | **Completed** (ReportLab fallback on Windows) |
+| Phase 2.5 - factsheets, PDF, share URLs | **Completed** (ReportLab) |
 | Phase 2.6 — FastAPI endpoints | **Completed** |
 | Phase 3 — frontend | **Completed** |
 | Phase 4 — formal black-box/white-box testing | **Not completed** |
@@ -159,8 +159,8 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 | Amenity dataset pipeline | **Completed** (`scripts/build_amenities.py`) |
 | Amenity map layers | **Completed** (toggleable category layers) |
 | API-response caching in IndexedDB | **Completed** (`ApiCache`, ETag/TTL/stale fallback) |
-| Frontend tests | **Completed** (14 Vitest tests) |
-| WeasyPrint native GTK setup | **Not completed** (ReportLab fallback works) |
+| Frontend tests | **Completed** (15 Vitest tests) |
+| PDF generation | **Completed** (ReportLab only) |
 | Production deployment/CI | **Not completed** |
 
 ---
@@ -293,8 +293,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - warnings,
   - pricing town-proxy note.
 - `ReportControl`:
-  - WeasyPrint when native libraries available,
-  - ReportLab fallback,
+  - ReportLab Platypus rendering only,
   - short-lived temp report store,
   - secure download metadata,
   - shareable scenario URL.
@@ -359,6 +358,10 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - reads `?share=`, decodes via `/api/v1/share/decode`,
   - saves the profile to Dexie, activates it and reruns ranking,
   - highlights shared subzone polygons and fills comparison selection.
+- Data panel:
+  - “Refresh data” button calls `POST /api/v1/data/refresh`,
+  - clears the IndexedDB API cache on success,
+  - updates the freshness display and reruns the active ranking.
 - Factsheet modal:
   - multi-flat pricing,
   - town-level proxy badge and note,
@@ -377,7 +380,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 ### 4.4 Testing and verification
 
 - **81 backend tests pass** via `make test`.
-- **14 frontend Vitest tests pass** via `npm test`.
+- **15 frontend Vitest tests pass** via `npm test`.
 - Frontend tests cover format/polyline helpers, amenity filtering/colours,
   `ApiCache` persistence/pruning, client cache reuse/stale fallback and top-20
   result rendering.
@@ -465,9 +468,15 @@ Supporting scripts:
 - **Comparison outside top 20:** `RankingControl.generateRankedRecommendations`
   accepts an optional `limit`; the comparison endpoint passes `limit=None` so
   subzones outside the displayed top 20 still receive score items.
-- **Frontend tests:** Vitest/jsdom/Testing Library with 14 tests covering format
+- **Frontend tests:** Vitest/jsdom/Testing Library with 15 tests covering format
   helpers, polyline decoding, amenity filtering/colours, `ApiCache`, client cache
-  reuse/stale fallback and top-20 `ResultsListUI` rendering.
+  reuse/stale fallback, refresh cache invalidation and top-20 `ResultsListUI`
+  rendering.
+- **Data refresh UI:** the Data panel exposes a refresh button that calls
+  `POST /api/v1/data/refresh`, clears `ApiCache`, updates the status display and
+  reruns the active ranking.
+- **PDF generation:** ReportLab Platypus only; WeasyPrint, its requirement and
+  Docker native dependencies were removed.
 
 ---
 
@@ -491,10 +500,10 @@ Supporting scripts:
      `STALE_CACHE` warning when the backend is unreachable.
    - Profiles remain in the separate `ProfileCatalog` Dexie database.
 
-3. **WeasyPrint native GTK libraries are not installed on Windows.**
-   - The Python package is installed, but Pango/GObject native libraries are missing.
-   - `ReportControl` detects this and uses ReportLab; PDFs work and are tested.
-   - A `backend/Dockerfile` installs the native dependencies, but Docker was not run in this environment.
+3. **WeasyPrint — removed 22 October 2026.**
+   - `ReportControl` now renders exclusively with ReportLab Platypus.
+   - WeasyPrint and its native Pango/GObject dependencies were removed from
+     `requirements.txt` and the Dockerfile.
 
 ### 5.2 Data limitations
 
@@ -533,7 +542,7 @@ Supporting scripts:
 
 10. **Frontend unit testing — resolved 22 October 2026.**
     - Vitest + jsdom + Testing Library are configured.
-    - 14 tests cover format/polyline helpers, `ApiCache`, client cache
+    - 15 tests cover format/polyline helpers, `ApiCache`, client cache
       reuse/stale fallback and `ResultsListUI` rendering.
     - `npm run build` remains the production build check.
 
@@ -598,7 +607,7 @@ Supporting scripts:
 | Missing commute entry | Straight-line estimate + `ESTIMATED_COMMUTE_FALLBACK` |
 | Ranking result size | Top 20 items; remaining results discarded |
 | Comparison size | 2–4 subzones |
-| PDF generation | WeasyPrint when native libs available; ReportLab fallback |
+| PDF generation | ReportLab Platypus only |
 | Persistence | Profiles in browser IndexedDB; no server database |
 | API caching | IndexedDB (`ApiCache`), TTL + ETag revalidation + stale fallback |
 | Map amenities | Toggleable school/healthcare/park/MRT/mall layers |
@@ -622,9 +631,9 @@ Supporting scripts:
 - **API cache:** `ApiCache` uses the separate IndexedDB database `sgpropfinder-api-cache`. Clear it from DevTools if you need to force fresh criteria/geometry/amenities after changing data outside the normal TTL.
 - **Amenity layers:** all five categories are visible by default; the map's “Amenity layers” panel can hide categories or all points.
 - **OneMap tiles** use `https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png`.
-- **WeasyPrint**: importing it without native GTK prints a library error; `ReportControl` checks for GObject before importing and falls back to ReportLab.
+- **PDF generation**: `ReportControl` uses ReportLab Platypus directly; WeasyPrint is no longer imported or installed.
 - **Data payloads can be large:** `/api/v1/subzones/geometry` returns the full 332-subzone FeatureCollection.
-- **No commit was made for the current update.** The cache, map-layer, frontend-test, mall-expansion and comparison changes are in the working tree; P0 fixes were committed in `b867bcd` and the top-20 cap in `25b46c2`.
+- **No commit was made for the current update.** ReportLab-only PDFs and the data-refresh UI are in the working tree; the cache/map/test/mall changes were committed in `54d627e`.
 
 ---
 
@@ -694,10 +703,9 @@ Supporting scripts:
    - formal HTTP latency benchmark for `/recommendations`,
    - cold/warm OneMap routing benchmark,
    - full Dialog Map E2E checklist.
-3. **Decide whether to install GTK for WeasyPrint or rely on ReportLab/Docker.**
-4. **Add CI/CD, HTTPS/CORS production configuration, and a shared report store** if deploying beyond a single process.
-5. Consider a curated HDB block-to-subzone mapping if true subzone-level pricing is required.
-6. Optionally extend frontend tests to the App/share-import and map-layer flows.
+3. **Add CI/CD, HTTPS/CORS production configuration, and a shared report store** if deploying beyond a single process.
+4. Consider a curated HDB block-to-subzone mapping if true subzone-level pricing is required.
+5. Optionally extend frontend tests to the App/share-import and map-layer flows.
 
 ---
 
@@ -706,7 +714,7 @@ Supporting scripts:
 | Check | Result |
 | --- | --- |
 | `make test` | **81 tests OK** |
-| `npm test` | **14 frontend tests OK** |
+| `npm test` | **15 frontend tests OK** |
 | `make build` / `npm run build` | **Passed** |
 | Live Uvicorn health/ready | **Passed**, 332 subzones |
 | Browser main flow | **Passed** |
@@ -722,7 +730,8 @@ Supporting scripts:
 | Ranking result cap | **Passed**, response returns exactly the top 20 items |
 | Comparison outside top 20 | **Passed**, comparison requests the full internal ranking |
 | API cache | **Passed**, repeated GETs use IndexedDB; stale fallback works |
+| Data refresh UI | **Passed**, calls `/data/refresh`, clears cache and reranks |
+| ReportLab-only PDF | **Passed**, no WeasyPrint import/requirement |
 | Amenity map layers | **Passed**, 1,172 points available with category toggles |
 | Mall coverage | **Passed**, 143 mall points including major-mall supplements |
-| ReportLab PDF | **Passed** |
-| WeasyPrint rendering on bare Windows | **Not available**; fallback used |
+| ReportLab PDF | **Passed** (only renderer) |

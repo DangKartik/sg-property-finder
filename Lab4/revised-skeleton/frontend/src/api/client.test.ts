@@ -48,6 +48,34 @@ describe("api client IndexedDB cache", () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
+  it("clears cached responses after a data refresh", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        jsonResponse({
+          success: true,
+          data: [],
+          warnings: [],
+          error: null,
+        }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({
+          success: true,
+          data: {},
+          warnings: [],
+          error: null,
+        }),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await api.getCriteria();
+    expect(await apiCache.get("v1:GET:/api/v1/criteria")).toBeDefined();
+
+    await api.refreshData();
+    expect(await apiCache.get("v1:GET:/api/v1/criteria")).toBeUndefined();
+  });
+
   it("uses the cached envelope when the network is unavailable", async () => {
     const fetchMock = vi
       .fn()

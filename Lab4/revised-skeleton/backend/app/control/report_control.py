@@ -54,7 +54,7 @@ class ReportControl:
         expires = generated + timedelta(minutes=15)
         filename = f"SGPropFinder_Report_{report_id[:8]}.pdf"
         path = self.reportDir / filename
-        content = self._renderPdf(self._buildHtml(recommendations, details))
+        content = self._renderReport(recommendations, details)
         path.write_bytes(content)
         self.reportStore.add(report_id, path, expires)
         return PdfReport(
@@ -94,96 +94,168 @@ class ReportControl:
         separator = "&" if "?" in baseUrl else "?"
         return f"{baseUrl}{separator}{urlencode({'share': encoded})}"
 
-    def _buildHtml(self, recommendations: RecommendationSet, details: list[NeighborhoodDetailDTO]) -> str:
-        rows = []
+    def _renderReport(
+        self,
+        recommendations: RecommendationSet,
+        details: list[NeighborhoodDetailDTO],
+    ) -> bytes:
+        """Render the report directly with ReportLab Platypus."""
+        from reportlab.lib import colors
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+        from reportlab.lib.units import mm
+        from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+        styles = getSampleStyleSheet()
+        body = styles["BodyText"]
+        small = ParagraphStyle(
+            "Small",
+            parent=body,
+            fontSize=8,
+            leading=10,
+            textColor=colors.HexColor("#475467"),
+        )
+        header = ParagraphStyle(
+            "TableHeader",
+            parent=body,
+            fontName="Helvetica-Bold",
+            fontSize=9,
+            leading=11,
+        )
+
+        story = [
+            Paragraph("Neighbourhood Recommendation Report", styles["Title"]),
+            Spacer(1, 6),
+            Paragraph(
+                "Profile: "
+                f"{html.escape(recommendations.profileId)} · Generated: "
+                f"{recommendations.generatedTime.isoformat()} · Snapshot: "
+                f"{html.escape(recommendations.dataSnapshotId)}",
+                small,
+            ),
+            Spacer(1, 14),
+            Paragraph("Ranked recommendations", styles["Heading2"]),
+        ]
+
+        recommendation_rows: list[list[Paragraph]] = [
+            [
+                Paragraph("Rank", header),
+                Paragraph("Subzone", header),
+                Paragraph("Score", header),
+            ]
+        ]
         for item in recommendations.getItems():
-            rows.append(
-                "<tr>"
-                f"<td>{item.rank}</td>"
-                f"<td>{html.escape(item.subzoneName)}</td>"
-                f"<td>{item.totalScore:.1f}</td>"
-                "</tr>"
+            recommendation_rows.append(
+                [
+                    Paragraph(str(item.rank), body),
+                    Paragraph(html.escape(item.subzoneName), body),
+                    Paragraph(f"{item.totalScore:.1f}", body),
+                ]
             )
-        detail_rows = []
+        if len(recommendation_rows) == 1:
+            recommendation_rows.append(
+                [Paragraph("—", body), Paragraph("No recommendations", body), Paragraph("—", body)]
+            )
+        recommendation_table = Table(
+            recommendation_rows,
+            colWidths=[18 * mm, 112 * mm, 28 * mm],
+            repeatRows=1,
+        )
+        recommendation_table.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e2e8f0")),
+                    ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
+                    ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                    ("TOPPADDING", (0, 0), (-1, -1), 4),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                ]
+            )
+        )
+        story.extend([recommendation_table, Spacer(1, 16), Paragraph("Neighbourhood details", styles["Heading2"])])
+
+        detail_rows: list[list[Paragraph]] = [
+            [
+                Paragraph("Subzone", header),
+                Paragraph("Pricing", header),
+                Paragraph("Green coverage", header),
+                Paragraph("Commute", header),
+            ]
+        ]
         for detail in details:
             prices = ", ".join(
                 f"{html.escape(flat)}: ${pricing.averagePrice:,.0f}"
                 for flat, pricing in detail.pricing.items()
             )
             detail_rows.append(
-                "<tr>"
-                f"<td>{html.escape(detail.subzoneName)}</td>"
-                f"<td>{prices or 'No pricing data'}</td>"
-                f"<td>{detail.environment.greenCoveragePercent:.1f}%</td>"
-                f"<td>{detail.commute.durationMinutes} min</td>"
-                "</tr>"
+                [
+                    Paragraph(html.escape(detail.subzoneName), body),
+                    Paragraph(prices or "No pricing data", body),
+                    Paragraph(f"{detail.environment.greenCoveragePercent:.1f}%", body),
+                    Paragraph(f"{detail.commute.durationMinutes} min", body),
+                ]
             )
-        warnings = recommendations.warnings + [w for detail in details for w in detail.warnings]
-        warning_items = "".join(f"<li>{html.escape(w.message)}</li>" for w in warnings) or "<li>None</li>"
-        return f"""<!doctype html>
-<html><head><meta charset="utf-8"><title>Neighbourhood Report</title>
-<style>
-body {{ font-family: Arial, sans-serif; margin: 32px; color: #1f2937; }}
-h1 {{ font-size: 24px; }} h2 {{ margin-top: 24px; font-size: 18px; }}
-table {{ border-collapse: collapse; width: 100%; margin-top: 8px; }}
-th, td {{ border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }}
-th {{ background: #e2e8f0; }}
-.small {{ color: #64748b; font-size: 12px; }}
-</style></head><body>
-<h1>Neighbourhood Recommendation Report</h1>
-<p class="small">Profile: {html.escape(recommendations.profileId)} · Generated: {recommendations.generatedTime.isoformat()} · Snapshot: {html.escape(recommendations.dataSnapshotId)}</p>
-<h2>Ranked recommendations</h2>
-<table><thead><tr><th>Rank</th><th>Subzone</th><th>Score</th></tr></thead><tbody>{''.join(rows) or '<tr><td colspan="3">No recommendations</td></tr>'}</tbody></table>
-<h2>Neighbourhood details</h2>
-<table><thead><tr><th>Subzone</th><th>Pricing</th><th>Green coverage</th><th>Commute</th></tr></thead><tbody>{''.join(detail_rows) or '<tr><td colspan="4">No details</td></tr>'}</tbody></table>
-<h2>Data warnings</h2><ul>{warning_items}</ul>
-</body></html>"""
-
-    def _renderPdf(self, document: str) -> bytes:
-        """Render HTML with WeasyPrint when available, otherwise ReportLab."""
-        if not self._weasyprintAvailable():
-            return self._renderWithReportLab(document)
-        try:
-            from weasyprint import HTML  # type: ignore
-
-            return HTML(string=document).write_pdf()
-        except Exception:
-            return self._renderWithReportLab(document)
-
-    @staticmethod
-    def _weasyprintAvailable() -> bool:
-        """Check that the native Pango/GObject libraries needed by WeasyPrint exist."""
-        try:
-            import ctypes.util
-
-            return bool(
-                ctypes.util.find_library("gobject-2.0")
-                or ctypes.util.find_library("libgobject-2.0-0")
+        if len(detail_rows) == 1:
+            detail_rows.append(
+                [
+                    Paragraph("—", body),
+                    Paragraph("No details", body),
+                    Paragraph("—", body),
+                    Paragraph("—", body),
+                ]
             )
-        except Exception:
-            return False
+        detail_table = Table(
+            detail_rows,
+            colWidths=[42 * mm, 76 * mm, 22 * mm, 18 * mm],
+            repeatRows=1,
+        )
+        detail_table.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e2e8f0")),
+                    ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5e1")),
+                    ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                    ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                    ("TOPPADDING", (0, 0), (-1, -1), 4),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                ]
+            )
+        )
+        story.extend([detail_table, Spacer(1, 16), Paragraph("Data warnings", styles["Heading2"])])
 
-    @staticmethod
-    def _renderWithReportLab(document: str) -> bytes:
-        """Dependency-light fallback used when WeasyPrint is unavailable."""
-        from reportlab.lib import colors
-        from reportlab.lib.pagesizes import A4
-        from reportlab.lib.styles import getSampleStyleSheet
-        from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+        warnings = recommendations.warnings + [
+            warning for detail in details for warning in detail.warnings
+        ]
+        messages = list(dict.fromkeys(warning.message for warning in warnings))
+        if messages:
+            for message in messages:
+                story.append(Paragraph(f"• {html.escape(message)}", body))
+                story.append(Spacer(1, 3))
+        else:
+            story.append(Paragraph("None", body))
+
+        story.extend(
+            [
+                Spacer(1, 18),
+                Paragraph("Generated by SG Property Finder.", small),
+            ]
+        )
 
         buffer = io.BytesIO()
-        doc = SimpleDocTemplate(buffer, pagesize=A4, title="Neighbourhood Report")
-        styles = getSampleStyleSheet()
-        story = [Paragraph("Neighbourhood Recommendation Report", styles["Title"]), Spacer(1, 12)]
-        text = html.unescape(document)
-        # Keep the fallback simple: render the text content, not the HTML layout.
-        import re
-
-        plain = re.sub(r"<[^>]+>", "\n", text)
-        for line in [line.strip() for line in plain.splitlines() if line.strip()]:
-            story.append(Paragraph(html.escape(line), styles["BodyText"]))
-            story.append(Spacer(1, 4))
-        doc.build(story)
+        document = SimpleDocTemplate(
+            buffer,
+            pagesize=A4,
+            title="Neighbourhood Report",
+            author="SG Property Finder",
+            leftMargin=18 * mm,
+            rightMargin=18 * mm,
+            topMargin=18 * mm,
+            bottomMargin=18 * mm,
+        )
+        document.build(story)
         return buffer.getvalue()
 
 

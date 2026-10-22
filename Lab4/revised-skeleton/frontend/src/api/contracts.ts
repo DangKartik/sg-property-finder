@@ -171,9 +171,16 @@ export interface ShareApi {
   decodeShare(share: string): Promise<ApiEnvelope<ShareScenarioDTO>>;
 }
 
-/** Freshness/status API for the future IndexedDB cache layer. */
+/** Freshness/status API for the IndexedDB cache layer. */
 export interface DataStatusApi {
   getStatus(): Promise<ApiEnvelope<DataStatusMapDTO>>;
+
+  /**
+   * Force a live data.gov.sg refresh of subzone and HDB snapshots.
+   * @returns Envelope containing refreshed dataset statuses.
+   * @throws When the refresh request fails.
+   */
+  refreshData(): Promise<ApiEnvelope<DataStatusMapDTO>>;
 }
 
 /**
