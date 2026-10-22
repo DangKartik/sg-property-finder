@@ -111,8 +111,10 @@ affect suitability scores. This preserves deterministic rankings.
   - Shopping malls: 1.0 km;
   - MRT/LRT stations: 800 m.
 - **CBD anchor:** Raffles Place MRT centroid, `1.2830, 103.8513` (WGS84).
-- Distances to polygon features use the nearest point on the polygon boundary;
-  distances to point features use the point coordinate.
+- **Amenity count method:** buffer-distance density. Every amenity point within
+  the fixed radius of the subzone representative point is counted. Park polygons
+  are converted to a single `representative_point()` when the amenities snapshot
+  is generated, so counts use that point coordinate.
 
 ## 6. Commute strategy and latency
 

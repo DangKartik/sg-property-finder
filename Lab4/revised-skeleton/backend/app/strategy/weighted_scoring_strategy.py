@@ -190,12 +190,16 @@ class WeightedScoringStrategy(ScoringStrategy):
         if criterion_id == "COMMUTE_TIME":
             return (float(commute.durationMinutes), "OneMap") if commute is not None else None
         if criterion_id == "SCHOOL_PROXIMITY":
+            if not indicators.amenityDataAvailable:
+                return None
             count = indicators.primarySchoolCount1km + indicators.secondarySchoolCount1km
             return (float(count), "MOE Schools")
         if criterion_id == "GREEN_COVERAGE":
             green = indicators.greenCoveragePercent500m
             return (float(green), "NParks Parks") if green is not None else None
         if criterion_id == "AMENITIES_DENSITY":
+            if not indicators.amenityDataAvailable:
+                return None
             count = (
                 indicators.mallCount1km
                 + indicators.polyclinicCount2km

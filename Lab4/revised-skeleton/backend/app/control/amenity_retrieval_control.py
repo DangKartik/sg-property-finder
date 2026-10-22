@@ -20,10 +20,21 @@ if TYPE_CHECKING:
     from app.control.data_availability_notifier import DataAvailabilityNotifier
 
 DISPLAY_RADIUS_KM = 2.0
+SCHOOL_RADIUS_KM = 1.0
+MRT_RADIUS_KM = 0.8
+PARK_RADIUS_KM = 0.5
+HEALTHCARE_RADIUS_KM = 2.0
+MALL_RADIUS_KM = 1.0
 
 
 class AmenityRetrievalControl(RetrievalControl):
-    """Stereotype: Control. Retrieves amenities and computes proximity indicators."""
+    """Stereotype: Control. Retrieves amenities and computes proximity indicators.
+
+    Counts use buffer-distance density: every amenity point within the fixed
+    radius of the subzone's representative point (the registry stores this as
+    ``centroid``) is counted. The radii are schools 1.0 km, MRT 800 m, parks
+    500 m, healthcare 2.0 km and shopping malls 1.0 km.
+    """
 
     def __init__(
         self,
@@ -178,18 +189,19 @@ class AmenityRetrievalControl(RetrievalControl):
 
         indicators = SubzoneIndicators(
             nearestParkM=_nearestM(rows, "park"),
-            parkCount500m=_count(rows, "park", 0.5),
+            parkCount500m=_count(rows, "park", PARK_RADIUS_KM),
             nearestSchoolM=_nearestM(rows, "school"),
-            primarySchoolCount1km=_count(rows, "school", 1.0, subtype="primary"),
-            secondarySchoolCount1km=_count(rows, "school", 1.0, subtype="secondary"),
+            primarySchoolCount1km=_count(rows, "school", SCHOOL_RADIUS_KM, subtype="primary"),
+            secondarySchoolCount1km=_count(rows, "school", SCHOOL_RADIUS_KM, subtype="secondary"),
             nearestPolyclinicM=_nearestM(rows, "polyclinic"),
-            polyclinicCount2km=_count(rows, "polyclinic", 2.0),
+            polyclinicCount2km=_count(rows, "polyclinic", HEALTHCARE_RADIUS_KM),
             nearestHospitalM=_nearestM(rows, "hospital"),
-            hospitalCount2km=_count(rows, "hospital", 2.0),
+            hospitalCount2km=_count(rows, "hospital", HEALTHCARE_RADIUS_KM),
             nearestMallM=_nearestM(rows, "mall"),
-            mallCount1km=_count(rows, "mall", 1.0),
+            mallCount1km=_count(rows, "mall", MALL_RADIUS_KM),
             nearestMrtM=_nearestM(rows, "mrt"),
-            mrtStationCount800m=_count(rows, "mrt", 0.8),
+            mrtStationCount800m=_count(rows, "mrt", MRT_RADIUS_KM),
+            amenityDataAvailable=not self._amenitiesError,
         )
         return RetrievalResult(indicators, warnings)
 

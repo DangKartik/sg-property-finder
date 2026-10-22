@@ -283,6 +283,11 @@ npm run build
 `ONEMAP_EMAIL` and `ONEMAP_PASSWORD` are therefore required in addition to the
 requested `ONEMAP_API_KEY` placeholder.
 
+## Handover
+
+See `PROJECT_STATUS.md` for the full completed/not-completed task list, context,
+run instructions, known gaps and recommended next steps.
+
 ## Implementation status
 
 - **Phase 1:** complete (ECB package layout, entity/enum refactor, docstrings,
@@ -293,12 +298,13 @@ requested `ONEMAP_API_KEY` placeholder.
 - **Frontend:** implemented (React 18 + TypeScript + Vite, Leaflet/React-Leaflet,
   Dexie/IndexedDB, responsive UI, comparison matrix and PDF export).
 - **Data assets:** URA subzones, HDB resale prices, town mapping, regional
-  environment baselines and the CBD commute matrix are populated.
-  `DatasetService` refreshes subzone/HDB snapshots from data.gov.sg when older
-  than 24 hours; live PM2.5/UVI/forecast already come from real-time APIs.
-  `/api/v1/data/status` and cache headers provide the contract for the future
-  IndexedDB cache layer. `amenities.json` is still required for the amenity
-  score; the app degrades gracefully with a warning until it is supplied.
+  environment baselines, the CBD commute matrix and a 1,095-point amenities
+  snapshot are populated. `DatasetService` refreshes subzone/HDB snapshots from
+  data.gov.sg when older than 24 hours; live PM2.5/UVI/forecast already come
+  from real-time APIs. `/api/v1/data/status` and cache headers provide the
+  contract for the future IndexedDB cache layer. Amenities are generated from
+  data.gov.sg school/park/MRT/polyclinic datasets plus OneMap hospital/mall
+  layers; run `make amenities` to rebuild the snapshot.
 
 Run the backend tests from `Lab4/revised-skeleton/backend`:
 

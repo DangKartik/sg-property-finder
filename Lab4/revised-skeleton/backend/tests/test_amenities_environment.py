@@ -27,6 +27,7 @@ class AmenityTests(unittest.TestCase):
     def test_counts_are_calculated_with_configured_radii(self) -> None:
         result = self.control.retrieveIndicators("TAMPINES01")
         indicators = result.data
+        self.assertTrue(indicators.amenityDataAvailable)
         self.assertEqual(indicators.parkCount500m, 1)
         self.assertEqual(indicators.primarySchoolCount1km, 1)
         self.assertEqual(indicators.secondarySchoolCount1km, 1)
@@ -45,6 +46,20 @@ class AmenityTests(unittest.TestCase):
         result = self.control.retrieveAmenityInfo("UNKNOWN")
         self.assertEqual(result.data, [])
         self.assertTrue(result.warnings)
+
+    def test_missing_source_marks_amenity_indicators_unavailable(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "amenities.json"
+            path.write_text("{not valid json", encoding="utf-8")
+            control = AmenityRetrievalControl(
+                DataGovSgAdapter(),
+                DataAvailabilityNotifier(),
+                amenitiesPath=path,
+                subzoneRegistry=self.registry,
+            )
+            result = control.retrieveIndicators("TAMPINES01")
+            self.assertFalse(result.data.amenityDataAvailable)
+            self.assertTrue(result.warnings)
 
 
 class EnvironmentTests(unittest.TestCase):

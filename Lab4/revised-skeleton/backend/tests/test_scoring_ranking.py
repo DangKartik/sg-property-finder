@@ -54,6 +54,30 @@ class ScoringTests(unittest.TestCase):
         self.assertAlmostEqual(sum(score.weight for score in jurong.criterionScores if not score.isMissing), 1.0, places=3)
         self.assertTrue(any("GREEN_COVERAGE" in warning.message for warning in warnings))
 
+    def test_missing_amenity_source_excludes_school_and_amenity_criteria(self) -> None:
+        tampines = self.registry.getSubzone("TAMPINES01")
+        tampines.indicators.amenityDataAvailable = False
+        warnings = []
+        items = self.strategy.scoreCandidates(
+            self.registry.getAllSubzones(), self.profile, self.commutes, warnings
+        )
+        tampines_item = next(item for item in items if item.subzoneId == "TAMPINES01")
+        missing = {
+            score.criterionId
+            for score in tampines_item.criterionScores
+            if score.isMissing
+        }
+        self.assertTrue({"SCHOOL_PROXIMITY", "AMENITIES_DENSITY"}.issubset(missing))
+        self.assertAlmostEqual(
+            sum(
+                score.weight
+                for score in tampines_item.criterionScores
+                if not score.isMissing
+            ),
+            1.0,
+            places=3,
+        )
+
     def test_fixed_domain_normalisation_is_candidate_independent(self) -> None:
         for subzone in self.registry.getAllSubzones():
             subzone.indicators.greenCoveragePercent500m = 30.0
