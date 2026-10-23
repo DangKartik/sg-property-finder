@@ -1,11 +1,11 @@
 # SG Property Finder — Project Status
 
-- **Last updated:** 22 October 2026
+- **Last updated:** 23 October 2026
 - **Repository:** `2006-SCMB-D2`
 - **Application folder:** `Lab4/revised-skeleton/`
 - **Current branch:** `main`
-- **Last commit:** `af953b5` (data refresh UI and ReportLab-only PDFs)
-- **Working tree:** 1–10 relative importance ratings, selection-driven amenity markers, local amenity rebuild in `/data/refresh`, enforced HDB town-proxy pricing, hybrid commute shortlisting and enriched ReportLab content are added; not yet committed
+- **Last commit:** `8b938ee` (hybrid commute distance calculations)
+- **Working tree:** code clean at `8b938ee`; this documentation update is pending commit
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -147,7 +147,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 | Phase 1 — ECB skeleton, entities, documentation | **Completed** |
 | Phase 2.1 — spatial engine, data assets, town mapping | **Completed** |
 | Phase 2.2 — adapters, retrieval, caching | **Completed** |
-| Phase 2.3 — commute strategy | **Completed** (matrix + live + estimated fallback) |
+| Phase 2.3 — commute strategy | **Completed** (matrix + hybrid shortlist + estimated fallback) |
 | Phase 2.4 — MCDA scoring/ranking | **Completed** |
 | Phase 2.5 - factsheets, PDF, share URLs | **Completed** (ReportLab) |
 | Phase 2.6 — FastAPI endpoints | **Completed** |
@@ -159,6 +159,9 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 | Amenity dataset pipeline | **Completed** (`scripts/build_amenities.py`) |
 | Amenity map layers | **Completed** (markers shown only for selected subzone) |
 | API-response caching in IndexedDB | **Completed** (`ApiCache`, ETag/TTL/stale fallback) |
+| Data refresh UI + amenity rebuild | **Completed** |
+| Hybrid commute shortlist | **Completed** (50 live + spatial heuristics) |
+| 1–10 criterion importance | **Completed** (relative-normalised) |
 | Frontend tests | **Completed** (21 Vitest tests) |
 | PDF generation | **Completed** (ReportLab only) |
 | Production deployment/CI | **Not completed** |
@@ -229,7 +232,8 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - local snapshots for fast startup,
   - automatic data.gov.sg refresh when snapshots are older than `DATA_MAX_AGE_HOURS` (default 24),
   - writes refreshed snapshots back to `backend/assets/data/`,
-  - `/api/v1/data/status` and `POST /api/v1/data/refresh`.
+  - `/api/v1/data/status` and `POST /api/v1/data/refresh`,
+  - refresh also triggers the local amenity rebuild from the cached POI snapshot.
 - Live refresh has been manually verified:
   - 332 subzones,
   - 243,176 HDB transactions,
@@ -241,8 +245,8 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 - `HousePricingRetrievalControl`:
   - 12-month rolling HDB window,
   - flat-type keyed `dict[str, HousePricing]`,
-  - minimum-5-transaction subzone rule,
-  - HDB-town median fallback,
+  - **always uses the HDB-town median proxy** (`isTownProxy=true`),
+  - no subzone-level pricing or block-to-subzone mapping,
   - median price, median $/sqm and price trend,
   - indexed by town/flat type for startup performance.
 - `EnvironmentRetrievalControl`:
@@ -394,9 +398,9 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 
 - **86 backend tests pass** via `make test`.
 - **21 frontend Vitest tests pass** via `npm test`.
-- Frontend tests cover format/polyline helpers, amenity filtering/colours,
-  `ApiCache` persistence/pruning, client cache reuse/stale fallback and top-20
-  result rendering.
+- Frontend tests cover format/polyline helpers, weight migration, nearby amenity
+  filtering/colours, `ApiCache` persistence/pruning, client cache reuse/stale
+  fallback, refresh cache invalidation and top-20 result rendering.
 - Frontend `npm run build` passes (`tsc --noEmit` + Vite production build).
 - Live FastAPI server verified:
   - health true,
@@ -417,6 +421,10 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - share-link import and shared-subzone highlighting,
   - amenity markers hidden until a subzone is selected, then nearby points only,
   - IndexedDB cache reuse on reload (only `/data/status` refetched).
+- `/api/v1/data/refresh` handler test:
+  - 1,172 amenity items,
+  - 332 subzone aggregates,
+  - amenity status returned as `local-amenity-snapshot`.
 - OneMap live checks:
   - token endpoint,
   - address search (10 results),
@@ -452,9 +460,9 @@ Supporting scripts:
 ### 4.6 P0 correctness fixes
 
 - **Commute matrix mode gating:** `CommuteControl` only consults
-  `commute_matrix.json` for `PUBLIC_TRANSIT`. `DRIVING` and `WALKING` near the
-  CBD call OneMap live and fall back to a straight-line estimate only when live
-  routing fails.
+  `commute_matrix.json` for `PUBLIC_TRANSIT`. `DRIVING` and `WALKING` use the
+  hybrid shortlist: 50 nearest subzones live, remainder spatial heuristic with
+  1.35× driving / 1.20× walking multipliers.
 - **Estimated fallback for missing matrix entries:** the 13 subzones without a
   matrix entry receive a straight-line estimate and an
   `ESTIMATED_COMMUTE_FALLBACK` warning instead of being excluded.
@@ -496,9 +504,9 @@ Supporting scripts:
 
 ---
 
-## 5. Not completed / known gaps
+## 5. Remaining gaps, accepted limitations and resolved items
 
-### 5.1 Highest priority
+### 5.1 Recently resolved
 
 1. **Amenities dataset — resolved 21 October 2026.**
    - `backend/assets/data/amenities.json` is generated by `make amenities`.
@@ -538,6 +546,8 @@ Supporting scripts:
    - They are recorded in `commute_matrix.json.metadata.errors` and now use a
      straight-line estimate with an `ESTIMATED_COMMUTE_FALLBACK` warning instead
      of being excluded from ranking.
+   - Driving/walking use the hybrid shortlist (50 live + spatial estimates);
+     public transport retains the matrix/fallback path.
 
 7. **`BUKIT TIMAH` and `OUT OF BOUNDS` mappings.**
    - These follow the supplied mapping but may not correspond to HDB town pricing data; such subzones can produce missing-price warnings.
@@ -567,7 +577,7 @@ Supporting scripts:
 
 11. **Formal SLA benchmark**
     - The backend ranking calculation was measured at ~13 ms on the local snapshot, but there is no formal HTTP end-to-end benchmark report.
-    - There is no formal cold-cache/OneMap routing benchmark (<10 s) with percentiles.
+    - Driving/walking now cap live OneMap calls at 50 plus in-memory heuristics, but there is still no formal cold-cache/OneMap routing benchmark with percentiles.
 
 12. **Complete Dialog Map E2E test**
     - Manual browser walkthrough succeeded for the main path.
@@ -637,7 +647,7 @@ Supporting scripts:
 
 - **Do not commit `.env`.** It contains OneMap credentials and is ignored by Git.
 - **Do not regenerate the 24 MB HDB CSV unnecessarily.** It is already in `backend/assets/data/hdb_resale.csv`.
-- **Amenities snapshot:** `make amenities` rebuilds `backend/assets/data/amenities.json` from data.gov.sg and OneMap. It needs the OneMap credentials in `.env`; it geocodes school postal codes and queries OneMap themes/search.
+- **Amenities snapshot:** `make amenities` rebuilds `backend/assets/data/amenities.json` from data.gov.sg and OneMap. It needs the OneMap credentials in `.env`; it geocodes school postal codes and queries OneMap themes/search. `POST /api/v1/data/refresh` instead rebuilds from the cached local point snapshot, adds subzone `aggregates`, and requires no network call.
 - **Start order matters:** backend first, then frontend. `make dev` handles both.
 - **`make test`** is the reliable way to run backend tests from the revised-skeleton root.
 - **Backend startup is ~4 seconds** because it loads 332 subzones, indexes 243k HDB rows and joins 1,172 amenity points.
@@ -652,7 +662,7 @@ Supporting scripts:
 - **OneMap tiles** use `https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png`.
 - **PDF generation**: `ReportControl` uses ReportLab Platypus directly; WeasyPrint is no longer imported or installed.
 - **Data payloads can be large:** `/api/v1/subzones/geometry` returns the full 332-subzone FeatureCollection.
-- **No commit was made for the current update.** The 1–10 importance-rating, selection-driven amenity-marker, local amenity-rebuild, enforced HDB town-proxy, hybrid-commute and enriched-ReportLab changes are in the working tree; ReportLab-only PDFs and the data-refresh UI were committed in `af953b5`.
+- **Code is committed at `8b938ee`.** The weighting, amenity-marker, amenity-rebuild, HDB proxy, hybrid-commute and enriched-PDF work is committed. This documentation update is pending.
 
 ---
 
@@ -670,7 +680,7 @@ Supporting scripts:
 | `backend/app/adapter/data_gov_sg_adapter.py` | data.gov.sg API/fallback adapter |
 | `backend/app/control/house_pricing_retrieval_control.py` | HDB pricing/window/town proxy |
 | `backend/app/control/environment_retrieval_control.py` | Regional baselines + live display data |
-| `backend/app/control/amenity_retrieval_control.py` | Amenity counts/indicators |
+| `backend/app/control/amenity_retrieval_control.py` | Amenity counts/indicators, local rebuild and snapshot status |
 | `backend/app/control/commute_control.py` | Matrix/live routing/cache |
 | `backend/app/control/ranking_control.py` | Recommendation orchestration |
 | `backend/app/strategy/weighted_scoring_strategy.py` | Fixed-domain MCDA |
@@ -694,7 +704,8 @@ Supporting scripts:
 | `frontend/src/boundary/NotificationModalUI.tsx` | Reusable alerts |
 | `frontend/src/container/ProfileCatalog.ts` | Dexie/IndexedDB profiles |
 | `frontend/src/container/ApiCache.ts` | Dexie/IndexedDB API response cache |
-| `frontend/src/utils/amenities.ts` | Amenity layer groups, filtering and colours |
+| `frontend/src/utils/amenities.ts` | Amenity layer groups, nearby filtering and colours |
+| `frontend/src/utils/weights.ts` | 1–10 importance clamping, legacy migration and persistence |
 | `frontend/src/control/ProfileControl.ts` | Client profile CRUD |
 | `frontend/src/api/client.ts` | Backend API client with cache/revalidation |
 | `frontend/src/styles.css` | Responsive UI and map-layer styles |
@@ -708,7 +719,7 @@ Supporting scripts:
 | `backend/assets/data/planning_area_to_hdb_town.json` | Populated |
 | `backend/assets/data/environment_baselines.json` | Deterministic regional baselines |
 | `backend/assets/data/commute_matrix.json` | 319/332 subzones |
-| `backend/assets/data/amenities.json` | **Present — 1,172 points generated by `make amenities`** |
+| `backend/assets/data/amenities.json` | **Present - 1,172 raw points from `make amenities`; `/data/refresh` adds subzone aggregates** |
 
 ---
 
@@ -755,4 +766,3 @@ Supporting scripts:
 | ReportLab-only PDF | **Passed**, includes weights, criterion scores, dates and caveats |
 | Amenity map layers | **Passed**, markers hidden until selection; nearby points only |
 | Mall coverage | **Passed**, 143 mall points including major-mall supplements |
-| ReportLab PDF | **Passed** (only renderer) |

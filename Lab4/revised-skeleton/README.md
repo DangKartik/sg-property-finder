@@ -308,11 +308,12 @@ run instructions, known gaps and recommended next steps.
 - **Phase 1:** complete (ECB package layout, entity/enum refactor, docstrings,
   stateless controls, environment setup, specifications).
 - **Phase 2:** backend implemented and unit-tested (adapters, retrieval engine,
-  commute service, MCDA scoring, factsheet aggregation, PDF/share URLs and REST
-  handlers).
+  hybrid commute service, 1–10 MCDA scoring, factsheet aggregation, ReportLab
+  PDF/share URLs and REST handlers).
 - **Frontend:** implemented (React 18 + TypeScript + Vite, Leaflet/React-Leaflet,
-  Dexie/IndexedDB profiles and API cache, selection-driven amenity markers, responsive UI,
-  comparison matrix, share-link import and PDF export).
+  Dexie/IndexedDB profiles and API cache, 1–10 preference ratings, data-refresh
+  controls, selection-driven amenity markers, responsive UI, comparison matrix,
+  share-link import and PDF export).
 - **Data assets:** URA subzones, HDB resale prices, town mapping, regional
   environment baselines, the CBD commute matrix and a 1,172-point amenities
   snapshot are populated. `DatasetService` refreshes subzone/HDB snapshots from
@@ -320,7 +321,8 @@ run instructions, known gaps and recommended next steps.
   from real-time APIs. `ApiCache` uses `/api/v1/data/status` and cache headers
   for IndexedDB response caching. Amenities are generated from data.gov.sg
   school/park/MRT/polyclinic datasets plus OneMap hospital/mall layers and LTA
-  major-mall names; run `make amenities` to rebuild the snapshot.
+  major-mall names; run `make amenities` to rebuild the snapshot. The Data panel
+  refresh also rebuilds amenity aggregates from the cached local point snapshot.
 
 Run the backend tests from `Lab4/revised-skeleton/backend`:
 
