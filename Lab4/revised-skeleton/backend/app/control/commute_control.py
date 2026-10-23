@@ -39,6 +39,11 @@ _FALLBACK_OVERHEAD_MINUTES = {
     TransitMode.DRIVING: 5.0,
     TransitMode.WALKING: 0.0,
 }
+_HEURISTIC_DISTANCE_MULTIPLIERS = {
+    TransitMode.PUBLIC_TRANSIT: 1.0,
+    TransitMode.DRIVING: 1.35,
+    TransitMode.WALKING: 1.20,
+}
 _MAX_LIVE_CONCURRENCY = 12
 
 
@@ -198,11 +203,12 @@ class CommuteControl:
     ) -> RetrievalResult[dict[str, CommuteEstimate]]:
         """Return commute estimates for a candidate set.
 
-        Near the CBD, public transport uses the precomputed matrix and falls
-        back to a straight-line estimate for missing entries. Driving and walking
-        never use the public-transport matrix: every subzone is routed live, with
-        a straight-line fallback if OneMap fails. For a custom workplace, the
-        nearest `topK` subzones are routed live.
+        Public transport near the CBD uses the precomputed matrix (with a
+        straight-line fallback for missing entries). Driving and walking use the
+        hybrid shortlist strategy: the nearest `topK` subzones are routed live,
+        while the remainder receive a spatial heuristic estimate with the mode's
+        road/path multiplier. Public transport for a custom workplace keeps the
+        existing top-`topK` live-routing shortlist.
         """
         departure = departureTime or nextWeekdayPeak()
         warnings: list[Any] = []
@@ -229,19 +235,21 @@ class CommuteControl:
                 estimates[subzone.subzoneCode] = estimate
             return RetrievalResult(estimates, warnings)
 
-        ranked = (
-            list(subzones)
-            if near_cbd
-            else sorted(
-                subzones,
-                key=lambda subzone: haversineKm(
-                    origin.latitude,
-                    origin.longitude,
-                    subzone.centroid.latitude,
-                    subzone.centroid.longitude,
-                ),
-            )[:topK]
+        ranked = sorted(
+            subzones,
+            key=lambda subzone: haversineKm(
+                origin.latitude,
+                origin.longitude,
+                subzone.centroid.latitude,
+                subzone.centroid.longitude,
+            ),
         )
+        if mode is TransitMode.PUBLIC_TRANSIT:
+            live_subzones = ranked[:topK]
+            heuristic_subzones: list[Subzone] = []
+        else:
+            live_subzones = ranked[:topK]
+            heuristic_subzones = ranked[topK:]
 
         semaphore = asyncio.Semaphore(_MAX_LIVE_CONCURRENCY)
 
@@ -275,12 +283,27 @@ class CommuteControl:
                         ),
                     )
 
-        results = await asyncio.gather(*(one(subzone) for subzone in ranked))
-        estimates = {}
+        results = await asyncio.gather(*(one(subzone) for subzone in live_subzones))
+        estimates: dict[str, CommuteEstimate] = {}
         for code, estimate, warning in results:
             estimates[code] = estimate
             if warning is not None:
                 warnings.append(warning)
+
+        for subzone in heuristic_subzones:
+            estimates[subzone.subzoneCode] = self._straightLineEstimate(
+                origin,
+                subzone.centroid,
+                mode,
+                departure,
+            )
+            warnings.append(
+                self._fallbackWarning(
+                    subzone.subzoneCode,
+                    mode,
+                    "Outside live-routing shortlist",
+                )
+            )
         return RetrievalResult(estimates, warnings)
 
     def retrieveCommutesSync(
@@ -381,13 +404,13 @@ class CommuteControl:
         mode: TransitMode,
         departure: datetime,
     ) -> CommuteEstimate:
-        """Estimate a commute from straight-line distance and a mode speed."""
+        """Estimate a commute from straight-line distance, mode multiplier and speed."""
         distance_km = haversineKm(
             origin.latitude,
             origin.longitude,
             destination.latitude,
             destination.longitude,
-        )
+        ) * _HEURISTIC_DISTANCE_MULTIPLIERS[mode]
         speed_kmh = _FALLBACK_SPEED_KMH[mode]
         overhead = _FALLBACK_OVERHEAD_MINUTES[mode]
         duration = max(1, math.ceil((distance_km / speed_kmh) * 60.0 + overhead))

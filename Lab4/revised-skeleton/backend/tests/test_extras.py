@@ -71,6 +71,33 @@ class AsyncCommuteTests(unittest.TestCase):
         self.assertEqual(len(result.data), 50)
         self.assertEqual(adapter.routing_calls, 50)
 
+    def test_driving_uses_hybrid_shortlist(self) -> None:
+        base = load_registry().getSubzone("TAMPINES01")
+        subzones = [
+            replace(
+                base,
+                subzoneCode=f"H{index:02d}",
+                centroid=Coordinates(1.30 + index * 0.001, 103.80 + index * 0.001),
+            )
+            for index in range(60)
+        ]
+        adapter = FakeOneMap()
+        control = CommuteControl(adapter, DataAvailabilityNotifier())
+        result = asyncio.run(
+            control.retrieveCommutes(
+                Coordinates(1.2830, 103.8513),
+                subzones,
+                TransitMode.DRIVING,
+                topK=50,
+            )
+        )
+        self.assertEqual(len(result.data), 60)
+        self.assertEqual(adapter.routing_calls, 50)
+        self.assertEqual(len(result.warnings), 10)
+        self.assertTrue(
+            all("Outside live-routing shortlist" in warning.message for warning in result.warnings)
+        )
+
     def test_async_adapter_method_is_preferred(self) -> None:
         class AsyncFake:
             def __init__(self) -> None:

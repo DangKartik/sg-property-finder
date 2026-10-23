@@ -5,7 +5,7 @@
 - **Application folder:** `Lab4/revised-skeleton/`
 - **Current branch:** `main`
 - **Last commit:** `af953b5` (data refresh UI and ReportLab-only PDFs)
-- **Working tree:** 1–10 relative importance ratings, selection-driven amenity markers, local amenity rebuild in `/data/refresh`, enforced HDB town-proxy pricing and enriched ReportLab content are added; not yet committed
+- **Working tree:** 1–10 relative importance ratings, selection-driven amenity markers, local amenity rebuild in `/data/refresh`, enforced HDB town-proxy pricing, hybrid commute shortlisting and enriched ReportLab content are added; not yet committed
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -89,7 +89,7 @@ make dev
 ```powershell
 make backend    # FastAPI only
 make frontend   # Vite only
-make test       # backend unittest suite (85 tests)
+make test       # backend unittest suite (86 tests)
 make test-frontend # frontend Vitest suite (21 tests)
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
@@ -259,14 +259,15 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 #### Commute
 
 - Precomputed CBD commute matrix keyed by actual URA subzone code.
-- Matrix is used **only for `PUBLIC_TRANSIT`**; driving/walking near the CBD
-  always use live OneMap routing.
-- 319/332 subzones covered; the 13 no-route entries now fall back to a
-  straight-line distance estimate with `ESTIMATED_COMMUTE_FALLBACK` and remain
-  eligible for ranking.
+- Matrix is used **only for `PUBLIC_TRANSIT`**.
+- Driving/walking use the hybrid shortlist strategy: the 50 nearest subzones
+  receive live OneMap routing; the remainder receive spatial heuristic estimates
+  with a 1.35× road factor for driving and a 1.20× path factor for walking.
+- 319/332 subzones covered; the 13 no-route entries fall back to a straight-line
+  estimate with `ESTIMATED_COMMUTE_FALLBACK` and remain eligible for ranking.
 - Next-weekday 08:30 SGT departure.
-- Async parallel routing for custom workplaces over a top-50 shortlist; live
-  routing failures also fall back to a straight-line estimate.
+- Async parallel routing for the live shortlist; failures and heuristic outliers
+  carry `ESTIMATED_COMMUTE_FALLBACK` warnings.
 - TTL cache for live commute results.
 
 #### Scoring and ranking
@@ -391,7 +392,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 
 ### 4.4 Testing and verification
 
-- **85 backend tests pass** via `make test`.
+- **86 backend tests pass** via `make test`.
 - **21 frontend Vitest tests pass** via `npm test`.
 - Frontend tests cover format/polyline helpers, amenity filtering/colours,
   `ApiCache` persistence/pruning, client cache reuse/stale fallback and top-20
@@ -620,7 +621,8 @@ Supporting scripts:
 | Address confidence | `SequenceMatcher` ratio between query and formatted address |
 | Profile creation | Online validation required |
 | Data refresh | `DATA_MAX_AGE_HOURS=24`; local snapshots + live refresh; amenities rebuilt from local POI snapshot |
-| Commute matrix | `PUBLIC_TRANSIT` only; driving/walking use live OneMap |
+| Commute matrix | `PUBLIC_TRANSIT` only; driving/walking use the hybrid shortlist |
+| Hybrid shortlist | Top 50 live; remainder uses 1.35× driving / 1.20× walking heuristic |
 | Missing commute entry | Straight-line estimate + `ESTIMATED_COMMUTE_FALLBACK` |
 | Ranking result size | Top 20 items; remaining results discarded |
 | Comparison size | 2–4 subzones |
@@ -650,7 +652,7 @@ Supporting scripts:
 - **OneMap tiles** use `https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png`.
 - **PDF generation**: `ReportControl` uses ReportLab Platypus directly; WeasyPrint is no longer imported or installed.
 - **Data payloads can be large:** `/api/v1/subzones/geometry` returns the full 332-subzone FeatureCollection.
-- **No commit was made for the current update.** The 1–10 importance-rating, selection-driven amenity-marker, local amenity-rebuild, enforced HDB town-proxy and enriched-ReportLab changes are in the working tree; ReportLab-only PDFs and the data-refresh UI were committed in `af953b5`.
+- **No commit was made for the current update.** The 1–10 importance-rating, selection-driven amenity-marker, local amenity-rebuild, enforced HDB town-proxy, hybrid-commute and enriched-ReportLab changes are in the working tree; ReportLab-only PDFs and the data-refresh UI were committed in `af953b5`.
 
 ---
 
@@ -675,7 +677,7 @@ Supporting scripts:
 | `backend/app/control/report_control.py` | PDF/share URL generation |
 | `backend/app/api/handlers.py` | Transport-agnostic REST handlers |
 | `scripts/build_amenities.py` | data.gov.sg + OneMap amenity snapshot builder |
-| `backend/tests/` | 85 unit/integration tests |
+| `backend/tests/` | 86 unit/integration tests |
 
 ### Frontend
 
@@ -729,7 +731,7 @@ Supporting scripts:
 
 | Check | Result |
 | --- | --- |
-| `make test` | **85 tests OK** |
+| `make test` | **86 tests OK** |
 | `npm test` | **21 frontend tests OK** |
 | `make build` / `npm run build` | **Passed** |
 | Live Uvicorn health/ready | **Passed**, 332 subzones |
@@ -742,6 +744,7 @@ Supporting scripts:
 | HDB town proxy | **Passed**, all 300 current pricing rows use `isTownProxy=true` |
 | Amenities-missing fallback | **Passed**, school/amenity criteria excluded and reweighted |
 | Commute mode gating | **Passed**, driving/walking no longer read the PT matrix |
+| Hybrid commute shortlist | **Passed**, 50 live calls + heuristic remainder with road/path factors |
 | Missing matrix fallback | **Passed**, 13 warnings attached; subzones remain ranked |
 | Share decode + import | **Passed**, endpoint returns profile/codes; frontend build succeeds |
 | Ranking result cap | **Passed**, response returns exactly the top 20 items |

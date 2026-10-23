@@ -137,18 +137,21 @@ affect suitability scores. This preserves deterministic rankings.
 - **Cache TTL:** 7 days. The cache key must include workplace/geohash, mode,
   departure date and departure window; a 7-day TTL alone is insufficient because
   OneMap PT results depend on the date/time.
-- **Custom workplace:** live OneMap routing for a top-50 shortlist selected by
-  straight-line distance from the workplace. Subzones outside the shortlist stay
-  in the ranking with the commute criterion treated as missing/reweighted.
-- **Driving/walking near the CBD:** always live OneMap routing, never the PT
-  matrix.
+- **Custom workplace, public transport:** live OneMap routing for a top-50
+  shortlist selected by straight-line distance. Subzones outside the shortlist
+  stay in the ranking with the commute criterion treated as missing/reweighted.
+- **Driving/walking (all origins):** hybrid shortlist. The nearest 50 subzones
+  use live OneMap routing; the remainder use spatial heuristic estimates with a
+  **1.35× road factor** for driving and a **1.20× path factor** for walking.
+  The PT matrix is never used.
 - **Failure / missing matrix entry:** use a straight-line distance estimate,
   keep the subzone eligible for ranking, and attach a
-  `DataAvailabilityWarning` with code `ESTIMATED_COMMUTE_FALLBACK`.
+  `DataAvailabilityWarning` with code `ESTIMATED_COMMUTE_FALLBACK`. Heuristic
+  shortlist outliers carry the same warning.
 
-**SLA risk:** the first ranking for a new workplace may still exceed 5 seconds if
-50 OneMap calls are made. Pre-warm popular workplaces or reduce the shortlist;
-see `OPEN_ISSUES.md` OPEN-09.
+**SLA risk:** the live shortlist is capped at 50 OneMap calls; the remaining
+candidates are estimated in memory. The first cold-cache ranking should still be
+benchmarked against the 5-second target.
 
 ## 7. Data snapshot and ingestion contract
 
