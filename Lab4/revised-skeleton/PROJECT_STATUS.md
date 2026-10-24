@@ -264,9 +264,10 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 
 - Precomputed CBD commute matrix keyed by actual URA subzone code.
 - Matrix is used **only for `PUBLIC_TRANSIT`**.
-- Driving/walking use the hybrid shortlist strategy: the 50 nearest subzones
-  receive live OneMap routing; the remainder receive spatial heuristic estimates
-  with a 1.35× road factor for driving and a 1.20× path factor for walking.
+- Driving/walking and custom-workplace public transport use the hybrid shortlist
+  strategy: the 50 nearest subzones receive live OneMap routing; the remainder
+  receive spatial heuristic estimates with a 1.35× road factor for driving, a
+  1.20× path factor for walking and a 1.00× factor for public transport.
 - 319/332 subzones covered; the 13 no-route entries fall back to a straight-line
   estimate with `ESTIMATED_COMMUTE_FALLBACK` and remain eligible for ranking.
 - Next-weekday 08:30 SGT departure.
@@ -460,14 +461,17 @@ Supporting scripts:
 ### 4.6 P0 correctness fixes
 
 - **Commute matrix mode gating:** `CommuteControl` only consults
-  `commute_matrix.json` for `PUBLIC_TRANSIT`. `DRIVING` and `WALKING` use the
-  hybrid shortlist: 50 nearest subzones live, remainder spatial heuristic with
-  1.35× driving / 1.20× walking multipliers.
+  `commute_matrix.json` for `PUBLIC_TRANSIT` near the CBD. `DRIVING`, `WALKING`
+  and custom-workplace public transport use the hybrid shortlist: 50 nearest
+  subzones live, remainder spatial heuristic with 1.35× driving / 1.20× walking
+  / 1.00× PT multipliers.
 - **Estimated fallback for missing matrix entries:** the 13 subzones without a
   matrix entry receive a straight-line estimate and an
   `ESTIMATED_COMMUTE_FALLBACK` warning instead of being excluded.
 - **No silent candidate dropping:** `RankingControl` scores every candidate;
-  missing commute values are treated as a missing criterion and reweighted.
+  every candidate now receives a commute estimate (live or straight-line
+  fallback), so the commute criterion is weighted consistently instead of being
+  skipped for out-of-shortlist subzones.
 - **Share URL import:** new `POST /api/v1/share/decode` endpoint. On startup,
   `App.tsx` reads `?share=`, decodes the scenario, saves the profile to Dexie,
   activates it, reruns ranking, selects the first shared subzone, fills the
@@ -546,8 +550,9 @@ Supporting scripts:
    - They are recorded in `commute_matrix.json.metadata.errors` and now use a
      straight-line estimate with an `ESTIMATED_COMMUTE_FALLBACK` warning instead
      of being excluded from ranking.
-   - Driving/walking use the hybrid shortlist (50 live + spatial estimates);
-     public transport retains the matrix/fallback path.
+   - Driving/walking and custom-workplace public transport use the hybrid
+     shortlist (50 live + spatial estimates); CBD public transport retains the
+     matrix/fallback path.
 
 7. **`BUKIT TIMAH` and `OUT OF BOUNDS` mappings.**
    - These follow the supplied mapping but may not correspond to HDB town pricing data; such subzones can produce missing-price warnings.
@@ -631,8 +636,8 @@ Supporting scripts:
 | Address confidence | `SequenceMatcher` ratio between query and formatted address |
 | Profile creation | Online validation required |
 | Data refresh | `DATA_MAX_AGE_HOURS=24`; local snapshots + live refresh; amenities rebuilt from local POI snapshot |
-| Commute matrix | `PUBLIC_TRANSIT` only; driving/walking use the hybrid shortlist |
-| Hybrid shortlist | Top 50 live; remainder uses 1.35× driving / 1.20× walking heuristic |
+| Commute matrix | `PUBLIC_TRANSIT` near the CBD only; other modes/origins use the hybrid shortlist |
+| Hybrid shortlist | Top 50 live; remainder uses 1.35× driving / 1.20× walking / 1.00× PT heuristic |
 | Missing commute entry | Straight-line estimate + `ESTIMATED_COMMUTE_FALLBACK` |
 | Ranking result size | Top 20 items; remaining results discarded |
 | Comparison size | 2–4 subzones |

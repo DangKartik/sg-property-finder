@@ -139,7 +139,8 @@ affect suitability scores. This preserves deterministic rankings.
   OneMap PT results depend on the date/time.
 - **Custom workplace, public transport:** live OneMap routing for a top-50
   shortlist selected by straight-line distance. Subzones outside the shortlist
-  stay in the ranking with the commute criterion treated as missing/reweighted.
+  receive a straight-line PT estimate (with `ESTIMATED_COMMUTE_FALLBACK`) so
+  every candidate has a commute value and the criterion is weighted consistently.
 - **Driving/walking (all origins):** hybrid shortlist. The nearest 50 subzones
   use live OneMap routing; the remainder use spatial heuristic estimates with a
   **1.35× road factor** for driving and a **1.20× path factor** for walking.

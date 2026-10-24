@@ -205,11 +205,11 @@ class CommuteControl:
         """Return commute estimates for a candidate set.
 
         Public transport near the CBD uses the precomputed matrix (with a
-        straight-line fallback for missing entries). Driving and walking use the
-        hybrid shortlist strategy: the nearest `topK` subzones are routed live,
-        while the remainder receive a spatial heuristic estimate with the mode's
-        road/path multiplier. Public transport for a custom workplace keeps the
-        existing top-`topK` live-routing shortlist.
+        straight-line fallback for missing entries). Otherwise the nearest
+        `topK` subzones are routed live, while the remainder receive a spatial
+        heuristic estimate with the mode's road/path multiplier. This keeps the
+        commute criterion available for every candidate instead of letting
+        out-of-shortlist subzones skip it and renormalise their other weights.
         """
         departure = departureTime or nextWeekdayPeak()
         warnings: list[Any] = []
@@ -245,12 +245,8 @@ class CommuteControl:
                 subzone.centroid.longitude,
             ),
         )
-        if mode is TransitMode.PUBLIC_TRANSIT:
-            live_subzones = ranked[:topK]
-            heuristic_subzones: list[Subzone] = []
-        else:
-            live_subzones = ranked[:topK]
-            heuristic_subzones = ranked[topK:]
+        live_subzones = ranked[:topK]
+        heuristic_subzones = ranked[topK:]
 
         semaphore = asyncio.Semaphore(_MAX_LIVE_CONCURRENCY)
 

@@ -98,7 +98,7 @@ class MapControlTests(unittest.TestCase):
 
 
 class AsyncCommuteTests(unittest.TestCase):
-    def test_custom_workplace_is_limited_to_top_k(self) -> None:
+    def test_custom_workplace_uses_live_shortlist_with_estimates(self) -> None:
         base = load_registry().getSubzone("TAMPINES01")
         subzones = [
             replace(
@@ -118,8 +118,12 @@ class AsyncCommuteTests(unittest.TestCase):
                 topK=50,
             )
         )
-        self.assertEqual(len(result.data), 50)
+        self.assertEqual(len(result.data), 60)
         self.assertEqual(adapter.routing_calls, 50)
+        self.assertEqual(len(result.warnings), 10)
+        self.assertTrue(
+            all("Outside live-routing shortlist" in warning.message for warning in result.warnings)
+        )
 
     def test_driving_uses_hybrid_shortlist(self) -> None:
         base = load_registry().getSubzone("TAMPINES01")
