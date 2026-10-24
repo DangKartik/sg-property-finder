@@ -55,6 +55,22 @@ class ValidationTests(unittest.TestCase):
             [error.message for error in result.errors],
         )
 
+    def test_excessive_minimum_count_is_rejected(self) -> None:
+        payload = profilePayload()
+        payload["minimumHospitals"] = 51
+        result = InputValidationControl().validateProfileData(profileDtoFromDict(payload))
+        self.assertFalse(result.isValid)
+        self.assertIn(
+            "Hospital minimum must be between 0 and 50.",
+            [error.message for error in result.errors],
+        )
+
+    def test_negative_minimum_count_is_rejected_at_parse(self) -> None:
+        payload = profilePayload()
+        payload["minimumMalls"] = -1
+        with self.assertRaises(ValueError):
+            profileDtoFromDict(payload)
+
     def test_ratings_do_not_need_to_sum_to_100(self) -> None:
         payload = profilePayload()
         for index, rating in enumerate([1, 2, 3, 4, 5]):

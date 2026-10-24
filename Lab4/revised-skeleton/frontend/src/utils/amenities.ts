@@ -12,7 +12,7 @@ export const AMENITY_GROUPS: AmenityGroup[] = [
     id: "schools",
     label: "Schools",
     color: "#2563eb",
-    categories: ["Primary School", "Secondary School"],
+    categories: ["Primary School", "Secondary School", "Tertiary School"],
   },
   {
     id: "healthcare",

@@ -214,6 +214,25 @@ class ProfileFactoryTests(unittest.TestCase):
         self.assertEqual(profile.profileName, "API Profile")
         self.assertEqual(len(profile.criteriaWeights), 5)
         self.assertEqual(profile.preferredCommuteMode, TransitMode.PUBLIC_TRANSIT)
+        self.assertEqual(profile.minimumPrimarySchools, 0)
+
+    def test_minimum_counts_round_trip(self) -> None:
+        payload = profilePayload()
+        payload.update(
+            {
+                "minimumPrimarySchools": 2,
+                "minimumSecondarySchools": 1,
+                "minimumTertiarySchools": 1,
+                "minimumMalls": 3,
+                "minimumHospitals": 1,
+            }
+        )
+        profile = preferenceProfileFromDto(profileDtoFromDict(payload))
+        self.assertEqual(profile.minimumPrimarySchools, 2)
+        self.assertEqual(profile.minimumSecondarySchools, 1)
+        self.assertEqual(profile.minimumTertiarySchools, 1)
+        self.assertEqual(profile.minimumMalls, 3)
+        self.assertEqual(profile.minimumHospitals, 1)
 
 
 if __name__ == "__main__":

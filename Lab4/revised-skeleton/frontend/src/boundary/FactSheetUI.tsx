@@ -141,7 +141,7 @@ export function FactSheetUI({
             <section className="fact-section">
               <h3>Access & amenities</h3>
               <dl className="fact-list">
-                <div><dt>Schools (1 km)</dt><dd>{detail.indicators?.primarySchoolCount1km ?? 0} primary · {detail.indicators?.secondarySchoolCount1km ?? 0} secondary</dd></div>
+                <div><dt>Schools (1 km)</dt><dd>{detail.indicators?.primarySchoolCount1km ?? 0} primary · {detail.indicators?.secondarySchoolCount1km ?? 0} secondary · {detail.indicators?.tertiarySchoolCount1km ?? 0} tertiary</dd></div>
                 <div><dt>Nearest school</dt><dd>{formatNumber(detail.indicators?.nearestSchoolM, 0)} m</dd></div>
                 <div><dt>Hospitals (2 km)</dt><dd>{detail.indicators?.hospitalCount2km ?? 0}</dd></div>
                 <div><dt>Malls (1 km)</dt><dd>{detail.indicators?.mallCount1km ?? 0}</dd></div>

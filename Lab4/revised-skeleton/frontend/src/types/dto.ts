@@ -86,6 +86,12 @@ export interface ProfileDTO {
   isActive: boolean;
   creationTime: string | null;
   lastUpdatedTime: string | null;
+  /** Hard minimum counts; 0 means no constraint. */
+  minimumPrimarySchools: number;
+  minimumSecondarySchools: number;
+  minimumTertiarySchools: number;
+  minimumMalls: number;
+  minimumHospitals: number;
 }
 
 /** Decoded shareable scenario returned by the backend. */
@@ -190,6 +196,7 @@ export interface SubzoneIndicatorsDTO {
   nearestSchoolM: number | null;
   primarySchoolCount1km: number;
   secondarySchoolCount1km: number;
+  tertiarySchoolCount1km: number;
   nearestPolyclinicM: number | null;
   polyclinicCount2km: number;
   nearestHospitalM: number | null;

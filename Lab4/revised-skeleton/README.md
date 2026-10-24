@@ -4,10 +4,11 @@ Phase 1 skeleton plus Phase 2 backend implementation for the neighbourhood
 recommender. This folder is separate from `Lab4/Skeleton Code`.
 
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
-PDF and REST endpoints are implemented and covered by 86 `unittest` tests. The
+PDF and REST endpoints are implemented and covered by 98 `unittest` tests. The
 React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison,
 enriched PDF export (ReportLab), share-link import, IndexedDB API caching,
-data-refresh controls and selection-driven amenity markers, with 21 Vitest tests.
+data-refresh controls, hard amenity minimums and selection-driven amenity
+markers, with 22 Vitest tests.
 
 ## Structure
 
@@ -311,18 +312,20 @@ run instructions, known gaps and recommended next steps.
   hybrid commute service, 1–10 MCDA scoring, factsheet aggregation, ReportLab
   PDF/share URLs and REST handlers).
 - **Frontend:** implemented (React 18 + TypeScript + Vite, Leaflet/React-Leaflet,
-  Dexie/IndexedDB profiles and API cache, 1–10 preference ratings, data-refresh
-  controls, selection-driven amenity markers, responsive UI, comparison matrix,
-  share-link import and PDF export).
+  Dexie/IndexedDB profiles and API cache, 1–10 preference ratings, hard minimum
+  counts for schools/malls/hospitals, data-refresh controls, selection-driven
+  amenity markers, responsive UI, comparison matrix, share-link import and PDF
+  export).
 - **Data assets:** URA subzones, HDB resale prices, town mapping, regional
-  environment baselines, the CBD commute matrix and a 1,172-point amenities
-  snapshot are populated. `DatasetService` refreshes subzone/HDB snapshots from
-  data.gov.sg when older than 24 hours; live PM2.5/UVI/forecast already come
-  from real-time APIs. `ApiCache` uses `/api/v1/data/status` and cache headers
-  for IndexedDB response caching. Amenities are generated from data.gov.sg
-  school/park/MRT/polyclinic datasets plus OneMap hospital/mall layers and LTA
-  major-mall names; run `make amenities` to rebuild the snapshot. The Data panel
-  refresh also rebuilds amenity aggregates from the cached local point snapshot.
+  environment baselines, the CBD commute matrix, a 1,172-point amenities
+  snapshot and a 28-point tertiary-school supplement are populated.
+  `DatasetService` refreshes subzone/HDB snapshots from data.gov.sg when older
+  than 24 hours; live PM2.5/UVI/forecast already come from real-time APIs.
+  `ApiCache` uses `/api/v1/data/status` and cache headers for IndexedDB response
+  caching. Amenities are generated from data.gov.sg school/park/MRT/polyclinic
+  datasets plus OneMap hospital/mall layers and LTA major-mall names; run
+  `make amenities` to rebuild the snapshot. The Data panel refresh also rebuilds
+  amenity aggregates from the cached local point snapshot.
 
 Run the backend tests from `Lab4/revised-skeleton/backend`:
 

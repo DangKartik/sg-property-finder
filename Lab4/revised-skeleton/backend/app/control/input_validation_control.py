@@ -72,6 +72,22 @@ class InputValidationControl:
                         f"Importance for {weight.getCriterionId()} must be between 1 and 10.",
                     )
 
+        for field_name, label in (
+            ("minimumPrimarySchools", "Primary school"),
+            ("minimumSecondarySchools", "Secondary school"),
+            ("minimumTertiarySchools", "Tertiary school"),
+            ("minimumMalls", "Mall"),
+            ("minimumHospitals", "Hospital"),
+        ):
+            value = getattr(data, field_name)
+            if not isinstance(value, int) or isinstance(value, bool):
+                result.addError(field_name, f"{label} minimum must be a whole number.")
+            elif value < 0 or value > 50:
+                result.addError(
+                    field_name,
+                    f"{label} minimum must be between 0 and 50.",
+                )
+
         if not isinstance(data.preferredCommuteMode, TransitMode):
             result.addError("preferredCommuteMode", "Select a valid commute mode.")
 

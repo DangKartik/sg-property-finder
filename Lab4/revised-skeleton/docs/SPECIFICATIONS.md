@@ -20,9 +20,9 @@ catalogue.
 
 ## 2. Normalisation and scoring
 
-After the hard budget filter, each raw value is normalised against its **fixed
-absolute domain** (not the candidate set), so scores remain comparable when the
-budget filter removes candidates:
+After the hard budget and amenity-minimum filters, each raw value is normalised
+against its **fixed absolute domain** (not the candidate set), so scores remain
+comparable when the budget filter removes candidates:
 
 ```text
 Maximisation:  S = (clamp(X, min, max) - min) / (max - min)
@@ -92,6 +92,27 @@ keyed by HDB town, not URA subzone. The application deliberately keeps the
 town-level median proxy and does not build a block-to-subzone mapping. The
 UI/PDF labels this as a **Town-Level Median Proxy**.
 
+## 3a. Hard amenity minimums
+
+The profile can specify five whole-number minimums. They are hard filters and
+are applied before scoring, after the budget filter:
+
+| Profile field | Indicator | Radius |
+| --- | --- | --- |
+| `minimumPrimarySchools` | `primarySchoolCount1km` | 1.0 km |
+| `minimumSecondarySchools` | `secondarySchoolCount1km` | 1.0 km |
+| `minimumTertiarySchools` | `tertiarySchoolCount1km` (JCs + universities) | 1.0 km |
+| `minimumMalls` | `mallCount1km` | 1.0 km |
+| `minimumHospitals` | `hospitalCount2km` | 2.0 km |
+
+- `0` means no requirement.
+- A subzone is discarded immediately when any count is below its minimum.
+- If amenity data is unavailable, the minimums are not applied and the normal
+  missing-data warning path is used.
+- Tertiary schools come from the MOE JC directory plus the
+  `tertiary_schools.json` supplement (JCs, Millennia Institute, mixed-level
+  schools with JC/IB levels, and autonomous universities).
+
 ## 4. Static vs live environment data
 
 ### Score-impact data (static baselines)
@@ -117,7 +138,7 @@ affect suitability scores. This preserves deterministic rankings.
 - **Subzone anchor:** Shapely `representative_point()` of the URA subzone polygon
   (guaranteed to lie inside the polygon).
 - **Buffer radii:**
-  - Primary/secondary schools: 1.0 km (OPEN-01 conflicts with 1.5 km);
+  - Primary/secondary/tertiary schools: 1.0 km (OPEN-01 conflicts with 1.5 km);
   - Polyclinics/public hospitals: 2.0 km;
   - Parks/green spaces: 500 m;
   - Shopping malls: 1.0 km;

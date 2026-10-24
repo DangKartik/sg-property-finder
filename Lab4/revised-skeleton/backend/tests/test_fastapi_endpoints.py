@@ -59,7 +59,7 @@ class FastApiEndpointTests(unittest.TestCase):
         response = self.client.get("/api/v1/amenities")
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.json()["success"])
-        self.assertEqual(len(response.json()["data"]), 15)
+        self.assertEqual(len(response.json()["data"]), 16)
         self.assertIn("max-age", response.headers["Cache-Control"])
 
     def test_data_status_for_frontend_cache(self) -> None:

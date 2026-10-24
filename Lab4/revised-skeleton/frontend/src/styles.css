@@ -177,6 +177,15 @@ input[type="range"] { accent-color: var(--teal); width: 100%; }
 .checkbox-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
 .check-label { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #344054; }
 .check-label input { accent-color: var(--teal); }
+.minimum-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.minimum-field { display: flex; flex-direction: column; gap: 4px; font-size: 0.8rem; color: #344054; }
+.minimum-field span { display: flex; flex-direction: column; gap: 1px; font-weight: 650; }
+.minimum-field small { color: var(--muted); font-size: 0.68rem; font-weight: 450; }
+.minimum-field input {
+  width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 8px 9px;
+  background: #fff; color: var(--ink); font-weight: 500;
+}
+.minimum-field input:focus { outline: 2px solid rgba(15, 118, 110, 0.25); border-color: var(--teal); }
 .address-search-row { display: flex; gap: 7px; margin-bottom: 8px; }
 .address-search-row input { flex: 1; }
 .confirmed-address { color: var(--teal-dark); font-size: 0.82rem; margin: 6px 0; }

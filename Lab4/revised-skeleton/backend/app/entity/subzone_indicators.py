@@ -16,6 +16,7 @@ class SubzoneIndicators:
     nearestSchoolM: float | None = None
     primarySchoolCount1km: int = 0
     secondarySchoolCount1km: int = 0
+    tertiarySchoolCount1km: int = 0
     nearestPolyclinicM: float | None = None
     polyclinicCount2km: int = 0
     nearestHospitalM: float | None = None

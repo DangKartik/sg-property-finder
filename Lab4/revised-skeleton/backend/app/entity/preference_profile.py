@@ -29,6 +29,11 @@ class PreferenceProfile:
     isActive: bool
     criteriaWeights: list[CriterionWeight]
     preferredCommuteMode: TransitMode
+    minimumPrimarySchools: int = 0
+    minimumSecondarySchools: int = 0
+    minimumTertiarySchools: int = 0
+    minimumMalls: int = 0
+    minimumHospitals: int = 0
 
     def getProfileId(self) -> str:
         """Return the profile identifier."""
@@ -46,6 +51,11 @@ class PreferenceProfile:
             self.anchorCoordinates = data.anchorCoordinates
         self.criteriaWeights = list(data.criteriaWeights)
         self.preferredCommuteMode = data.preferredCommuteMode
+        self.minimumPrimarySchools = data.minimumPrimarySchools
+        self.minimumSecondarySchools = data.minimumSecondarySchools
+        self.minimumTertiarySchools = data.minimumTertiarySchools
+        self.minimumMalls = data.minimumMalls
+        self.minimumHospitals = data.minimumHospitals
         self.isActive = data.isActive
         self.lastUpdatedTime = datetime.now()
 

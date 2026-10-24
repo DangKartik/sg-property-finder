@@ -171,7 +171,8 @@ export function ComparisonUI({
                   {result.details.map((detail) => (
                     <td key={detail.subzoneCode}>
                       {detail.indicators?.primarySchoolCount1km ?? 0} primary ·{" "}
-                      {detail.indicators?.secondarySchoolCount1km ?? 0} secondary
+                      {detail.indicators?.secondarySchoolCount1km ?? 0} secondary ·{" "}
+                      {detail.indicators?.tertiarySchoolCount1km ?? 0} tertiary
                     </td>
                   ))}
                 </tr>

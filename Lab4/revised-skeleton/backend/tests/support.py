@@ -176,4 +176,9 @@ def profilePayload() -> dict[str, Any]:
         ],
         "preferredCommuteMode": "PUBLIC_TRANSIT",
         "isActive": True,
+        "minimumPrimarySchools": 0,
+        "minimumSecondarySchools": 0,
+        "minimumTertiarySchools": 0,
+        "minimumMalls": 0,
+        "minimumHospitals": 0,
     }

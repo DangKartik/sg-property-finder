@@ -1,6 +1,7 @@
 [
   {"name": "Tampines Primary School", "category": "Primary School", "latitude": 1.351, "longitude": 103.941},
   {"name": "Tampines Secondary School", "category": "Secondary School", "latitude": 1.349, "longitude": 103.939},
+  {"name": "Tampines Junior College", "category": "Tertiary School", "latitude": 1.352, "longitude": 103.942},
   {"name": "Tampines Polyclinic", "category": "Polyclinic", "latitude": 1.352, "longitude": 103.943},
   {"name": "Changi General Hospital", "category": "Hospital", "latitude": 1.335, "longitude": 103.945},
   {"name": "Tampines Park", "category": "Park", "latitude": 1.3505, "longitude": 103.9405},

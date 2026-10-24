@@ -3,12 +3,13 @@
 The generated ``backend/assets/data/amenities.json`` is consumed by
 ``AmenityRetrievalControl``. Counts are computed with buffer-distance density:
 every amenity point within a fixed radius of a subzone's representative point
-is counted. The radii are schools 1.0 km, MRT 800 m, parks 500 m, healthcare
-2.0 km and shopping malls 1.0 km.
+is counted. The radii are schools 1.0 km, tertiary schools 1.0 km, MRT 800 m,
+parks 500 m, healthcare 2.0 km and shopping malls 1.0 km.
 
 Sources
 -------
 - MOE General information of schools (data.gov.sg)
+- Tertiary supplement: JCs and universities (MOE + OpenStreetMap)
 - NParks Parks and Nature Reserves (data.gov.sg)
 - LTA MRT Station Exit (data.gov.sg)
 - HPB Breast Screening Centre and MOH Vaccination Polyclinics (data.gov.sg)
@@ -104,12 +105,15 @@ SUPPLEMENTAL_MALL_NAMES = (
 CATEGORY_ORDER = (
     "Primary School",
     "Secondary School",
+    "Tertiary School",
     "Polyclinic",
     "Hospital",
     "Park",
     "Shopping Mall",
     "MRT",
 )
+
+TERTIARY_SUPPLEMENT_PATH = BACKEND_ROOT / "assets" / "data" / "tertiary_schools.json"
 
 MALL_NAME_PATTERN = re.compile(
     r"\b(MALL|SHOPPING CENTRE|SHOPPING CENTER|PLAZA|JUNCTION|SQUARE|COMPLEX|"
@@ -152,6 +156,7 @@ class AmenitySnapshotBuilder:
     def build(self) -> list[dict[str, Any]]:
         """Return the sorted amenity records."""
         self._addSchools()
+        self._addTertiarySupplement()
         self._addParks()
         self._addMrtStations()
         self._addHospitals()
@@ -180,11 +185,14 @@ class AmenitySnapshotBuilder:
         self._log(f"Schools: {len(rows)} rows; geocoding postal codes with OneMap")
         for index, row in enumerate(rows, start=1):
             level = str(row.get("mainlevel_code") or "").upper()
+            categories: list[str] = []
             if "PRIMARY" in level or "P1" in level:
-                category = "Primary School"
-            elif "SECONDARY" in level or "S1" in level:
-                category = "Secondary School"
-            else:
+                categories.append("Primary School")
+            if "SECONDARY" in level or "S1" in level:
+                categories.append("Secondary School")
+            if "JUNIOR COLLEGE" in level or "CENTRALISED" in level or "JC" in level:
+                categories.append("Tertiary School")
+            if not categories:
                 self._skipped["school_level"] += 1
                 continue
 
@@ -198,9 +206,31 @@ class AmenitySnapshotBuilder:
             if coordinates is None:
                 self._skipped["school_geocode"] += 1
                 continue
-            self._add(name, category, *coordinates)
+            for category in categories:
+                self._add(name, category, *coordinates)
             if self.verbose and index % 50 == 0:
                 self._log(f"  geocoded {index}/{len(rows)} school rows")
+
+    def _addTertiarySupplement(self) -> None:
+        """Add JC/university locations not present in the MOE directory."""
+        if not TERTIARY_SUPPLEMENT_PATH.exists():
+            self._skipped["tertiary_supplement_missing"] += 1
+            return
+        payload = json.loads(TERTIARY_SUPPLEMENT_PATH.read_text(encoding="utf-8"))
+        items = payload.get("items", []) if isinstance(payload, dict) else []
+        self._log(f"Tertiary supplement: {len(items)} JC/university rows")
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            name = str(item.get("name") or "").strip()
+            try:
+                latitude = float(item["latitude"])
+                longitude = float(item["longitude"])
+            except (KeyError, TypeError, ValueError):
+                self._skipped["tertiary_supplement_geometry"] += 1
+                continue
+            if name:
+                self._add(name, "Tertiary School", latitude, longitude)
 
     def _addParks(self) -> None:
         payload = self._download(PARKS_DATASET_ID, "NParks parks and nature reserves")
@@ -557,6 +587,7 @@ def main(argv: list[str] | None = None) -> int:
             "anchor": "subzone representative point",
             "radiiKm": {
                 "schools": 1.0,
+                "tertiarySchools": 1.0,
                 "mrt": 0.8,
                 "parks": 0.5,
                 "healthcare": 2.0,
@@ -564,6 +595,7 @@ def main(argv: list[str] | None = None) -> int:
             },
             "sources": {
                 "schools": "MOE General information of schools (data.gov.sg)",
+                "tertiarySchools": "MOE JC directory + tertiary_schools.json supplement (JCs/universities)",
                 "parks": "NParks Parks and Nature Reserves (data.gov.sg)",
                 "mrt": "LTA MRT Station Exit (data.gov.sg)",
                 "polyclinics": "HPB Breast Screening Centre and MOH Vaccination Polyclinics (data.gov.sg)",

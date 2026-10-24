@@ -32,6 +32,7 @@ class AmenityTests(unittest.TestCase):
         self.assertEqual(indicators.parkCount500m, 1)
         self.assertEqual(indicators.primarySchoolCount1km, 1)
         self.assertEqual(indicators.secondarySchoolCount1km, 1)
+        self.assertEqual(indicators.tertiarySchoolCount1km, 1)
         self.assertEqual(indicators.hospitalCount2km, 1)
         self.assertEqual(indicators.mallCount1km, 1)
         self.assertEqual(indicators.mrtStationCount800m, 1)
@@ -60,7 +61,7 @@ class AmenityTests(unittest.TestCase):
                 subzoneRegistry=registry,
             )
             status = control.rebuildFromLocalSources()
-            self.assertEqual(status.recordCount, 15)
+            self.assertEqual(status.recordCount, 16)
             payload = json.loads(path.read_text(encoding="utf-8"))
             self.assertIn("rebuiltAt", payload["metadata"])
             self.assertIn("TAMPINES01", payload["aggregates"])
@@ -81,6 +82,36 @@ class AmenityTests(unittest.TestCase):
             result = control.retrieveIndicators("TAMPINES01")
             self.assertFalse(result.data.amenityDataAvailable)
             self.assertTrue(result.warnings)
+
+    def test_tertiary_supplement_adds_schools(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "amenities.json"
+            shutil.copy(FIXTURES / "amenities.json", path)
+            (Path(directory) / "tertiary_schools.json").write_text(
+                json.dumps(
+                    {
+                        "items": [
+                            {
+                                "name": "Test University",
+                                "category": "Tertiary School",
+                                "latitude": 1.351,
+                                "longitude": 103.941,
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            control = AmenityRetrievalControl(
+                DataGovSgAdapter(),
+                DataAvailabilityNotifier(),
+                amenitiesPath=path,
+                subzoneRegistry=self.registry,
+            )
+            indicators = control.retrieveIndicators("TAMPINES01").data
+            self.assertEqual(indicators.tertiarySchoolCount1km, 2)
+            names = {item["name"] for item in control.getAllAmenities().data}
+            self.assertIn("Test University", names)
 
 
 class EnvironmentTests(unittest.TestCase):

@@ -46,7 +46,7 @@ export function ResultsListUI({
         <p className="muted">Select or create a plan to generate recommendations.</p>
       )}
       {!loading && recommendationSet && items.length === 0 && (
-        <p className="muted">No subzones matched the current budget filter.</p>
+        <p className="muted">No subzones matched the current hard filters.</p>
       )}
 
       <div className="result-list">
