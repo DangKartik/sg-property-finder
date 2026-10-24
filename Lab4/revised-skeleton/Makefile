@@ -1,7 +1,7 @@
 PYTHON ?= python
 NPM ?= npm
 
-.PHONY: help install install-backend install-frontend dev backend frontend test test-frontend amenities build clean
+.PHONY: help install install-backend install-frontend dev backend frontend test test-frontend benchmark amenities build clean
 
 help:
 	@echo SG Property Finder
@@ -13,6 +13,7 @@ help:
 	@echo   make frontend         - run only Vite on port 5173
 	@echo   make test             - run backend unittest suite
 	@echo   make test-frontend    - run frontend Vitest suite
+	@echo   make benchmark        - run the Phase 5 SLA benchmark
 	@echo   make amenities        - rebuild backend/assets/data/amenities.json
 	@echo   make build            - type-check and build the frontend
 	@echo   make clean            - remove frontend dist and Python caches
@@ -39,6 +40,9 @@ test:
 
 test-frontend:
 	$(NPM) --prefix frontend test
+
+benchmark:
+	$(PYTHON) scripts/benchmark_api.py --spawn-server --warm-samples 50
 
 amenities:
 	$(PYTHON) scripts/build_amenities.py

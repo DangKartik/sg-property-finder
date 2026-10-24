@@ -5,7 +5,7 @@
 - **Application folder:** `Lab4/revised-skeleton/`
 - **Current branch:** `main`
 - **Last commit:** `8130aed` (capitalised amenities factsheet headers)
-- **Working tree:** latest `/health` alias, black-box/white-box suites and documentation changes pending commit
+- **Working tree:** latest `/health` alias, black-box/white-box suites, Phase 5 benchmark/E2E reports and documentation changes pending commit
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -91,6 +91,7 @@ make backend    # FastAPI only
 make frontend   # Vite only
 make test       # backend unittest suite (145 tests)
 make test-frontend # frontend Vitest suite (23 tests)
+make benchmark  # Phase 5 SLA benchmark
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
 make help
@@ -153,7 +154,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 | Phase 2.6 — FastAPI endpoints | **Completed** |
 | Phase 3 — frontend | **Completed** |
 | Phase 4 — formal black-box/white-box testing | **Completed** — EP/BVA and CFG/basis-path documentation |
-| Phase 5 — formal SLA benchmarking/E2E documentation | **Partially completed** (manual verification only) |
+| Phase 5 - formal SLA benchmarking/E2E documentation | **Completed** - benchmark and 18-check E2E checklist |
 | Makefile / one-command local run | **Completed** |
 | Real amenities dataset | **Completed** — 1,200 effective points (1,172 base + 28 tertiary); `make amenities` rebuilds it |
 | Amenity dataset pipeline | **Completed** (`scripts/build_amenities.py` + `tertiary_schools.json`) |
@@ -453,6 +454,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 - `frontend`
 - `test`
 - `test-frontend`
+- `benchmark`
 - `amenities`
 - `build`
 - `clean`
@@ -462,6 +464,7 @@ Supporting scripts:
 
 - `scripts/dev.py`
 - `scripts/test_backend.py`
+- `scripts/benchmark_api.py`
 - `scripts/build_amenities.py`
 - `scripts/clean.py`
 
@@ -589,15 +592,23 @@ Supporting scripts:
       `ResultsListUI` rendering.
     - `npm run build` remains the production build check.
 
-### 5.4 Phase 5 not completed
+### 5.4 Phase 5 — completed 24 October 2026
 
-11. **Formal SLA benchmark**
-    - The backend ranking calculation was measured at ~13 ms on the local snapshot, but there is no formal HTTP end-to-end benchmark report.
-    - Driving/walking now cap live OneMap calls at 50 plus in-memory heuristics, but there is still no formal cold-cache/OneMap routing benchmark with percentiles.
+11. **Formal SLA benchmark — completed.**
+    - Script: `scripts/benchmark_api.py`.
+    - Results: `docs/sla_benchmark_results.json`.
+    - Report: `docs/SLA_BENCHMARK.md`.
+    - Cold recommendation p50 1.25 s / p95 2.27 s; warm p50 0.19 s /
+      p95 0.28 s; all requests HTTP 200.
+    - OneMap cold p50 101 ms / p95 518 ms; 2/10 fallbacks; warm cache hits
+      effectively instant.
 
-12. **Complete Dialog Map E2E test**
-    - Manual browser walkthrough succeeded for the main path.
-    - Not systematically covered: invalid form, address failure, delete confirmation, API outage, report expiry, all comparison edge cases, mobile layouts.
+12. **Dialog Map E2E checklist — completed.**
+    - Report: `docs/PHASE5_E2E_CHECKLIST.md`.
+    - 18/18 checks passed, covering plan creation, hard minima, ranking,
+      grouped factsheet, comparison, PDF/share, persistence, delete guard,
+      invalid form, address failure, refresh, simulated outage, health,
+      report expiry and 390 px responsive layout.
 
 ### 5.5 Production/operational gaps
 
@@ -681,7 +692,7 @@ Supporting scripts:
 - **OneMap tiles** use `https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png`.
 - **PDF generation**: `ReportControl` uses ReportLab Platypus directly; WeasyPrint is no longer imported or installed.
 - **Data payloads can be large:** `/api/v1/subzones/geometry` returns the full 332-subzone FeatureCollection.
-- **Code is committed at `8b938ee`.** The weighting, amenity-marker, amenity-rebuild, HDB proxy, hybrid-commute and enriched-PDF work is committed. This documentation update is pending.
+- **Code is committed at `8130aed`** (capitalised factsheet headers). The Phase 5 benchmark/E2E reports, health alias and documentation updates are pending commit.
 
 ---
 
@@ -745,12 +756,9 @@ Supporting scripts:
 
 ## 9. Recommended next steps
 
-1. **Complete Phase 5**:
-   - formal HTTP latency benchmark for `/recommendations`,
-   - cold/warm OneMap routing benchmark,
-   - full Dialog Map E2E checklist.
-2. **Add CI/CD, HTTPS/CORS production configuration, and a shared report store** if deploying beyond a single process.
-3. Optionally extend frontend tests to the App/share-import and map-layer flows.
+1. **Add CI/CD, HTTPS/CORS production configuration, and a shared report store** if deploying beyond a single process.
+2. Optionally extend frontend tests to the App/share-import and map-layer flows.
+3. Re-run the SLA benchmark under concurrent load and on representative client networks before production.
 
 ---
 
@@ -761,7 +769,9 @@ Supporting scripts:
 | `make test` | **145 tests OK** |
 | `npm test` | **23 frontend tests OK** |
 | Black-box validation suite | **37 methods / 68 logical cases OK** — see `docs/BLACK_BOX_TESTING.md` |
-| White-box scoring/ranking suite | **9 tests / 7 basis paths OK** — see `docs/WHITE_BOX_TESTING.md` |
+| White-box scoring/ranking suite | **9 tests / 7 basis paths OK** - see `docs/WHITE_BOX_TESTING.md` |
+| SLA benchmark | **Passed** — cold recommendations p95 2.27 s; warm p95 0.28 s; see `docs/SLA_BENCHMARK.md` |
+| Dialog Map E2E | **18/18 checks passed** — see `docs/PHASE5_E2E_CHECKLIST.md` |
 | `make build` / `npm run build` | **Passed** |
 | Live Uvicorn health/ready | **Passed**, 332 subzones |
 | Browser main flow | **Passed** |

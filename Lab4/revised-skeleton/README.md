@@ -8,7 +8,8 @@ PDF and REST endpoints are implemented and covered by 145 `unittest` tests. The
 React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison,
 enriched PDF export (ReportLab), share-link import, IndexedDB API caching,
 data-refresh controls, hard amenity minimums and selection-driven amenity
-markers, with 23 Vitest tests.
+markers, with 23 Vitest tests. Formal black-box/white-box testing and Phase 5
+SLA/E2E documentation are in `docs/`.
 
 ## Structure
 
@@ -215,8 +216,10 @@ Method names keep the diagram's camelCase to make traceability easy. Convert to 
 ## Specification documents
 
 - `docs/SPECIFICATIONS.md` — frozen scoring, budget, environment, geography, commute, snapshot and API rules.
-- `docs/BLACK_BOX_TESTING.md` — formal EP/BVA, expected/actual matrix and results for profile validation.
-- `docs/WHITE_BOX_TESTING.md` — CFGs, `V(G)`, basis paths and tests for scoring/ranking.
+- `docs/BLACK_BOX_TESTING.md` - formal EP/BVA, expected/actual matrix and results for profile validation.
+- `docs/WHITE_BOX_TESTING.md` - CFGs, `V(G)`, basis paths and tests for scoring/ranking.
+- `docs/SLA_BENCHMARK.md` - Phase 5 HTTP/OneMap latency benchmark and results.
+- `docs/PHASE5_E2E_CHECKLIST.md` - 18-check Dialog Map end-to-end checklist.
 - `docs/OPEN_ISSUES.md` — contradictions and data limitations that still need a decision before implementation.
 - `docs/ENVIRONMENT.md` — `.env` setup and variable reference.
 
@@ -249,6 +252,7 @@ make backend    # FastAPI only
 make frontend   # Vite only
 make test          # backend unittest suite
 make test-frontend # frontend Vitest suite
+make benchmark     # Phase 5 SLA benchmark (docs/SLA_BENCHMARK.md)
 make build         # frontend type-check + production build
 make clean
 make help
