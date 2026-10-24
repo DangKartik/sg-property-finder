@@ -50,10 +50,6 @@ class SubzoneRegistry:
                 return subzone
         return None
 
-    def setIndicators(self, subzoneCode: str, indicators: SubzoneIndicators) -> None:
-        """Attach precomputed indicators to a subzone."""
-        self.getSubzone(subzoneCode).indicators = indicators
-
     @classmethod
     def fromGeoJson(
         cls,

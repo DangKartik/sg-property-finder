@@ -141,59 +141,6 @@ class CommuteControl:
         self.cache[key] = estimate
         return estimate
 
-    async def retrieveCommuteAsync(
-        self,
-        origin: Coordinates,
-        destination: Coordinates,
-        mode: TransitMode,
-        departureTime: datetime | None = None,
-        destinationSubzoneCode: str | None = None,
-        warnings: list[Any] | None = None,
-    ) -> CommuteEstimate:
-        """Async variant that prefers the adapter's httpx routing method."""
-        departure = departureTime or nextWeekdayPeak()
-        key = _cacheKey(origin, destination, mode, departure, destinationSubzoneCode)
-        cached = self.cache.get(key)
-        if cached is not None:
-            return cached
-
-        if (
-            destinationSubzoneCode
-            and self.isNearCbd(origin)
-            and mode is TransitMode.PUBLIC_TRANSIT
-        ):
-            matrix_estimate = self._matrixEstimate(destinationSubzoneCode, mode)
-            if matrix_estimate is not None:
-                self.cache[key] = matrix_estimate
-                return matrix_estimate
-            estimate = self._straightLineEstimate(origin, destination, mode, departure)
-            if warnings is not None:
-                warnings.append(
-                    self._fallbackWarning(
-                        destinationSubzoneCode,
-                        mode,
-                        "Commute matrix entry missing",
-                    )
-                )
-            return estimate
-
-        try:
-            estimate = await self._liveEstimateAsync(origin, destination, mode, departure)
-        except CommuteError:
-            estimate = self._straightLineEstimate(origin, destination, mode, departure)
-            if warnings is not None:
-                warnings.append(
-                    self._fallbackWarning(
-                        destinationSubzoneCode,
-                        mode,
-                        "OneMap routing failed",
-                    )
-                )
-            return estimate
-
-        self.cache[key] = estimate
-        return estimate
-
     async def retrieveCommutes(
         self,
         origin: Coordinates,

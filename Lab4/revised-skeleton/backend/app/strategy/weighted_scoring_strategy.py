@@ -36,16 +36,6 @@ class WeightedScoringStrategy(ScoringStrategy):
         items = self.scoreCandidates([subzone], profile, {subzone.subzoneCode: commute})
         return items[0].totalScore if items else 0.0
 
-    def computeCriterionScores(
-        self,
-        subzone: Subzone,
-        profile: PreferenceProfile,
-        commute: CommuteEstimate,
-    ) -> list[CriterionScore]:
-        """Return criterion scores for one subzone in a one-candidate cohort."""
-        items = self.scoreCandidates([subzone], profile, {subzone.subzoneCode: commute})
-        return items[0].criterionScores if items else []
-
     def scoreCandidates(
         self,
         subzones: list[Subzone],

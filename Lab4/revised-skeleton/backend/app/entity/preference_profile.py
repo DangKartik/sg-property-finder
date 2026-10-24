@@ -10,7 +10,6 @@ if TYPE_CHECKING:
     from app.entity.criterion_weight import CriterionWeight
     from app.entity.enums import TransitMode
     from app.entity.types import Coordinates
-    from app.schemas.profile_dto import ProfileDTO
 
 
 @dataclass
@@ -38,38 +37,6 @@ class PreferenceProfile:
     def getProfileId(self) -> str:
         """Return the profile identifier."""
         return self.profileId
-
-    def updateDetails(self, data: ProfileDTO) -> None:
-        """Copy non-null fields from a profile DTO and update the timestamp."""
-        self.profileName = data.profileName
-        self.budgetMin = data.budgetMin
-        self.budgetMax = data.budgetMax
-        self.selectedFlatTypes = list(data.selectedFlatTypes)
-        if data.workplaceAddress is not None:
-            self.workplaceAddress = data.workplaceAddress
-        if data.anchorCoordinates is not None:
-            self.anchorCoordinates = data.anchorCoordinates
-        self.criteriaWeights = list(data.criteriaWeights)
-        self.preferredCommuteMode = data.preferredCommuteMode
-        self.minimumPrimarySchools = data.minimumPrimarySchools
-        self.minimumSecondarySchools = data.minimumSecondarySchools
-        self.minimumTertiarySchools = data.minimumTertiarySchools
-        self.minimumMalls = data.minimumMalls
-        self.minimumHospitals = data.minimumHospitals
-        self.isActive = data.isActive
-        self.lastUpdatedTime = datetime.now()
-
-    def addCriterionWeight(self, weight: CriterionWeight) -> None:
-        """Add or replace the weight for a criterion."""
-        for index, existing in enumerate(self.criteriaWeights):
-            if existing.getCriterionId() == weight.getCriterionId():
-                self.criteriaWeights[index] = weight
-                return
-        self.criteriaWeights.append(weight)
-
-    def getCriteriaWeights(self) -> list[CriterionWeight]:
-        """Return the profile's criterion weights."""
-        return list(self.criteriaWeights)
 
     def getWeightForCriterion(self, criterionId: str) -> float:
         """Return the 1–10 importance rating for a criterion, or 0.0 if absent."""
