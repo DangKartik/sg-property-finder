@@ -177,7 +177,7 @@ class AmenityRetrievalControl(RetrievalControl):
                 )
             )
         for item in source_rows:
-            category = _category(item)
+            category = _displayCategory(item)
             lat = _optionalFloat(item.get("latitude", item.get("lat")))
             lon = _optionalFloat(item.get("longitude", item.get("lng", item.get("lon"))))
             if not category or lat is None or lon is None:
@@ -420,6 +420,28 @@ def _category(item: dict[str, Any]) -> str:
     if raw in {"mrt", "lrt", "station"}:
         return "mrt"
     return raw
+
+
+def _displayCategory(item: dict[str, Any]) -> str:
+    """Return the user-facing category while preserving school sub-types."""
+    raw = str(item.get("category") or item.get("type") or item.get("CLASS") or "").strip()
+    lowered = raw.lower()
+    if "primary" in lowered:
+        return "Primary School"
+    if "secondary" in lowered:
+        return "Secondary School"
+    if "tertiary" in lowered or "junior college" in lowered or "university" in lowered:
+        return "Tertiary School"
+    normalized = _category(item)
+    return {
+        "school": "School",
+        "tertiary": "Tertiary School",
+        "polyclinic": "Polyclinic",
+        "hospital": "Hospital",
+        "park": "Park",
+        "mall": "Shopping Mall",
+        "mrt": "MRT",
+    }.get(normalized, raw or normalized.title())
 
 
 def _subtype(item: dict[str, Any]) -> str:

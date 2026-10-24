@@ -44,6 +44,23 @@ class AmenityTests(unittest.TestCase):
         self.assertEqual(distances, sorted(distances))
         self.assertTrue(all(item.distanceKm <= 2.0 for item in amenities))
 
+    def test_amenity_list_preserves_display_categories(self) -> None:
+        amenities = self.control.retrieveAmenityInfo("TAMPINES01").data
+        categories = {item.category for item in amenities}
+        self.assertTrue(
+            {
+                "Primary School",
+                "Secondary School",
+                "Tertiary School",
+                "Polyclinic",
+                "Hospital",
+                "Park",
+                "Shopping Mall",
+                "MRT",
+            }.issubset(categories),
+            categories,
+        )
+
     def test_unknown_subzone_returns_warning(self) -> None:
         result = self.control.retrieveAmenityInfo("UNKNOWN")
         self.assertEqual(result.data, [])

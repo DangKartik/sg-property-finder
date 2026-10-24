@@ -4,11 +4,11 @@ Phase 1 skeleton plus Phase 2 backend implementation for the neighbourhood
 recommender. This folder is separate from `Lab4/Skeleton Code`.
 
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
-PDF and REST endpoints are implemented and covered by 98 `unittest` tests. The
+PDF and REST endpoints are implemented and covered by 99 `unittest` tests. The
 React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison,
 enriched PDF export (ReportLab), share-link import, IndexedDB API caching,
 data-refresh controls, hard amenity minimums and selection-driven amenity
-markers, with 22 Vitest tests.
+markers, with 23 Vitest tests.
 
 ## Structure
 

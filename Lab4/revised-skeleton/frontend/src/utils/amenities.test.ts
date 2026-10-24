@@ -4,9 +4,10 @@ import {
   amenityColor,
   distanceKm,
   filterAmenities,
+  groupAmenitiesByCategory,
   nearbyAmenities,
 } from "./amenities";
-import type { AmenityPointDTO } from "../types/dto";
+import type { AmenityInfoDTO, AmenityPointDTO } from "../types/dto";
 
 const points: AmenityPointDTO[] = [
   { name: "School A", category: "Primary School", latitude: 1.35, longitude: 103.94 },
@@ -42,5 +43,46 @@ describe("amenity layers", () => {
     expect(distanceKm(center, near)).toBeLessThan(2);
     expect(nearbyAmenities([near, far], center)).toEqual([near]);
     expect(nearbyAmenities([near, far], null)).toEqual([]);
+  });
+
+  it("groups factsheet amenities by category in display order", () => {
+    const info: AmenityInfoDTO[] = [
+      {
+        amenityName: "Mall B",
+        category: "Shopping Mall",
+        location: { latitude: 1.35, longitude: 103.94 },
+        distanceKm: 0.8,
+      },
+      {
+        amenityName: "Primary A",
+        category: "Primary School",
+        location: { latitude: 1.35, longitude: 103.94 },
+        distanceKm: 0.3,
+      },
+      {
+        amenityName: "Mall A",
+        category: "Shopping Mall",
+        location: { latitude: 1.35, longitude: 103.94 },
+        distanceKm: 0.2,
+      },
+      {
+        amenityName: "Mystery Place",
+        category: "Other",
+        location: { latitude: 1.35, longitude: 103.94 },
+        distanceKm: 1.1,
+      },
+    ];
+
+    const groups = groupAmenitiesByCategory(info);
+
+    expect(groups.map((group) => group.label)).toEqual([
+      "Primary Schools",
+      "Malls",
+      "Other",
+    ]);
+    expect(groups[1].items.map((item) => item.amenityName)).toEqual([
+      "Mall A",
+      "Mall B",
+    ]);
   });
 });

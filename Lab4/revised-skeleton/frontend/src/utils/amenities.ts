@@ -1,10 +1,78 @@
-import type { AmenityPointDTO } from "../types/dto";
+import type { AmenityInfoDTO, AmenityPointDTO } from "../types/dto";
 
 export interface AmenityGroup {
   id: string;
   label: string;
   color: string;
   categories: string[];
+}
+
+/** Display order and labels for the factsheet amenity sections. */
+export const AMENITY_INFO_ORDER = [
+  "Primary School",
+  "Secondary School",
+  "Tertiary School",
+  "Polyclinic",
+  "Hospital",
+  "Park",
+  "Shopping Mall",
+  "MRT",
+] as const;
+
+export const AMENITY_INFO_LABELS: Record<string, string> = {
+  "Primary School": "Primary Schools",
+  "Secondary School": "Secondary Schools",
+  "Tertiary School": "Tertiary Schools (JC/University)",
+  Polyclinic: "Polyclinics",
+  Hospital: "Hospitals",
+  Park: "Parks",
+  "Shopping Mall": "Malls",
+  MRT: "MRTs / LRTs",
+};
+
+export interface AmenityInfoGroup {
+  category: string;
+  label: string;
+  items: AmenityInfoDTO[];
+}
+
+/** Group nearby amenities by category, preserving a stable section order. */
+export function groupAmenitiesByCategory(
+  amenities: AmenityInfoDTO[],
+): AmenityInfoGroup[] {
+  const groups = new Map<string, AmenityInfoDTO[]>();
+  for (const amenity of amenities) {
+    const existing = groups.get(amenity.category);
+    if (existing) {
+      existing.push(amenity);
+    } else {
+      groups.set(amenity.category, [amenity]);
+    }
+  }
+
+  const order = new Map<string, number>(
+    AMENITY_INFO_ORDER.map((category, index) => [category, index]),
+  );
+  return [...groups.entries()]
+    .sort(([left], [right]) => {
+      const leftIndex = order.get(left);
+      const rightIndex = order.get(right);
+      if (leftIndex !== undefined && rightIndex !== undefined) {
+        return leftIndex - rightIndex;
+      }
+      if (leftIndex !== undefined) return -1;
+      if (rightIndex !== undefined) return 1;
+      return left.localeCompare(right);
+    })
+    .map(([category, items]) => ({
+      category,
+      label: AMENITY_INFO_LABELS[category] ?? category,
+      items: [...items].sort(
+        (left, right) =>
+          (left.distanceKm ?? Number.POSITIVE_INFINITY) -
+          (right.distanceKm ?? Number.POSITIVE_INFINITY),
+      ),
+    }));
 }
 
 export const AMENITY_GROUPS: AmenityGroup[] = [

@@ -89,8 +89,8 @@ make dev
 ```powershell
 make backend    # FastAPI only
 make frontend   # Vite only
-make test       # backend unittest suite (98 tests)
-make test-frontend # frontend Vitest suite (22 tests)
+make test       # backend unittest suite (99 tests)
+make test-frontend # frontend Vitest suite (23 tests)
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
 make help
@@ -163,7 +163,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 | Hybrid commute shortlist | **Completed** (50 live + spatial heuristics) |
 | 1–10 criterion importance | **Completed** (relative-normalised) |
 | Hard amenity minimums | **Completed** (primary/secondary/tertiary schools, malls, hospitals) |
-| Frontend tests | **Completed** (22 Vitest tests) |
+| Frontend tests | **Completed** (23 Vitest tests) |
 | PDF generation | **Completed** (ReportLab only) |
 | Production deployment/CI | **Not completed** |
 
@@ -389,6 +389,8 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - town-level proxy badge and note,
   - green coverage/weather/PM2.5/UVI,
   - school/hospital/mall/MRT/park counts,
+  - nearby amenities grouped by category (primary/secondary/tertiary schools,
+    polyclinics, hospitals, parks, malls, MRT) with counts and distance,
   - commute details,
   - missing-data badges.
 - Comparison matrix for 2–4 subzones.
@@ -401,8 +403,8 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 
 ### 4.4 Testing and verification
 
-- **98 backend tests pass** via `make test`.
-- **22 frontend Vitest tests pass** via `npm test`.
+- **99 backend tests pass** via `make test`.
+- **23 frontend Vitest tests pass** via `npm test`.
 - Frontend tests cover format/polyline helpers, weight migration, nearby amenity
   filtering/colours, `ApiCache` persistence/pruning, client cache reuse/stale
   fallback, refresh cache invalidation and top-20 result rendering.
@@ -498,7 +500,7 @@ Supporting scripts:
 - **Comparison outside top 20:** `RankingControl.generateRankedRecommendations`
   accepts an optional `limit`; the comparison endpoint passes `limit=None` so
   subzones outside the displayed top 20 still receive score items.
-- **Frontend tests:** Vitest/jsdom/Testing Library with 22 tests covering format
+- **Frontend tests:** Vitest/jsdom/Testing Library with 23 tests covering format
   helpers, polyline decoding, weight migration, nearby amenity filtering/colours,
   `ApiCache`, client cache reuse/stale fallback, refresh cache invalidation and
   top-20 `ResultsListUI` rendering.
@@ -577,7 +579,7 @@ Supporting scripts:
 
 10. **Frontend unit testing — resolved 22 October 2026.**
     - Vitest + jsdom + Testing Library are configured.
-    - 22 tests cover format/polyline helpers, weight migration, nearby amenity
+    - 23 tests cover format/polyline helpers, weight migration, nearby amenity
       filtering, `ApiCache`, client cache reuse/stale fallback and
       `ResultsListUI` rendering.
     - `npm run build` remains the production build check.
@@ -755,8 +757,8 @@ Supporting scripts:
 
 | Check | Result |
 | --- | --- |
-| `make test` | **98 tests OK** |
-| `npm test` | **22 frontend tests OK** |
+| `make test` | **99 tests OK** |
+| `npm test` | **23 frontend tests OK** |
 | `make build` / `npm run build` | **Passed** |
 | Live Uvicorn health/ready | **Passed**, 332 subzones |
 | Browser main flow | **Passed** |
