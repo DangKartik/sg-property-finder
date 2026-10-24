@@ -6,6 +6,7 @@ import math
 from datetime import datetime
 from typing import TYPE_CHECKING
 
+from app.core.polyline import mergeEncodedPolylines
 from app.entity.types import Coordinates, MapData, RouteData
 
 if TYPE_CHECKING:
@@ -71,8 +72,8 @@ class MapControl:
         if itineraries:
             legs = itineraries[0].get("legs", [])
             distance = sum(float(leg.get("distance", 0)) for leg in legs)
-            geometry = "".join(
-                str(leg.get("legGeometry", {}).get("points", "")) for leg in legs
+            geometry = mergeEncodedPolylines(
+                leg.get("legGeometry", {}).get("points") for leg in legs
             )
             return RouteData(
                 geometry=geometry,

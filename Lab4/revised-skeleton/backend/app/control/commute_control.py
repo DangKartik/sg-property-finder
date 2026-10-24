@@ -11,6 +11,7 @@ from typing import Any, TYPE_CHECKING
 
 from app.core.cache import TTLCache
 from app.core.geometry import haversineKm
+from app.core.polyline import mergeEncodedPolylines
 from app.core.time import CBD_LATITUDE, CBD_LONGITUDE, nextWeekdayPeak
 from app.entity.commute_estimate import CommuteEstimate
 from app.entity.enums import DataAvailabilityCode, TransitMode
@@ -445,17 +446,18 @@ class CommuteControl:
             if plans:
                 best = plans[0]
                 duration_seconds = best.get("duration", 0)
-                distance_m = sum(
-                    leg.get("distance", 0) for leg in best.get("legs", [])
-                )
-                transfers = max(0, len(best.get("legs", [])) - 1)
+                legs = best.get("legs", [])
+                distance_m = sum(leg.get("distance", 0) for leg in legs)
+                transfers = max(0, len(legs) - 1)
                 return CommuteEstimate(
                     durationMinutes=max(1, math.ceil(float(duration_seconds) / 60)),
                     distanceKm=round(float(distance_m) / 1000, 3),
                     transferCount=transfers,
                     travelMode=mode,
                     departureTime=departure,
-                    routeGeometry=payload.get("plan", {}).get("itineraries", [{}])[0].get("legs", [{}])[0].get("legGeometry", {}).get("points"),
+                    routeGeometry=mergeEncodedPolylines(
+                        leg.get("legGeometry", {}).get("points") for leg in legs
+                    ),
                 )
             raise CommuteError("OneMap routing response had no summary")
 

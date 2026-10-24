@@ -21,9 +21,15 @@ ENV_FILE = ROOT / ".env"
 ENV_EXAMPLE = ROOT / ".env.example"
 
 
-def wait_for(url: str, timeout_seconds: int = 60) -> bool:
+def wait_for(
+    url: str,
+    timeout_seconds: int = 60,
+    process: subprocess.Popen[bytes] | None = None,
+) -> bool:
     deadline = time.monotonic() + timeout_seconds
     while time.monotonic() < deadline:
+        if process is not None and process.poll() is not None:
+            return False
         try:
             with urllib.request.urlopen(url, timeout=2) as response:
                 if response.status < 500:
@@ -32,6 +38,23 @@ def wait_for(url: str, timeout_seconds: int = 60) -> bool:
             pass
         time.sleep(0.75)
     return False
+
+
+def oneMapCredentialsConfigured() -> bool:
+    """Return whether OneMap credentials exist in the environment or `.env`."""
+    values: dict[str, str] = {}
+    if ENV_FILE.exists():
+        for raw_line in ENV_FILE.read_text(encoding="utf-8-sig").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            if line.startswith("export "):
+                line = line[len("export ") :]
+            key, value = line.split("=", 1)
+            values[key.strip()] = value.strip().strip('"').strip("'")
+    email = os.environ.get("ONEMAP_EMAIL") or values.get("ONEMAP_EMAIL")
+    password = os.environ.get("ONEMAP_PASSWORD") or values.get("ONEMAP_PASSWORD")
+    return bool(email and password)
 
 
 def terminate(process: subprocess.Popen[bytes] | None) -> None:
@@ -66,6 +89,12 @@ def main() -> int:
             print("Missing .env. Copy .env.example to .env and add OneMap credentials.")
             return 1
 
+    if not args.frontend_only and not oneMapCredentialsConfigured():
+        print("OneMap credentials are missing; the backend cannot start.")
+        print(f"Set ONEMAP_EMAIL and ONEMAP_PASSWORD in {ENV_FILE},")
+        print("then run `make dev` again. A free OneMap account works.")
+        return 1
+
     backend_process: subprocess.Popen[bytes] | None = None
     frontend_process: subprocess.Popen[bytes] | None = None
 
@@ -87,7 +116,9 @@ def main() -> int:
                 cwd=BACKEND,
                 start_new_session=os.name != "nt",
             )
-            if not wait_for("http://127.0.0.1:8000/api/v1/health", 90):
+            if not wait_for(
+                "http://127.0.0.1:8000/api/v1/health", 90, backend_process
+            ):
                 print("Backend did not become healthy. Check the backend output above.")
                 return 1
             print("Backend ready: http://127.0.0.1:8000/docs")
@@ -103,7 +134,9 @@ def main() -> int:
                 cwd=FRONTEND,
                 start_new_session=os.name != "nt",
             )
-            if not wait_for("http://127.0.0.1:5173/", 90):
+            if not wait_for(
+                "http://127.0.0.1:5173/", 90, frontend_process
+            ):
                 print("Frontend did not start. Check the Vite output above.")
                 return 1
             print("Frontend ready: http://127.0.0.1:5173")

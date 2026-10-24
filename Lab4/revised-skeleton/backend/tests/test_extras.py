@@ -11,6 +11,7 @@ from app.control.commute_control import CommuteControl
 from app.control.data_availability_notifier import DataAvailabilityNotifier
 from app.control.map_control import MapControl
 from app.core.cache import TTLCache
+from app.core.polyline import decodePolyline, encodePolyline
 from app.entity.enums import TransitMode
 from app.entity.types import Coordinates
 from app.services.live_environment import LiveEnvironmentProvider
@@ -45,6 +46,55 @@ class MapControlTests(unittest.TestCase):
         )
         self.assertEqual(overlay.durationMinutes, 20)
         self.assertEqual(overlay.distanceKm, 8.0)
+
+    def test_public_transport_overlay_merges_all_leg_geometries(self) -> None:
+        class MultiLegAdapter:
+            def getRoutingData(self, origin, destination, mode, departureTime=None):
+                return {
+                    "plan": {
+                        "itineraries": [
+                            {
+                                "duration": 1800,
+                                "legs": [
+                                    {
+                                        "distance": 400,
+                                        "legGeometry": {
+                                            "points": encodePolyline(
+                                                [(1.28, 103.85), (1.285, 103.855)]
+                                            )
+                                        },
+                                    },
+                                    {
+                                        "distance": 3600,
+                                        "legGeometry": {
+                                            "points": encodePolyline(
+                                                [
+                                                    (1.285, 103.855),
+                                                    (1.29, 103.86),
+                                                    (1.295, 103.865),
+                                                ]
+                                            )
+                                        },
+                                    },
+                                ],
+                            }
+                        ]
+                    }
+                }
+
+        control = MapControl(load_registry(), MultiLegAdapter(), None)  # type: ignore[arg-type]
+        overlay = control.getCommuteOverlay(
+            Coordinates(1.28, 103.85),
+            Coordinates(1.295, 103.865),
+            TransitMode.PUBLIC_TRANSIT,
+        )
+
+        self.assertEqual(overlay.distanceKm, 4.0)
+        points = decodePolyline(overlay.geometry)
+        self.assertEqual(len(points), 4)
+        self.assertAlmostEqual(points[-1][0], 1.295, places=5)
+        self.assertAlmostEqual(points[-1][1], 103.865, places=5)
+        self.assertTrue(all(point[1] < 104 for point in points))
 
 
 class AsyncCommuteTests(unittest.TestCase):

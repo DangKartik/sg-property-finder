@@ -23,7 +23,7 @@ install-backend:
 	$(PYTHON) -m pip install -r backend/requirements.txt
 
 install-frontend:
-	$(NPM) --prefix frontend install
+	$(NPM) --prefix frontend install --no-audit --no-fund
 
 dev:
 	$(PYTHON) scripts/dev.py
