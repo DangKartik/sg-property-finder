@@ -42,6 +42,7 @@ class FastApiEndpointTests(unittest.TestCase):
 
     def test_health_ready_and_criteria(self) -> None:
         self.assertEqual(self.client.get("/api/v1/health").status_code, 200)
+        self.assertEqual(self.client.get("/health").status_code, 200)
         ready = self.client.get("/api/v1/ready")
         self.assertTrue(ready.json()["data"]["ready"])
         criteria = self.client.get("/api/v1/criteria")

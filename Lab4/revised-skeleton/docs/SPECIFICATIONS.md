@@ -214,6 +214,7 @@ All endpoints return the standard envelope:
 | Method | Path | Request | Response |
 | --- | --- | --- | --- |
 | `GET` | `/api/v1/health` | — | service status |
+| `GET` | `/health` | — | alias for container/probe health checks |
 | `GET` | `/api/v1/ready` | — | data/cache readiness |
 | `GET` | `/api/v1/criteria` | - | `CriterionDefinition[]` |
 | `GET` | `/api/v1/amenities` | - | amenity points for the map |

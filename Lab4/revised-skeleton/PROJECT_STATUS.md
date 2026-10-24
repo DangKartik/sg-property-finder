@@ -1,11 +1,11 @@
 # SG Property Finder — Project Status
 
-- **Last updated:** 23 October 2026
+- **Last updated:** 24 October 2026
 - **Repository:** `2006-SCMB-D2`
 - **Application folder:** `Lab4/revised-skeleton/`
 - **Current branch:** `main`
-- **Last commit:** `8b938ee` (hybrid commute distance calculations)
-- **Working tree:** code clean at `8b938ee`; this documentation update is pending commit
+- **Last commit:** `8130aed` (capitalised amenities factsheet headers)
+- **Working tree:** latest `/health` alias and documentation changes pending commit
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -89,7 +89,7 @@ make dev
 ```powershell
 make backend    # FastAPI only
 make frontend   # Vite only
-make test       # backend unittest suite (99 tests)
+make test       # backend unittest suite (136 tests)
 make test-frontend # frontend Vitest suite (23 tests)
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
@@ -152,7 +152,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 | Phase 2.5 - factsheets, PDF, share URLs | **Completed** (ReportLab) |
 | Phase 2.6 — FastAPI endpoints | **Completed** |
 | Phase 3 — frontend | **Completed** |
-| Phase 4 — formal black-box/white-box testing | **Not completed** |
+| Phase 4 — formal black-box/white-box testing | **Partially completed** — black-box EP/BVA documented; white-box pending |
 | Phase 5 — formal SLA benchmarking/E2E documentation | **Partially completed** (manual verification only) |
 | Makefile / one-command local run | **Completed** |
 | Real amenities dataset | **Completed** — 1,200 effective points (1,172 base + 28 tertiary); `make amenities` rebuilds it |
@@ -327,6 +327,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - `GET /api/v1/criteria`
   - `GET /api/v1/amenities`
   - `GET /api/v1/health`
+  - `GET /health` (alias for probes)
   - `GET /api/v1/ready`
   - `GET /api/v1/data/status`
   - `POST /api/v1/data/refresh`
@@ -403,7 +404,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 
 ### 4.4 Testing and verification
 
-- **99 backend tests pass** via `make test`.
+- **136 backend tests pass** via `make test`.
 - **23 frontend Vitest tests pass** via `npm test`.
 - Frontend tests cover format/polyline helpers, weight migration, nearby amenity
   filtering/colours, `ApiCache` persistence/pruning, client cache reuse/stale
@@ -565,11 +566,13 @@ Supporting scripts:
 
 ### 5.3 Formal testing not completed
 
-8. **Phase 4 black-box testing documentation**
-   - No formal equivalence-class partitioning matrix.
-   - No formal boundary-value analysis matrix.
-   - No test-minimization document.
-   - Some of these checks exist as `unittest` cases, but the required three-column expected/actual matrix has not been produced.
+8. **Phase 4 black-box testing documentation — completed 24 October 2026.**
+   - Formal equivalence-class partitioning and boundary-value tables are in
+     `docs/BLACK_BOX_TESTING.md`.
+   - The suite is `backend/tests/test_black_box_validation.py`: 37 test methods
+     and 68 logical cases, all passing.
+   - Covers `InputValidationControl` and the `profileDtoFromDict` parse boundary,
+     including the hard-minimum fields.
 
 9. **Phase 4 white-box testing documentation**
    - No control-flow graphs.
@@ -740,10 +743,10 @@ Supporting scripts:
 
 ## 9. Recommended next steps
 
-1. **Complete Phase 4 documentation**:
-   - EP/BVA tables for `InputValidationControl`,
+1. **Complete Phase 4 white-box documentation**:
    - CFGs and cyclomatic complexity for ranking/scoring,
    - basis-path test cases.
+   - Black-box EP/BVA is complete; see `docs/BLACK_BOX_TESTING.md`.
 2. **Complete Phase 5**:
    - formal HTTP latency benchmark for `/recommendations`,
    - cold/warm OneMap routing benchmark,
@@ -757,8 +760,9 @@ Supporting scripts:
 
 | Check | Result |
 | --- | --- |
-| `make test` | **99 tests OK** |
+| `make test` | **136 tests OK** |
 | `npm test` | **23 frontend tests OK** |
+| Black-box validation suite | **37 methods / 68 logical cases OK** — see `docs/BLACK_BOX_TESTING.md` |
 | `make build` / `npm run build` | **Passed** |
 | Live Uvicorn health/ready | **Passed**, 332 subzones |
 | Browser main flow | **Passed** |

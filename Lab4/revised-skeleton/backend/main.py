@@ -77,6 +77,11 @@ def createApp(context: AppContext | None = None) -> Any:
     def health() -> Any:
         return respond(handlers.health())
 
+    @app.get("/health")
+    def health_alias() -> Any:
+        """Conventional health-check alias used by probes and containers."""
+        return respond(handlers.health())
+
     @app.get("/api/v1/ready")
     def ready() -> Any:
         return respond(handlers.ready(context))
