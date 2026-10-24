@@ -5,7 +5,7 @@
 - **Application folder:** `Lab4/revised-skeleton/`
 - **Current branch:** `main`
 - **Last commit:** `8130aed` (capitalised amenities factsheet headers)
-- **Working tree:** latest `/health` alias and documentation changes pending commit
+- **Working tree:** latest `/health` alias, black-box/white-box suites and documentation changes pending commit
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -89,7 +89,7 @@ make dev
 ```powershell
 make backend    # FastAPI only
 make frontend   # Vite only
-make test       # backend unittest suite (136 tests)
+make test       # backend unittest suite (145 tests)
 make test-frontend # frontend Vitest suite (23 tests)
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
@@ -152,7 +152,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 | Phase 2.5 - factsheets, PDF, share URLs | **Completed** (ReportLab) |
 | Phase 2.6 — FastAPI endpoints | **Completed** |
 | Phase 3 — frontend | **Completed** |
-| Phase 4 — formal black-box/white-box testing | **Partially completed** — black-box EP/BVA documented; white-box pending |
+| Phase 4 — formal black-box/white-box testing | **Completed** — EP/BVA and CFG/basis-path documentation |
 | Phase 5 — formal SLA benchmarking/E2E documentation | **Partially completed** (manual verification only) |
 | Makefile / one-command local run | **Completed** |
 | Real amenities dataset | **Completed** — 1,200 effective points (1,172 base + 28 tertiary); `make amenities` rebuilds it |
@@ -404,7 +404,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 
 ### 4.4 Testing and verification
 
-- **136 backend tests pass** via `make test`.
+- **145 backend tests pass** via `make test`.
 - **23 frontend Vitest tests pass** via `npm test`.
 - Frontend tests cover format/polyline helpers, weight migration, nearby amenity
   filtering/colours, `ApiCache` persistence/pruning, client cache reuse/stale
@@ -564,7 +564,7 @@ Supporting scripts:
 7. **`BUKIT TIMAH` and `OUT OF BOUNDS` mappings.**
    - These follow the supplied mapping but may not correspond to HDB town pricing data; such subzones can produce missing-price warnings.
 
-### 5.3 Formal testing not completed
+### 5.3 Formal testing documentation
 
 8. **Phase 4 black-box testing documentation — completed 24 October 2026.**
    - Formal equivalence-class partitioning and boundary-value tables are in
@@ -574,11 +574,13 @@ Supporting scripts:
    - Covers `InputValidationControl` and the `profileDtoFromDict` parse boundary,
      including the hard-minimum fields.
 
-9. **Phase 4 white-box testing documentation**
-   - No control-flow graphs.
-   - No cyclomatic-complexity calculations.
-   - No basis-path test-case table.
-   - `RankingControl.generateRankedRecommendations` and `WeightedScoringStrategy.computeSuitabilityScore` were not formally analysed with CFG/`V(G)`.
+9. **Phase 4 white-box testing documentation — completed 24 October 2026.**
+   - CFGs, cyclomatic complexity and basis-path tables are in
+     `docs/WHITE_BOX_TESTING.md`.
+   - The suite is `backend/tests/test_white_box.py`: 9 tests covering
+     `WeightedScoringStrategy.computeSuitabilityScore` (`V(G)=2`) and
+     `RankingControl.generateRankedRecommendations` (`V(G)=5`).
+   - All nodes, predicate outcomes and basis paths are exercised.
 
 10. **Frontend unit testing — resolved 22 October 2026.**
     - Vitest + jsdom + Testing Library are configured.
@@ -743,16 +745,12 @@ Supporting scripts:
 
 ## 9. Recommended next steps
 
-1. **Complete Phase 4 white-box documentation**:
-   - CFGs and cyclomatic complexity for ranking/scoring,
-   - basis-path test cases.
-   - Black-box EP/BVA is complete; see `docs/BLACK_BOX_TESTING.md`.
-2. **Complete Phase 5**:
+1. **Complete Phase 5**:
    - formal HTTP latency benchmark for `/recommendations`,
    - cold/warm OneMap routing benchmark,
    - full Dialog Map E2E checklist.
-3. **Add CI/CD, HTTPS/CORS production configuration, and a shared report store** if deploying beyond a single process.
-4. Optionally extend frontend tests to the App/share-import and map-layer flows.
+2. **Add CI/CD, HTTPS/CORS production configuration, and a shared report store** if deploying beyond a single process.
+3. Optionally extend frontend tests to the App/share-import and map-layer flows.
 
 ---
 
@@ -760,9 +758,10 @@ Supporting scripts:
 
 | Check | Result |
 | --- | --- |
-| `make test` | **136 tests OK** |
+| `make test` | **145 tests OK** |
 | `npm test` | **23 frontend tests OK** |
 | Black-box validation suite | **37 methods / 68 logical cases OK** — see `docs/BLACK_BOX_TESTING.md` |
+| White-box scoring/ranking suite | **9 tests / 7 basis paths OK** — see `docs/WHITE_BOX_TESTING.md` |
 | `make build` / `npm run build` | **Passed** |
 | Live Uvicorn health/ready | **Passed**, 332 subzones |
 | Browser main flow | **Passed** |

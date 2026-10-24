@@ -222,7 +222,7 @@ make test
 Observed summary at the time of writing:
 
 ```text
-Ran 136 tests
+Ran 145 tests
 OK
 ```
 

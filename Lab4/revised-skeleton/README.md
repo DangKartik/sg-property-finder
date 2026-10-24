@@ -4,7 +4,7 @@ Phase 1 skeleton plus Phase 2 backend implementation for the neighbourhood
 recommender. This folder is separate from `Lab4/Skeleton Code`.
 
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
-PDF and REST endpoints are implemented and covered by 136 `unittest` tests. The
+PDF and REST endpoints are implemented and covered by 145 `unittest` tests. The
 React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison,
 enriched PDF export (ReportLab), share-link import, IndexedDB API caching,
 data-refresh controls, hard amenity minimums and selection-driven amenity
@@ -216,6 +216,7 @@ Method names keep the diagram's camelCase to make traceability easy. Convert to 
 
 - `docs/SPECIFICATIONS.md` — frozen scoring, budget, environment, geography, commute, snapshot and API rules.
 - `docs/BLACK_BOX_TESTING.md` — formal EP/BVA, expected/actual matrix and results for profile validation.
+- `docs/WHITE_BOX_TESTING.md` — CFGs, `V(G)`, basis paths and tests for scoring/ranking.
 - `docs/OPEN_ISSUES.md` — contradictions and data limitations that still need a decision before implementation.
 - `docs/ENVIRONMENT.md` — `.env` setup and variable reference.
 
