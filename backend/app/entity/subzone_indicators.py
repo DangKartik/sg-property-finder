@@ -16,6 +16,7 @@ class SubzoneIndicators:
     nearestSchoolM: float | None = None
     primarySchoolCount1km: int = 0
     secondarySchoolCount1km: int = 0
+    tertiarySchoolCount1km: int = 0
     nearestPolyclinicM: float | None = None
     polyclinicCount2km: int = 0
     nearestHospitalM: float | None = None
@@ -25,8 +26,6 @@ class SubzoneIndicators:
     nearestMrtM: float | None = None
     mrtStationCount800m: int = 0
     amenityDataAvailable: bool = False
-    parkConnectorLength1km: float = 0.0
-    cyclingPathLength1km: float = 0.0
     medianResalePrice: float | None = None
     medianPricePerSqm: float | None = None
     transactionCount12m: int = 0

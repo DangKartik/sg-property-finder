@@ -1,7 +1,8 @@
 # Frozen Specification — v1
 
-This file records the rules that implementation must follow. Values marked **OPEN**
-require a product decision and are also listed in `OPEN_ISSUES.md`.
+This file records the frozen rules that implementation follows. Resolved
+decisions and accepted limitations are summarized in `docs/OPEN_ISSUES.md` and
+`PROJECT_STATUS.md`.
 
 ## 1. Criterion catalogue
 
@@ -20,9 +21,9 @@ catalogue.
 
 ## 2. Normalisation and scoring
 
-After the hard budget filter, each raw value is normalised against its **fixed
-absolute domain** (not the candidate set), so scores remain comparable when the
-budget filter removes candidates:
+After the hard budget and amenity-minimum filters, each raw value is normalised
+against its **fixed absolute domain** (not the candidate set), so scores remain
+comparable when the budget filter removes candidates:
 
 ```text
 Maximisation:  S = (clamp(X, min, max) - min) / (max - min)
@@ -92,6 +93,27 @@ keyed by HDB town, not URA subzone. The application deliberately keeps the
 town-level median proxy and does not build a block-to-subzone mapping. The
 UI/PDF labels this as a **Town-Level Median Proxy**.
 
+## 3a. Hard amenity minimums
+
+The profile can specify five whole-number minimums. They are hard filters and
+are applied before scoring, after the budget filter:
+
+| Profile field | Indicator | Radius |
+| --- | --- | --- |
+| `minimumPrimarySchools` | `primarySchoolCount1km` | 1.0 km |
+| `minimumSecondarySchools` | `secondarySchoolCount1km` | 1.0 km |
+| `minimumTertiarySchools` | `tertiarySchoolCount1km` (JCs + universities) | 1.0 km |
+| `minimumMalls` | `mallCount1km` | 1.0 km |
+| `minimumHospitals` | `hospitalCount2km` | 2.0 km |
+
+- `0` means no requirement.
+- A subzone is discarded immediately when any count is below its minimum.
+- If amenity data is unavailable, the minimums are not applied and the normal
+  missing-data warning path is used.
+- Tertiary schools come from the MOE JC directory plus the
+  `tertiary_schools.json` supplement (JCs, Millennia Institute, mixed-level
+  schools with JC/IB levels, and autonomous universities).
+
 ## 4. Static vs live environment data
 
 ### Score-impact data (static baselines)
@@ -117,7 +139,7 @@ affect suitability scores. This preserves deterministic rankings.
 - **Subzone anchor:** Shapely `representative_point()` of the URA subzone polygon
   (guaranteed to lie inside the polygon).
 - **Buffer radii:**
-  - Primary/secondary schools: 1.0 km (OPEN-01 conflicts with 1.5 km);
+  - Primary/secondary/tertiary schools: 1.0 km;
   - Polyclinics/public hospitals: 2.0 km;
   - Parks/green spaces: 500 m;
   - Shopping malls: 1.0 km;
@@ -137,18 +159,22 @@ affect suitability scores. This preserves deterministic rankings.
 - **Cache TTL:** 7 days. The cache key must include workplace/geohash, mode,
   departure date and departure window; a 7-day TTL alone is insufficient because
   OneMap PT results depend on the date/time.
-- **Custom workplace:** live OneMap routing for a top-50 shortlist selected by
-  straight-line distance from the workplace. Subzones outside the shortlist stay
-  in the ranking with the commute criterion treated as missing/reweighted.
-- **Driving/walking near the CBD:** always live OneMap routing, never the PT
-  matrix.
+- **Custom workplace, public transport:** live OneMap routing for a top-50
+  shortlist selected by straight-line distance. Subzones outside the shortlist
+  receive a straight-line PT estimate (with `ESTIMATED_COMMUTE_FALLBACK`) so
+  every candidate has a commute value and the criterion is weighted consistently.
+- **Driving/walking (all origins):** hybrid shortlist. The nearest 50 subzones
+  use live OneMap routing; the remainder use spatial heuristic estimates with a
+  **1.35× road factor** for driving and a **1.20× path factor** for walking.
+  The PT matrix is never used.
 - **Failure / missing matrix entry:** use a straight-line distance estimate,
   keep the subzone eligible for ranking, and attach a
-  `DataAvailabilityWarning` with code `ESTIMATED_COMMUTE_FALLBACK`.
+  `DataAvailabilityWarning` with code `ESTIMATED_COMMUTE_FALLBACK`. Heuristic
+  shortlist outliers carry the same warning.
 
-**SLA risk:** the first ranking for a new workplace may still exceed 5 seconds if
-50 OneMap calls are made. Pre-warm popular workplaces or reduce the shortlist;
-see `OPEN_ISSUES.md` OPEN-09.
+**SLA risk:** the live shortlist is capped at 50 OneMap calls; the remaining
+candidates are estimated in memory. The first cold-cache ranking should still be
+benchmarked against the 5-second target.
 
 ## 7. Data snapshot and ingestion contract
 
@@ -189,6 +215,7 @@ All endpoints return the standard envelope:
 | Method | Path | Request | Response |
 | --- | --- | --- | --- |
 | `GET` | `/api/v1/health` | — | service status |
+| `GET` | `/health` | — | alias for container/probe health checks |
 | `GET` | `/api/v1/ready` | — | data/cache readiness |
 | `GET` | `/api/v1/criteria` | - | `CriterionDefinition[]` |
 | `GET` | `/api/v1/amenities` | - | amenity points for the map |
@@ -199,7 +226,7 @@ All endpoints return the standard envelope:
 | `POST` | `/api/v1/share/decode` | `{ "share": "..." }` | `{ profile, subzoneCodes }` |
 | `POST` | `/api/v1/commute/overlay` | origin, destination, mode | `RouteData` |
 | `POST` | `/api/v1/recommendations` | `ProfileDTO` | `RecommendationSet` |
-| `GET` | `/api/v1/subzones/{code}/factsheet` | profile context (OPEN-10) | `NeighborhoodDetailDTO` |
+| `GET` | `/api/v1/subzones/{code}/factsheet` | profile context | `NeighborhoodDetailDTO` |
 | `POST` | `/api/v1/comparison` | `ProfileDTO`, `subzoneCodes[]` | `ComparisonResult` |
 | `POST` | `/api/v1/reports/pdf` | `ProfileDTO`, `subzoneCodes[]` | `PdfReport` |
 | `GET` | `/api/v1/reports/download/{reportId}` | - | PDF bytes |

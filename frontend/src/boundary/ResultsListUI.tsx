@@ -10,6 +10,8 @@ export interface ResultsListUIProps {
   onToggleCompare: (subzoneId: string) => void;
   onOpenComparison: () => void;
   onOpenFactsheet: (subzoneId: string) => void;
+  onExport: () => void;
+  exportDisabled: boolean;
 }
 
 /** Ranked subzone cards; synchronized with the map by subzone code. */
@@ -22,6 +24,8 @@ export function ResultsListUI({
   onToggleCompare,
   onOpenComparison,
   onOpenFactsheet,
+  onExport,
+  exportDisabled,
 }: ResultsListUIProps) {
   const items = recommendationSet?.items ?? [];
 
@@ -41,12 +45,23 @@ export function ResultsListUI({
         </button>
       </div>
 
+      <div className="results-tools">
+        <button
+          className="button small"
+          onClick={onExport}
+          disabled={exportDisabled}
+          title="Export the current recommendations as a PDF"
+        >
+          Export Recommendations to PDF
+        </button>
+      </div>
+
       {loading && <div className="loading-line">Ranking neighbourhoods…</div>}
       {!loading && !recommendationSet && (
         <p className="muted">Select or create a plan to generate recommendations.</p>
       )}
       {!loading && recommendationSet && items.length === 0 && (
-        <p className="muted">No subzones matched the current budget filter.</p>
+        <p className="muted">No subzones matched the current hard filters.</p>
       )}
 
       <div className="result-list">

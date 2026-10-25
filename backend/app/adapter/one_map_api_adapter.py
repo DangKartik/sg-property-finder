@@ -266,12 +266,3 @@ class OneMapApiAdapter:
             lons = [c.longitude for c in extents]
             params["extents"] = f"{min(lats)},{min(lons)},{max(lats)},{max(lons)}"
         return self._authorizedJson("/api/public/themesvc/retrieveTheme", params)
-
-    def getNearbyTransport(self, origin: Coordinates, radiusM: int) -> JSON:
-        """Return nearby transport options.
-
-        OneMap's nearby-transport service is not required by the Phase 2
-        endpoints; this method is intentionally deferred until the exact
-        service contract is confirmed.
-        """
-        raise NotImplementedError("Nearby transport is not part of the Phase 2 endpoint set")

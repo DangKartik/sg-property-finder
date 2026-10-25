@@ -28,17 +28,3 @@ class ReportStore:
             path.unlink(missing_ok=True)
             return None
         return path
-
-    def remove(self, reportId: str) -> None:
-        """Remove and delete a report."""
-        entry = self._reports.pop(reportId, None)
-        if entry is not None:
-            entry[0].unlink(missing_ok=True)
-
-    def cleanup(self) -> None:
-        """Delete all expired reports."""
-        now = datetime.now(timezone.utc)
-        for report_id, (path, expires_at) in list(self._reports.items()):
-            if expires_at <= now:
-                self._reports.pop(report_id, None)
-                path.unlink(missing_ok=True)

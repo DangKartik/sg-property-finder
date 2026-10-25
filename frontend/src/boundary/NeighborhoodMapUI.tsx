@@ -34,6 +34,8 @@ export interface NeighborhoodMapUIProps {
   routeOrigin: CoordinatesDTO | null;
   routeDestination: CoordinatesDTO | null;
   onSelect: (subzoneId: string) => void;
+  onRefresh?: () => void;
+  refreshing?: boolean;
 }
 
 const SINGAPORE_CENTER: [number, number] = [1.3521, 103.8198];
@@ -49,6 +51,8 @@ export function NeighborhoodMapUI({
   routeOrigin,
   routeDestination,
   onSelect,
+  onRefresh,
+  refreshing = false,
 }: NeighborhoodMapUIProps) {
   const [visibleGroups, setVisibleGroups] = useState<string[]>(
     ALL_AMENITY_GROUP_IDS,
@@ -78,10 +82,21 @@ export function NeighborhoodMapUI({
             [routeDestination.latitude, routeDestination.longitude] as [number, number],
           ]
         : [];
+  const mapStyle = useMemo(
+    () => (feature: Feature | undefined) =>
+      styleFeature(feature, scores, selectedSubzoneId, highlightedSubzoneIds),
+    [scores, selectedSubzoneId, highlightedSubzoneIds],
+  );
 
   return (
     <section className="map-panel" aria-label="Neighbourhood suitability map">
-      <MapContainer center={center} zoom={11} scrollWheelZoom className="leaflet-container">
+      <MapContainer
+        center={center}
+        zoom={11}
+        minZoom={11}
+        scrollWheelZoom
+        className="leaflet-container"
+      >
         <TileLayer
           attribution='Map data &copy; <a href="https://www.onemap.gov.sg/">OneMap Singapore</a>'
           url="https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png"
@@ -89,11 +104,8 @@ export function NeighborhoodMapUI({
         />
         {mapData && (
           <GeoJSON
-            key={`${selectedSubzoneId ?? "none"}-${highlightedSubzoneIds.join(",")}-${JSON.stringify(scores)}`}
             data={mapData.geojson as GeoJsonObject}
-            style={(feature) =>
-              styleFeature(feature, scores, selectedSubzoneId, highlightedSubzoneIds)
-            }
+            style={mapStyle}
             onEachFeature={(feature, layer) => bindFeature(feature, layer, onSelect)}
           />
         )}
@@ -132,6 +144,16 @@ export function NeighborhoodMapUI({
           </Polyline>
         )}
       </MapContainer>
+      {onRefresh && (
+        <button
+          className="button small map-refresh-button"
+          onClick={onRefresh}
+          disabled={refreshing}
+          title="Refresh subzone and HDB data"
+        >
+          Refresh
+        </button>
+      )}
       {amenities.length > 0 && (
         <details className="amenity-controls">
           <summary>Nearby amenities</summary>
@@ -180,9 +202,10 @@ function styleFeature(
     fillColor: scoreColor(score),
     fillOpacity:
       score === undefined ? 0.18 : selected ? 0.82 : highlighted ? 0.78 : 0.55,
-    color: selected ? "#0f172a" : highlighted ? "#f59e0b" : "#ffffff",
+    color: selected ? "#000000" : highlighted ? "#f59e0b" : "#ffffff",
     weight: selected ? 3 : highlighted ? 2.5 : 1,
     opacity: 0.9,
+    lineJoin: "round",
   };
 }
 

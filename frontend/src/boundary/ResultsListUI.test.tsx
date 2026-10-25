@@ -24,6 +24,7 @@ function recommendationSet(count: number): RecommendationSetDTO {
 describe("ResultsListUI", () => {
   it("renders the ranked cards and comparison controls", () => {
     const onToggleCompare = vi.fn();
+    const onExport = vi.fn();
     const { container } = render(
       <ResultsListUI
         recommendationSet={recommendationSet(20)}
@@ -34,6 +35,8 @@ describe("ResultsListUI", () => {
         onToggleCompare={onToggleCompare}
         onOpenComparison={vi.fn()}
         onOpenFactsheet={vi.fn()}
+        onExport={onExport}
+        exportDisabled={false}
       />,
     );
 
@@ -43,6 +46,9 @@ describe("ResultsListUI", () => {
 
     fireEvent.click(screen.getAllByRole("checkbox")[0]);
     expect(onToggleCompare).toHaveBeenCalledWith("SZ1");
+
+    fireEvent.click(screen.getByRole("button", { name: /export recommendations to pdf/i }));
+    expect(onExport).toHaveBeenCalledTimes(1);
   });
 
   it("shows the warning count when the response has warnings", () => {
@@ -71,6 +77,8 @@ describe("ResultsListUI", () => {
         onToggleCompare={vi.fn()}
         onOpenComparison={vi.fn()}
         onOpenFactsheet={vi.fn()}
+        onExport={vi.fn()}
+        exportDisabled={false}
       />,
     );
 

@@ -1,13 +1,19 @@
 # Neighbourhood Recommender — Backend + Frontend
 
-Phase 1 skeleton plus Phase 2 backend implementation for the neighbourhood
-recommender. This folder is separate from `Lab4/Skeleton Code`.
+Full-stack neighbourhood recommender for Singapore. This folder is the
+implemented application; `Lab4/Skeleton Code` is the original skeleton and is
+kept only for project history.
+
+**New here?** Follow [`HOW_TO_RUN.md`](HOW_TO_RUN.md) for step-by-step setup,
+dependency installation and run commands.
 
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
-PDF and REST endpoints are implemented and covered by 85 `unittest` tests. The
+PDF and REST endpoints are implemented and covered by 145 `unittest` tests. The
 React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison,
 enriched PDF export (ReportLab), share-link import, IndexedDB API caching,
-data-refresh controls and selection-driven amenity markers, with 21 Vitest tests.
+data-refresh control on the map, hard amenity minimums and selection-driven amenity
+markers, with 27 Vitest tests. Formal black-box/white-box testing and Phase 5
+SLA/E2E documentation are in `docs/`.
 
 ## Structure
 
@@ -27,7 +33,6 @@ revised-skeleton/
 │   ├── OPEN_ISSUES.md
 │   └── SPECIFICATIONS.md
 ├── backend/
-│   ├── Dockerfile
 │   ├── main.py
 │   ├── requirements.txt
 │   ├── README.md
@@ -43,6 +48,7 @@ revised-skeleton/
 │       ├── core/
 │       │   ├── cache.py
 │       │   ├── geometry.py
+│       │   ├── polyline.py
 │       │   ├── serialization.py
 │       │   └── time.py
 │       ├── services/profile_factory.py
@@ -65,8 +71,7 @@ revised-skeleton/
 │       │   ├── neighborhood_details_control.py
 │       │   ├── ranking_control.py
 │       │   ├── report_control.py
-│       │   ├── retrieval_control.py
-│       │   └── system_startup_control.py
+│       │   └── retrieval_control.py
 │       ├── entity/
 │       │   ├── address_match.py
 │       │   ├── amenity_info.py
@@ -133,7 +138,7 @@ revised-skeleton/
 | Diagram class | Location | Note |
 | --- | --- | --- |
 | `ProfileFormUI` | `frontend/src/boundary/ProfileFormUI.tsx` | React component; includes workplace address search. |
-| `ProfileSelectorUI` | `frontend/src/boundary/ProfileSelectorUI.tsx` | React component. |
+| `ProfileSelectorUI` | `frontend/src/boundary/ProfileSelectorUI.tsx` | Top-right plan dropdown with per-row Edit/Delete. |
 | `ResultsListUI` | `frontend/src/boundary/ResultsListUI.tsx` | React component. |
 | `NeighborhoodMapUI` | `frontend/src/boundary/NeighborhoodMapUI.tsx` | React + Leaflet. |
 | `FactSheetUI` | `frontend/src/boundary/FactSheetUI.tsx` | Pricing is keyed by flat type. |
@@ -142,7 +147,6 @@ revised-skeleton/
 | `ProfileCatalog` | `frontend/src/container/ProfileCatalog.ts` | Dexie/IndexedDB-backed; async API. |
 | `ApiCache` | `frontend/src/container/ApiCache.ts` | Dexie/IndexedDB API envelope cache with ETag/TTL metadata. |
 | `ProfileControl` | `frontend/src/control/ProfileControl.ts` | Client-side CRUD over Dexie + backend validation. |
-| `SystemStartupControl` | `backend/app/control/system_startup_control.py` | Loads the subzone registry/cache. |
 | `InputValidationControl` | `backend/app/control/input_validation_control.py` | Authoritative validation. |
 | `RankingControl` | `backend/app/control/ranking_control.py` | Stateless; receives a `PreferenceProfile`. |
 | `MapControl` | `backend/app/control/map_control.py` | Returns serialisable `MapData`. |
@@ -214,7 +218,11 @@ Method names keep the diagram's camelCase to make traceability easy. Convert to 
 ## Specification documents
 
 - `docs/SPECIFICATIONS.md` — frozen scoring, budget, environment, geography, commute, snapshot and API rules.
-- `docs/OPEN_ISSUES.md` — contradictions and data limitations that still need a decision before implementation.
+- `docs/BLACK_BOX_TESTING.md` - formal EP/BVA, expected/actual matrix and results for profile validation.
+- `docs/WHITE_BOX_TESTING.md` - CFGs, `V(G)`, basis paths and tests for scoring/ranking.
+- `docs/SLA_BENCHMARK.md` - Phase 5 HTTP/OneMap latency benchmark and results.
+- `docs/PHASE5_E2E_CHECKLIST.md` - 18-check Dialog Map end-to-end checklist.
+- `docs/OPEN_ISSUES.md` - accepted data/functional limitations and production-only gaps.
 - `docs/ENVIRONMENT.md` — `.env` setup and variable reference.
 
 ## Environment setup
@@ -246,6 +254,7 @@ make backend    # FastAPI only
 make frontend   # Vite only
 make test          # backend unittest suite
 make test-frontend # frontend Vitest suite
+make benchmark     # Phase 5 SLA benchmark (docs/SLA_BENCHMARK.md)
 make build         # frontend type-check + production build
 make clean
 make help
@@ -308,19 +317,23 @@ run instructions, known gaps and recommended next steps.
 - **Phase 1:** complete (ECB package layout, entity/enum refactor, docstrings,
   stateless controls, environment setup, specifications).
 - **Phase 2:** backend implemented and unit-tested (adapters, retrieval engine,
-  commute service, MCDA scoring, factsheet aggregation, PDF/share URLs and REST
-  handlers).
+  hybrid commute service, 1–10 MCDA scoring, factsheet aggregation, ReportLab
+  PDF/share URLs and REST handlers).
 - **Frontend:** implemented (React 18 + TypeScript + Vite, Leaflet/React-Leaflet,
-  Dexie/IndexedDB profiles and API cache, selection-driven amenity markers, responsive UI,
-  comparison matrix, share-link import and PDF export).
+  Dexie/IndexedDB profiles and API cache, 1–10 preference ratings, hard minimum
+  counts for schools/malls/hospitals, a map refresh control, selection-driven
+  amenity markers, responsive UI, comparison matrix, share-link import and PDF
+  export).
 - **Data assets:** URA subzones, HDB resale prices, town mapping, regional
-  environment baselines, the CBD commute matrix and a 1,172-point amenities
-  snapshot are populated. `DatasetService` refreshes subzone/HDB snapshots from
-  data.gov.sg when older than 24 hours; live PM2.5/UVI/forecast already come
-  from real-time APIs. `ApiCache` uses `/api/v1/data/status` and cache headers
-  for IndexedDB response caching. Amenities are generated from data.gov.sg
-  school/park/MRT/polyclinic datasets plus OneMap hospital/mall layers and LTA
-  major-mall names; run `make amenities` to rebuild the snapshot.
+  environment baselines, the CBD commute matrix, a 1,172-point amenities
+  snapshot and a 28-point tertiary-school supplement are populated.
+  `DatasetService` refreshes subzone/HDB snapshots from data.gov.sg when older
+  than 24 hours; live PM2.5/UVI/forecast already come from real-time APIs.
+  `ApiCache` uses `/api/v1/data/status` and cache headers for IndexedDB response
+  caching. Amenities are generated from data.gov.sg school/park/MRT/polyclinic
+  datasets plus OneMap hospital/mall layers and LTA major-mall names; run
+  `make amenities` to rebuild the snapshot. The map refresh button also rebuilds
+  amenity aggregates from the cached local point snapshot.
 
 Run the backend tests from `Lab4/revised-skeleton/backend`:
 

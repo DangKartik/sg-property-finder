@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from app.control.data_availability_notifier import DataAvailabilityNotifier
 from app.entity.commute_estimate import CommuteEstimate
 from app.entity.criterion_score import CriterionScore
@@ -36,16 +34,6 @@ class WeightedScoringStrategy(ScoringStrategy):
         items = self.scoreCandidates([subzone], profile, {subzone.subzoneCode: commute})
         return items[0].totalScore if items else 0.0
 
-    def computeCriterionScores(
-        self,
-        subzone: Subzone,
-        profile: PreferenceProfile,
-        commute: CommuteEstimate,
-    ) -> list[CriterionScore]:
-        """Return criterion scores for one subzone in a one-candidate cohort."""
-        items = self.scoreCandidates([subzone], profile, {subzone.subzoneCode: commute})
-        return items[0].criterionScores if items else []
-
     def scoreCandidates(
         self,
         subzones: list[Subzone],
@@ -60,7 +48,12 @@ class WeightedScoringStrategy(ScoringStrategy):
         remaining weights are renormalised.
         """
         warning_list = warnings if warnings is not None else []
-        eligible = [subzone for subzone in subzones if self._budgetEligible(subzone, profile)]
+        eligible = [
+            subzone
+            for subzone in subzones
+            if self._budgetEligible(subzone, profile)
+            and self._meetsMinimumAmenities(subzone, profile)
+        ]
         criteria = self.criterionCatalog.getAllCriteria()
 
         # Relative weight normalisation: user ratings are 1–10, but the MCDA
@@ -238,6 +231,26 @@ class WeightedScoringStrategy(ScoringStrategy):
         if subzone.indicators.medianResalePrice is not None:
             return subzone.indicators.medianResalePrice <= profile.budgetMax
         return True
+
+    def _meetsMinimumAmenities(
+        self, subzone: Subzone, profile: PreferenceProfile
+    ) -> bool:
+        """Return whether a subzone meets every hard amenity minimum.
+
+        The filter is skipped when amenity data is unavailable; the scoring
+        strategy already excludes those criteria and attaches warnings in that
+        case, so discarding every subzone would be misleading.
+        """
+        indicators = subzone.indicators
+        if indicators is None or not indicators.amenityDataAvailable:
+            return True
+        return (
+            indicators.primarySchoolCount1km >= profile.minimumPrimarySchools
+            and indicators.secondarySchoolCount1km >= profile.minimumSecondarySchools
+            and indicators.tertiarySchoolCount1km >= profile.minimumTertiarySchools
+            and indicators.mallCount1km >= profile.minimumMalls
+            and indicators.hospitalCount2km >= profile.minimumHospitals
+        )
 
     @staticmethod
     def _priceSortKey(subzone_id: str, subzones: list[Subzone]) -> float:

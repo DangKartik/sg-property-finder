@@ -50,6 +50,11 @@ def profileDtoFromDict(data: dict[str, Any]) -> ProfileDTO:
             isActive=bool(data.get("isActive", True)),
             creationTime=_parseDatetime(data.get("creationTime")),
             lastUpdatedTime=_parseDatetime(data.get("lastUpdatedTime")),
+            minimumPrimarySchools=_parseCount(data.get("minimumPrimarySchools")),
+            minimumSecondarySchools=_parseCount(data.get("minimumSecondarySchools")),
+            minimumTertiarySchools=_parseCount(data.get("minimumTertiarySchools")),
+            minimumMalls=_parseCount(data.get("minimumMalls")),
+            minimumHospitals=_parseCount(data.get("minimumHospitals")),
         )
     except (KeyError, TypeError, ValueError) as exc:
         raise ValueError(f"Invalid profile payload: {exc}") from exc
@@ -71,7 +76,26 @@ def preferenceProfileFromDto(data: ProfileDTO) -> PreferenceProfile:
         isActive=data.isActive,
         criteriaWeights=list(data.criteriaWeights),
         preferredCommuteMode=data.preferredCommuteMode,
+        minimumPrimarySchools=data.minimumPrimarySchools,
+        minimumSecondarySchools=data.minimumSecondarySchools,
+        minimumTertiarySchools=data.minimumTertiarySchools,
+        minimumMalls=data.minimumMalls,
+        minimumHospitals=data.minimumHospitals,
     )
+
+
+def _parseCount(value: Any) -> int:
+    """Parse a non-negative whole-number minimum count."""
+    if value is None or value == "":
+        return 0
+    if isinstance(value, bool):
+        raise ValueError("Minimum amenity counts must be whole numbers")
+    if isinstance(value, float) and not value.is_integer():
+        raise ValueError("Minimum amenity counts must be whole numbers")
+    number = int(value)
+    if number < 0:
+        raise ValueError("Minimum amenity counts cannot be negative")
+    return number
 
 
 def _parseDatetime(value: Any) -> datetime | None:

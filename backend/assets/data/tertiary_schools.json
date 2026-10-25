@@ -1,0 +1,40 @@
+{
+  "metadata": {
+    "source": "MOE General Information of Schools (data.gov.sg) + OpenStreetMap Nominatim",
+    "updatedAt": "2026-10-24",
+    "note": "Junior colleges, Millennia Institute, mixed-level schools offering JC/IB levels, and autonomous universities. Category is Tertiary School for amenity counting within 1 km.",
+    "counts": {
+      "Tertiary School": 28
+    }
+  },
+  "items": [
+    { "name": "ANDERSON SERANGOON JUNIOR COLLEGE", "category": "Tertiary School", "latitude": 1.364888, "longitude": 103.88759 },
+    { "name": "ANGLO-CHINESE JUNIOR COLLEGE", "category": "Tertiary School", "latitude": 1.302607, "longitude": 103.785624 },
+    { "name": "CATHOLIC JUNIOR COLLEGE", "category": "Tertiary School", "latitude": 1.325273, "longitude": 103.835363 },
+    { "name": "EUNOIA JUNIOR COLLEGE", "category": "Tertiary School", "latitude": 1.362051, "longitude": 103.840846 },
+    { "name": "JURONG PIONEER JUNIOR COLLEGE", "category": "Tertiary School", "latitude": 1.385452, "longitude": 103.753924 },
+    { "name": "NANYANG JUNIOR COLLEGE", "category": "Tertiary School", "latitude": 1.351002, "longitude": 103.866616 },
+    { "name": "ST ANDREW'S JUNIOR COLLEGE", "category": "Tertiary School", "latitude": 1.331932, "longitude": 103.863531 },
+    { "name": "TAMPINES MERIDIAN JUNIOR COLLEGE", "category": "Tertiary School", "latitude": 1.376182, "longitude": 103.937868 },
+    { "name": "VICTORIA JUNIOR COLLEGE", "category": "Tertiary School", "latitude": 1.305817, "longitude": 103.919914 },
+    { "name": "YISHUN INNOVA JUNIOR COLLEGE", "category": "Tertiary School", "latitude": 1.424495, "longitude": 103.830528 },
+    { "name": "MILLENNIA INSTITUTE", "category": "Tertiary School", "latitude": 1.351045, "longitude": 103.741142 },
+    { "name": "ANGLO-CHINESE SCHOOL (INDEPENDENT)", "category": "Tertiary School", "latitude": 1.303223, "longitude": 103.780678 },
+    { "name": "DUNMAN HIGH SCHOOL", "category": "Tertiary School", "latitude": 1.299962, "longitude": 103.882942 },
+    { "name": "HWA CHONG INSTITUTION", "category": "Tertiary School", "latitude": 1.326358, "longitude": 103.80329 },
+    { "name": "NATIONAL JUNIOR COLLEGE", "category": "Tertiary School", "latitude": 1.330293, "longitude": 103.804111 },
+    { "name": "NUS HIGH SCHOOL OF MATHEMATICS AND SCIENCE", "category": "Tertiary School", "latitude": 1.306007, "longitude": 103.770153 },
+    { "name": "RAFFLES INSTITUTION", "category": "Tertiary School", "latitude": 1.34629, "longitude": 103.84362 },
+    { "name": "RIVER VALLEY HIGH SCHOOL", "category": "Tertiary School", "latitude": 1.344596, "longitude": 103.708191 },
+    { "name": "SCHOOL OF THE ARTS, SINGAPORE", "category": "Tertiary School", "latitude": 1.299365, "longitude": 103.848687 },
+    { "name": "SINGAPORE SPORTS SCHOOL", "category": "Tertiary School", "latitude": 1.426411, "longitude": 103.789445 },
+    { "name": "ST. JOSEPH'S INSTITUTION", "category": "Tertiary School", "latitude": 1.323653, "longitude": 103.828499 },
+    { "name": "TEMASEK JUNIOR COLLEGE", "category": "Tertiary School", "latitude": 1.35728, "longitude": 103.956186 },
+    { "name": "NATIONAL UNIVERSITY OF SINGAPORE", "category": "Tertiary School", "latitude": 1.295719, "longitude": 103.779036 },
+    { "name": "NANYANG TECHNOLOGICAL UNIVERSITY", "category": "Tertiary School", "latitude": 1.34703, "longitude": 103.682086 },
+    { "name": "SINGAPORE MANAGEMENT UNIVERSITY", "category": "Tertiary School", "latitude": 1.29611, "longitude": 103.849949 },
+    { "name": "SINGAPORE UNIVERSITY OF TECHNOLOGY AND DESIGN", "category": "Tertiary School", "latitude": 1.342244, "longitude": 103.964305 },
+    { "name": "SINGAPORE INSTITUTE OF TECHNOLOGY", "category": "Tertiary School", "latitude": 1.41232, "longitude": 103.909462 },
+    { "name": "SINGAPORE UNIVERSITY OF SOCIAL SCIENCES", "category": "Tertiary School", "latitude": 1.329274, "longitude": 103.776213 }
+  ]
+}

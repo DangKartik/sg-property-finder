@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 from contextlib import asynccontextmanager
 from typing import Any
 
@@ -74,6 +75,11 @@ def createApp(context: AppContext | None = None) -> Any:
 
     @app.get("/api/v1/health")
     def health() -> Any:
+        return respond(handlers.health())
+
+    @app.get("/health")
+    def health_alias() -> Any:
+        """Conventional health-check alias used by probes and containers."""
         return respond(handlers.health())
 
     @app.get("/api/v1/ready")
@@ -184,4 +190,7 @@ def createApp(context: AppContext | None = None) -> Any:
 try:
     app = createApp() if FASTAPI_AVAILABLE else None
 except Exception:  # pragma: no cover - startup configuration is environment-specific
+    logging.getLogger("sgpropfinder.main").exception(
+        "Failed to create the FastAPI application; fix the startup error above."
+    )
     app = None

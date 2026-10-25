@@ -27,6 +27,11 @@ function profileWithWeights(weights: number[]): ProfileDTO {
     isActive: true,
     creationTime: null,
     lastUpdatedTime: null,
+    minimumPrimarySchools: 0,
+    minimumSecondarySchools: 0,
+    minimumTertiarySchools: 0,
+    minimumMalls: 0,
+    minimumHospitals: 0,
   };
 }
 

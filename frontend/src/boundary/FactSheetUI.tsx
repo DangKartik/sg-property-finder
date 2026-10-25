@@ -3,6 +3,7 @@ import type { NeighborhoodDetailsApi } from "../api/contracts";
 import { requireData } from "../api/client";
 import type { NeighborhoodDetailDTO, ProfileDTO } from "../types/dto";
 import { formatDate, formatNumber, formatPrice } from "../utils/format";
+import { groupAmenitiesByCategory } from "../utils/amenities";
 
 export interface FactSheetUIProps {
   subzoneCode: string | null;
@@ -141,7 +142,7 @@ export function FactSheetUI({
             <section className="fact-section">
               <h3>Access & amenities</h3>
               <dl className="fact-list">
-                <div><dt>Schools (1 km)</dt><dd>{detail.indicators?.primarySchoolCount1km ?? 0} primary · {detail.indicators?.secondarySchoolCount1km ?? 0} secondary</dd></div>
+                <div><dt>Schools (1 km)</dt><dd>{detail.indicators?.primarySchoolCount1km ?? 0} primary · {detail.indicators?.secondarySchoolCount1km ?? 0} secondary · {detail.indicators?.tertiarySchoolCount1km ?? 0} tertiary</dd></div>
                 <div><dt>Nearest school</dt><dd>{formatNumber(detail.indicators?.nearestSchoolM, 0)} m</dd></div>
                 <div><dt>Hospitals (2 km)</dt><dd>{detail.indicators?.hospitalCount2km ?? 0}</dd></div>
                 <div><dt>Malls (1 km)</dt><dd>{detail.indicators?.mallCount1km ?? 0}</dd></div>
@@ -165,15 +166,29 @@ export function FactSheetUI({
               {detail.amenities.length === 0 ? (
                 <p className="muted">No amenity points are available for this subzone.</p>
               ) : (
-                <div className="amenity-chips">
-                  {detail.amenities.slice(0, 18).map((amenity) => (
-                    <span className="amenity-chip" key={`${amenity.category}-${amenity.amenityName}`}>
-                      {amenity.amenityName}
-                      <small>
-                        {amenity.category}
-                        {amenity.distanceKm !== null ? ` · ${amenity.distanceKm} km` : ""}
-                      </small>
-                    </span>
+                <div className="amenity-groups">
+                  {groupAmenitiesByCategory(detail.amenities).map((group) => (
+                    <section className="amenity-group" key={group.category}>
+                      <h4>
+                        {group.label}
+                        <span className="badge">{group.items.length}</span>
+                      </h4>
+                      <div className="amenity-chips">
+                        {group.items.map((amenity, index) => (
+                          <span
+                            className="amenity-chip"
+                            key={`${amenity.category}-${amenity.amenityName}-${index}`}
+                          >
+                            {amenity.amenityName}
+                            <small>
+                              {amenity.distanceKm !== null
+                                ? `${amenity.distanceKm} km`
+                                : "distance unavailable"}
+                            </small>
+                          </span>
+                        ))}
+                      </div>
+                    </section>
                   ))}
                 </div>
               )}

@@ -25,3 +25,8 @@ class ProfileDTO:
     isActive: bool = True
     creationTime: datetime | None = None
     lastUpdatedTime: datetime | None = None
+    minimumPrimarySchools: int = 0
+    minimumSecondarySchools: int = 0
+    minimumTertiarySchools: int = 0
+    minimumMalls: int = 0
+    minimumHospitals: int = 0

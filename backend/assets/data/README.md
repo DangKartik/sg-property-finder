@@ -11,6 +11,7 @@ environment readings come from the data.gov.sg real-time APIs.
 subzones.geojson
 planning_area_to_hdb_town.json
 amenities.json
+tertiary_schools.json
 environment_baselines.json
 hdb_resale.csv
 commute_matrix.json
@@ -24,7 +25,8 @@ following real assets are already populated:
 - `planning_area_to_hdb_town.json`
 - `environment_baselines.json`
 - `commute_matrix.json`
-- `amenities.json` (1,172 points; see below)
+- `amenities.json` (1,172 base points; see below)
+- `tertiary_schools.json` (28 JC/university points merged at load time)
 
 If `amenities.json` is absent or unreadable, factsheets return an empty amenity
 list with a `MISSING_SOURCE_DATA` warning and the school/amenity criteria are
@@ -52,7 +54,8 @@ Maps URA planning areas to HDB town names, for example:
 ```
 
 Planning areas without an HDB town should be omitted or mapped to `null`. The
-shipped file is empty on purpose; complete it from HDB's town definitions.
+shipped file is populated with the mapping used by the application; update it
+from HDB's town definitions if the source data changes.
 
 ## `hdb_resale.csv`
 
@@ -82,6 +85,7 @@ contains provenance metadata plus a list of amenity points:
     "method": "buffer_distance_density",
     "radiiKm": {
       "schools": 1.0,
+      "tertiarySchools": 1.0,
       "mrt": 0.8,
       "parks": 0.5,
       "healthcare": 2.0,
@@ -99,12 +103,13 @@ contains provenance metadata plus a list of amenity points:
 }
 ```
 
-Supported categories are `Primary School`, `Secondary School`, `Polyclinic`,
-`Hospital`, `Park`, `Shopping Mall` and `MRT`. The pipeline uses:
+Supported categories are `Primary School`, `Secondary School`, `Tertiary School`,
+`Polyclinic`, `Hospital`, `Park`, `Shopping Mall` and `MRT`. The pipeline uses:
 
 | Category | Source |
 | --- | --- |
 | Primary/secondary schools | MOE **General information of schools** (data.gov.sg), postal codes geocoded with OneMap Search |
+| Tertiary schools | `tertiary_schools.json` supplement: JCs, Millennia Institute, mixed-level JC/IB schools and autonomous universities |
 | Parks | NParks **Parks and Nature Reserves** (data.gov.sg); each polygon is represented by a `representative_point()` |
 | MRT | LTA **MRT Station Exit** (data.gov.sg); exits are grouped into one point per station |
 | Polyclinics | HPB **Breast Screening Centre** + MOH **Vaccination Polyclinics** (data.gov.sg) |
@@ -113,9 +118,14 @@ Supported categories are `Primary School`, `Secondary School`, `Polyclinic`,
 
 **Count method:** buffer-distance density, not point-in-polygon. The backend
 takes each subzone's representative point and counts every amenity point within
-the fixed radius. The radii are 1.0 km for schools and malls, 800 m for MRT,
-500 m for parks, and 2.0 km for polyclinics and hospitals. The factsheet list
-shows all amenities within 2 km, sorted by distance.
+the fixed radius. The radii are 1.0 km for primary/secondary/tertiary schools and
+malls, 800 m for MRT, 500 m for parks, and 2.0 km for polyclinics and hospitals.
+The factsheet list shows all amenities within 2 km, sorted by distance.
+
+`tertiary_schools.json` is merged into the amenity list at load time, so the
+28 tertiary points count toward the hard minimum filters and appear on the map
+without regenerating `amenities.json`. `scripts/build_amenities.py` also reads
+the supplement when rebuilding the snapshot.
 
 `POST /api/v1/data/refresh` reuses the local `amenities.json` point layer as the
 cached raw POI source, recomputes all subzone aggregates in memory, and writes
@@ -160,8 +170,10 @@ Precomputed CBD commute estimates:
 }
 ```
 
-The production matrix should cover all subzones used by the app. Custom
-workplaces use live OneMap routing for a top-50 shortlist.
+The shipped matrix covers 319/332 subzones. Custom workplaces use live OneMap
+routing for a top-50 shortlist; the remainder receive straight-line PT estimates
+so every candidate has a commute value. Missing matrix entries also use the
+straight-line fallback with `ESTIMATED_COMMUTE_FALLBACK`.
 
 ## Attribution
 

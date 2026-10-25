@@ -86,6 +86,12 @@ export interface ProfileDTO {
   isActive: boolean;
   creationTime: string | null;
   lastUpdatedTime: string | null;
+  /** Hard minimum counts; 0 means no constraint. */
+  minimumPrimarySchools: number;
+  minimumSecondarySchools: number;
+  minimumTertiarySchools: number;
+  minimumMalls: number;
+  minimumHospitals: number;
 }
 
 /** Decoded shareable scenario returned by the backend. */
@@ -170,18 +176,6 @@ export interface CommuteEstimateDTO {
   routeGeometry: string | null;
 }
 
-/** Subzone geometry and metadata. */
-export interface SubzoneDTO {
-  subzoneCode: string;
-  subzoneName: string;
-  planningAreaName: string;
-  townName: string;
-  boundaryGeoJson: unknown;
-  regionName: string;
-  centroid: CoordinatesDTO;
-  indicators: SubzoneIndicatorsDTO | null;
-}
-
 /** Precomputed numeric features used by scoring. */
 export interface SubzoneIndicatorsDTO {
   nearestParkM: number | null;
@@ -190,6 +184,7 @@ export interface SubzoneIndicatorsDTO {
   nearestSchoolM: number | null;
   primarySchoolCount1km: number;
   secondarySchoolCount1km: number;
+  tertiarySchoolCount1km: number;
   nearestPolyclinicM: number | null;
   polyclinicCount2km: number;
   nearestHospitalM: number | null;
@@ -198,8 +193,6 @@ export interface SubzoneIndicatorsDTO {
   mallCount1km: number;
   nearestMrtM: number | null;
   mrtStationCount800m: number;
-  parkConnectorLength1km: number;
-  cyclingPathLength1km: number;
   medianResalePrice: number | null;
   medianPricePerSqm: number | null;
   transactionCount12m: number;

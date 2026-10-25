@@ -25,6 +25,23 @@ const FLAT_TYPES = [
   "MULTI-GENERATION",
 ];
 
+type MinimumKey =
+  | "minimumPrimarySchools"
+  | "minimumSecondarySchools"
+  | "minimumTertiarySchools"
+  | "minimumMalls"
+  | "minimumHospitals";
+
+const MINIMUM_FIELDS: Array<{ key: MinimumKey; label: string; radius: string }> = [
+  { key: "minimumPrimarySchools", label: "Primary schools", radius: "within 1 km" },
+  { key: "minimumSecondarySchools", label: "Secondary schools", radius: "within 1 km" },
+  { key: "minimumTertiarySchools", label: "Tertiary schools (JC/university)", radius: "within 1 km" },
+  { key: "minimumMalls", label: "Malls", radius: "within 1 km" },
+  { key: "minimumHospitals", label: "Hospitals", radius: "within 2 km" },
+];
+
+const MAX_MINIMUM_COUNT = 50;
+
 export interface ProfileFormUIProps {
   profileControl: ProfileControl;
   addressSearchApi: AddressSearchApi;
@@ -64,6 +81,13 @@ export function ProfileFormUI({
   const [commuteMode, setCommuteMode] = useState<TransitModeDTO>(
     initialProfile?.preferredCommuteMode ?? "PUBLIC_TRANSIT",
   );
+  const [minimums, setMinimums] = useState<Record<MinimumKey, number>>({
+    minimumPrimarySchools: initialProfile?.minimumPrimarySchools ?? 0,
+    minimumSecondarySchools: initialProfile?.minimumSecondarySchools ?? 0,
+    minimumTertiarySchools: initialProfile?.minimumTertiarySchools ?? 0,
+    minimumMalls: initialProfile?.minimumMalls ?? 0,
+    minimumHospitals: initialProfile?.minimumHospitals ?? 0,
+  });
   const [errors, setErrors] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -93,6 +117,14 @@ export function ProfileFormUI({
         ? current.filter((item) => item !== flatType)
         : [...current, flatType],
     );
+  }
+
+  function updateMinimum(key: MinimumKey, value: string) {
+    const numeric = Number(value);
+    const next = Number.isFinite(numeric)
+      ? Math.max(0, Math.min(MAX_MINIMUM_COUNT, Math.round(numeric)))
+      : 0;
+    setMinimums((current) => ({ ...current, [key]: next }));
   }
 
   async function searchAddress() {
@@ -146,6 +178,17 @@ export function ProfileFormUI({
       setErrors(["Each criterion importance must be between 1 and 10."]);
       return;
     }
+    if (
+      MINIMUM_FIELDS.some(({ key }) => {
+        const value = minimums[key];
+        return !Number.isInteger(value) || value < 0 || value > MAX_MINIMUM_COUNT;
+      })
+    ) {
+      setErrors([
+        `Minimum counts must be whole numbers between 0 and ${MAX_MINIMUM_COUNT}.`,
+      ]);
+      return;
+    }
 
     const data: ProfileDTO = {
       profileId: initialProfile?.profileId ?? null,
@@ -164,6 +207,11 @@ export function ProfileFormUI({
       isActive: true,
       creationTime: initialProfile?.creationTime ?? new Date().toISOString(),
       lastUpdatedTime: new Date().toISOString(),
+      minimumPrimarySchools: minimums.minimumPrimarySchools,
+      minimumSecondarySchools: minimums.minimumSecondarySchools,
+      minimumTertiarySchools: minimums.minimumTertiarySchools,
+      minimumMalls: minimums.minimumMalls,
+      minimumHospitals: minimums.minimumHospitals,
     };
 
     setSaving(true);
@@ -326,6 +374,34 @@ export function ProfileFormUI({
             <option value="WALKING">Walking</option>
           </select>
         </label>
+      </fieldset>
+
+      <fieldset className="field-group">
+        <legend>
+          Amenities
+        </legend>
+        <div className="minimum-grid">
+          {MINIMUM_FIELDS.map(({ key, label, radius }) => (
+            <label className="minimum-field" key={key}>
+              <span>
+                {label}
+                <small>{radius}</small>
+              </span>
+              <input
+                type="number"
+                min={0}
+                max={MAX_MINIMUM_COUNT}
+                step={1}
+                value={minimums[key]}
+                onChange={(event) => updateMinimum(key, event.target.value)}
+              />
+            </label>
+          ))}
+        </div>
+        <p className="hint">
+          Set a value to 0 for no requirement. These are hard filters: a subzone
+          that does not meet the specified number of each amenity is excluded automatically.
+        </p>
       </fieldset>
 
       <fieldset className="field-group">

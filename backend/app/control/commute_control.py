@@ -11,6 +11,7 @@ from typing import Any, TYPE_CHECKING
 
 from app.core.cache import TTLCache
 from app.core.geometry import haversineKm
+from app.core.polyline import mergeEncodedPolylines
 from app.core.time import CBD_LATITUDE, CBD_LONGITUDE, nextWeekdayPeak
 from app.entity.commute_estimate import CommuteEstimate
 from app.entity.enums import DataAvailabilityCode, TransitMode
@@ -18,7 +19,6 @@ from app.entity.types import Coordinates, RetrievalResult
 
 if TYPE_CHECKING:
     from app.adapter.one_map_api_adapter import OneMapApiAdapter
-    from app.container.subzone_registry import SubzoneRegistry
     from app.control.data_availability_notifier import DataAvailabilityNotifier
     from app.entity.subzone import Subzone
 
@@ -38,6 +38,11 @@ _FALLBACK_OVERHEAD_MINUTES = {
     TransitMode.PUBLIC_TRANSIT: 10.0,
     TransitMode.DRIVING: 5.0,
     TransitMode.WALKING: 0.0,
+}
+_HEURISTIC_DISTANCE_MULTIPLIERS = {
+    TransitMode.PUBLIC_TRANSIT: 1.0,
+    TransitMode.DRIVING: 1.35,
+    TransitMode.WALKING: 1.20,
 }
 _MAX_LIVE_CONCURRENCY = 12
 
@@ -135,59 +140,6 @@ class CommuteControl:
         self.cache[key] = estimate
         return estimate
 
-    async def retrieveCommuteAsync(
-        self,
-        origin: Coordinates,
-        destination: Coordinates,
-        mode: TransitMode,
-        departureTime: datetime | None = None,
-        destinationSubzoneCode: str | None = None,
-        warnings: list[Any] | None = None,
-    ) -> CommuteEstimate:
-        """Async variant that prefers the adapter's httpx routing method."""
-        departure = departureTime or nextWeekdayPeak()
-        key = _cacheKey(origin, destination, mode, departure, destinationSubzoneCode)
-        cached = self.cache.get(key)
-        if cached is not None:
-            return cached
-
-        if (
-            destinationSubzoneCode
-            and self.isNearCbd(origin)
-            and mode is TransitMode.PUBLIC_TRANSIT
-        ):
-            matrix_estimate = self._matrixEstimate(destinationSubzoneCode, mode)
-            if matrix_estimate is not None:
-                self.cache[key] = matrix_estimate
-                return matrix_estimate
-            estimate = self._straightLineEstimate(origin, destination, mode, departure)
-            if warnings is not None:
-                warnings.append(
-                    self._fallbackWarning(
-                        destinationSubzoneCode,
-                        mode,
-                        "Commute matrix entry missing",
-                    )
-                )
-            return estimate
-
-        try:
-            estimate = await self._liveEstimateAsync(origin, destination, mode, departure)
-        except CommuteError:
-            estimate = self._straightLineEstimate(origin, destination, mode, departure)
-            if warnings is not None:
-                warnings.append(
-                    self._fallbackWarning(
-                        destinationSubzoneCode,
-                        mode,
-                        "OneMap routing failed",
-                    )
-                )
-            return estimate
-
-        self.cache[key] = estimate
-        return estimate
-
     async def retrieveCommutes(
         self,
         origin: Coordinates,
@@ -198,11 +150,12 @@ class CommuteControl:
     ) -> RetrievalResult[dict[str, CommuteEstimate]]:
         """Return commute estimates for a candidate set.
 
-        Near the CBD, public transport uses the precomputed matrix and falls
-        back to a straight-line estimate for missing entries. Driving and walking
-        never use the public-transport matrix: every subzone is routed live, with
-        a straight-line fallback if OneMap fails. For a custom workplace, the
-        nearest `topK` subzones are routed live.
+        Public transport near the CBD uses the precomputed matrix (with a
+        straight-line fallback for missing entries). Otherwise the nearest
+        `topK` subzones are routed live, while the remainder receive a spatial
+        heuristic estimate with the mode's road/path multiplier. This keeps the
+        commute criterion available for every candidate instead of letting
+        out-of-shortlist subzones skip it and renormalise their other weights.
         """
         departure = departureTime or nextWeekdayPeak()
         warnings: list[Any] = []
@@ -229,19 +182,17 @@ class CommuteControl:
                 estimates[subzone.subzoneCode] = estimate
             return RetrievalResult(estimates, warnings)
 
-        ranked = (
-            list(subzones)
-            if near_cbd
-            else sorted(
-                subzones,
-                key=lambda subzone: haversineKm(
-                    origin.latitude,
-                    origin.longitude,
-                    subzone.centroid.latitude,
-                    subzone.centroid.longitude,
-                ),
-            )[:topK]
+        ranked = sorted(
+            subzones,
+            key=lambda subzone: haversineKm(
+                origin.latitude,
+                origin.longitude,
+                subzone.centroid.latitude,
+                subzone.centroid.longitude,
+            ),
         )
+        live_subzones = ranked[:topK]
+        heuristic_subzones = ranked[topK:]
 
         semaphore = asyncio.Semaphore(_MAX_LIVE_CONCURRENCY)
 
@@ -275,12 +226,27 @@ class CommuteControl:
                         ),
                     )
 
-        results = await asyncio.gather(*(one(subzone) for subzone in ranked))
-        estimates = {}
+        results = await asyncio.gather(*(one(subzone) for subzone in live_subzones))
+        estimates: dict[str, CommuteEstimate] = {}
         for code, estimate, warning in results:
             estimates[code] = estimate
             if warning is not None:
                 warnings.append(warning)
+
+        for subzone in heuristic_subzones:
+            estimates[subzone.subzoneCode] = self._straightLineEstimate(
+                origin,
+                subzone.centroid,
+                mode,
+                departure,
+            )
+            warnings.append(
+                self._fallbackWarning(
+                    subzone.subzoneCode,
+                    mode,
+                    "Outside live-routing shortlist",
+                )
+            )
         return RetrievalResult(estimates, warnings)
 
     def retrieveCommutesSync(
@@ -381,13 +347,13 @@ class CommuteControl:
         mode: TransitMode,
         departure: datetime,
     ) -> CommuteEstimate:
-        """Estimate a commute from straight-line distance and a mode speed."""
+        """Estimate a commute from straight-line distance, mode multiplier and speed."""
         distance_km = haversineKm(
             origin.latitude,
             origin.longitude,
             destination.latitude,
             destination.longitude,
-        )
+        ) * _HEURISTIC_DISTANCE_MULTIPLIERS[mode]
         speed_kmh = _FALLBACK_SPEED_KMH[mode]
         overhead = _FALLBACK_OVERHEAD_MINUTES[mode]
         duration = max(1, math.ceil((distance_km / speed_kmh) * 60.0 + overhead))
@@ -422,17 +388,18 @@ class CommuteControl:
             if plans:
                 best = plans[0]
                 duration_seconds = best.get("duration", 0)
-                distance_m = sum(
-                    leg.get("distance", 0) for leg in best.get("legs", [])
-                )
-                transfers = max(0, len(best.get("legs", [])) - 1)
+                legs = best.get("legs", [])
+                distance_m = sum(leg.get("distance", 0) for leg in legs)
+                transfers = max(0, len(legs) - 1)
                 return CommuteEstimate(
                     durationMinutes=max(1, math.ceil(float(duration_seconds) / 60)),
                     distanceKm=round(float(distance_m) / 1000, 3),
                     transferCount=transfers,
                     travelMode=mode,
                     departureTime=departure,
-                    routeGeometry=payload.get("plan", {}).get("itineraries", [{}])[0].get("legs", [{}])[0].get("legGeometry", {}).get("points"),
+                    routeGeometry=mergeEncodedPolylines(
+                        leg.get("legGeometry", {}).get("points") for leg in legs
+                    ),
                 )
             raise CommuteError("OneMap routing response had no summary")
 

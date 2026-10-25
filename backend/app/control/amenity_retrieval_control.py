@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 
 DISPLAY_RADIUS_KM = 2.0
 SCHOOL_RADIUS_KM = 1.0
+TERTIARY_RADIUS_KM = 1.0
 MRT_RADIUS_KM = 0.8
 PARK_RADIUS_KM = 0.5
 HEALTHCARE_RADIUS_KM = 2.0
@@ -33,6 +34,7 @@ AMENITY_INDICATOR_FIELDS = (
     "nearestSchoolM",
     "primarySchoolCount1km",
     "secondarySchoolCount1km",
+    "tertiarySchoolCount1km",
     "nearestPolyclinicM",
     "polyclinicCount2km",
     "nearestHospitalM",
@@ -60,6 +62,7 @@ class AmenityRetrievalControl(RetrievalControl):
         notifier: DataAvailabilityNotifier,
         amenitiesPath: Path | str | None = None,
         subzoneRegistry: SubzoneRegistry | None = None,
+        tertiaryPath: Path | str | None = None,
     ) -> None:
         """Create the amenity control.
 
@@ -68,10 +71,18 @@ class AmenityRetrievalControl(RetrievalControl):
             notifier: Stateless warning factory.
             amenitiesPath: Optional local JSON/GeoJSON amenity file.
             subzoneRegistry: Registry used to resolve subzone anchors.
+            tertiaryPath: Optional tertiary-school supplement. Defaults to
+                ``tertiary_schools.json`` beside ``amenitiesPath``.
         """
         super().__init__(dataGovAdapter, notifier)
         self.amenitiesPath = Path(amenitiesPath) if amenitiesPath else None
         self.subzoneRegistry = subzoneRegistry
+        if tertiaryPath:
+            self.tertiaryPath = Path(tertiaryPath)
+        elif self.amenitiesPath:
+            self.tertiaryPath = self.amenitiesPath.with_name("tertiary_schools.json")
+        else:
+            self.tertiaryPath = None
         self._amenitiesCache: list[dict[str, Any]] | None = None
         self._amenitiesError = False
 
@@ -121,7 +132,22 @@ class AmenityRetrievalControl(RetrievalControl):
             except Exception:
                 self._amenitiesCache = []
                 self._amenitiesError = True
+            self._amenitiesCache = _mergeAmenityItems(
+                self._amenitiesCache,
+                self._tertiaryAmenities(),
+            )
         return self._amenitiesCache
+
+    def _tertiaryAmenities(self) -> list[dict[str, Any]]:
+        """Load the optional JC/university supplement."""
+        path = self.tertiaryPath
+        if path is None or not path.exists():
+            return []
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return []
+        return _extractAmenityItems(payload)
 
     def retrieveAmenityInfo(self, subzoneCode: str) -> RetrievalResult[list[AmenityInfo]]:
         """Return amenities within the display radius of a subzone."""
@@ -151,7 +177,7 @@ class AmenityRetrievalControl(RetrievalControl):
                 )
             )
         for item in source_rows:
-            category = _category(item)
+            category = _displayCategory(item)
             lat = _optionalFloat(item.get("latitude", item.get("lat")))
             lon = _optionalFloat(item.get("longitude", item.get("lng", item.get("lon"))))
             if not category or lat is None or lon is None:
@@ -242,7 +268,10 @@ class AmenityRetrievalControl(RetrievalControl):
         if path is None or not path.exists():
             raise FileNotFoundError("amenities.json is missing")
         payload = json.loads(path.read_text(encoding="utf-8"))
-        items = _extractAmenityItems(payload)
+        items = _mergeAmenityItems(
+            _extractAmenityItems(payload),
+            self._tertiaryAmenities(),
+        )
         if not items:
             raise ValueError("amenities.json contains no amenity points")
 
@@ -330,6 +359,7 @@ class AmenityRetrievalControl(RetrievalControl):
             nearestSchoolM=_nearestM(rows, "school"),
             primarySchoolCount1km=_count(rows, "school", SCHOOL_RADIUS_KM, subtype="primary"),
             secondarySchoolCount1km=_count(rows, "school", SCHOOL_RADIUS_KM, subtype="secondary"),
+            tertiarySchoolCount1km=_count(rows, "tertiary", TERTIARY_RADIUS_KM),
             nearestPolyclinicM=_nearestM(rows, "polyclinic"),
             polyclinicCount2km=_count(rows, "polyclinic", HEALTHCARE_RADIUS_KM),
             nearestHospitalM=_nearestM(rows, "hospital"),
@@ -354,10 +384,31 @@ def _extractAmenityItems(payload: Any) -> list[dict[str, Any]]:
     return []
 
 
+def _mergeAmenityItems(*groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Merge amenity groups, dropping duplicate category/name pairs."""
+    merged: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
+    for group in groups:
+        for item in group:
+            key = (
+                str(item.get("category") or item.get("type") or item.get("CLASS") or "")
+                .strip()
+                .lower(),
+                str(item.get("name") or item.get("amenityName") or "").strip().lower(),
+            )
+            if key in seen:
+                continue
+            seen.add(key)
+            merged.append(item)
+    return merged
+
+
 def _category(item: dict[str, Any]) -> str:
     raw = str(item.get("category") or item.get("type") or item.get("CLASS") or "").strip().lower()
     if "primary" in raw or "secondary" in raw or raw in {"school", "schools"}:
         return "school"
+    if "tertiary" in raw or "junior college" in raw or "university" in raw:
+        return "tertiary"
     if "polyclinic" in raw:
         return "polyclinic"
     if "hospital" in raw:
@@ -369,6 +420,28 @@ def _category(item: dict[str, Any]) -> str:
     if raw in {"mrt", "lrt", "station"}:
         return "mrt"
     return raw
+
+
+def _displayCategory(item: dict[str, Any]) -> str:
+    """Return the user-facing category while preserving school sub-types."""
+    raw = str(item.get("category") or item.get("type") or item.get("CLASS") or "").strip()
+    lowered = raw.lower()
+    if "primary" in lowered:
+        return "Primary School"
+    if "secondary" in lowered:
+        return "Secondary School"
+    if "tertiary" in lowered or "junior college" in lowered or "university" in lowered:
+        return "Tertiary School"
+    normalized = _category(item)
+    return {
+        "school": "School",
+        "tertiary": "Tertiary School",
+        "polyclinic": "Polyclinic",
+        "hospital": "Hospital",
+        "park": "Park",
+        "mall": "Shopping Mall",
+        "mrt": "MRT",
+    }.get(normalized, raw or normalized.title())
 
 
 def _subtype(item: dict[str, Any]) -> str:

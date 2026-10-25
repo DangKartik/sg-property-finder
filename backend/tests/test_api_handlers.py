@@ -65,6 +65,17 @@ class ApiHandlerTests(unittest.TestCase):
         self.assertTrue(result.success, result.error)
         self.assertEqual(len(result.data["items"]), 3)
 
+    def test_recommendations_apply_hard_minimums(self) -> None:
+        payload = profilePayload()
+        payload["minimumTertiarySchools"] = 1
+        payload["minimumHospitals"] = 1
+        result = handlers.recommendations(payload, self.context)
+        self.assertTrue(result.success, result.error)
+        self.assertEqual(
+            [item["subzoneId"] for item in result.data["items"]],
+            ["TAMPINES01"],
+        )
+
     def test_factsheet(self) -> None:
         result = handlers.factsheet("TAMPINES01", profilePayload(), self.context)
         self.assertTrue(result.success, result.error)

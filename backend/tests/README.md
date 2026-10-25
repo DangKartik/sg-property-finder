@@ -18,6 +18,9 @@ The suite uses local fixtures only; it never calls OneMap or data.gov.sg.
 | `test_commute.py` | CBD matrix, custom routing, cache, next weekday peak |
 | `test_scoring_ranking.py` | budget filter, min-max, missing-data renormalisation, tie-break, ranking |
 | `test_validation.py` | flat types, address lookup, weight boundaries |
+| `test_black_box_validation.py` | formal EP/BVA profile-validation suite (37 methods, 68 logical cases) |
+| `test_white_box.py` | CFG/basis-path suite for scoring and ranking (9 tests) |
+| `test_polyline.py` | encoded-polyline decoding and multi-leg route merging |
 | `test_report.py` | PDF bytes, secure metadata, export, share URL |
 | `test_api_handlers.py` | address, recommendations, factsheet, comparison, report, geometry, criteria |
 | `test_extras.py` | TTL cache, map payload/overlay, top-50 async commute, live environment, profile factory |

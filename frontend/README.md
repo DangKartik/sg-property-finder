@@ -48,7 +48,7 @@ different origin, set `VITE_API_BASE_URL` to the backend origin when building.
 - Data panel refresh button that refreshes subzone/HDB snapshots, rebuilds
   amenities from the local POI snapshot, clears the API cache and reruns the
   active ranking.
-- Vitest/jsdom/Testing Library suite with 21 tests.
+- Vitest/jsdom/Testing Library suite with 27 tests.
 - Reusable notification modal for validation and API errors.
 - Profile plans persist in IndexedDB through Dexie. The backend exposes
   `X-Data-As-Of`/`ETag`/`/api/v1/data/status` for adding API-response caching to

@@ -140,6 +140,17 @@ class ReportControl:
         snapshot = recommendations.profileSnapshot or {}
         profile_name = str(snapshot.get("profileName") or recommendations.profileId)
         flat_types = snapshot.get("selectedFlatTypes") or []
+        minimums = [
+            ("primary schools", snapshot.get("minimumPrimarySchools") or 0),
+            ("secondary schools", snapshot.get("minimumSecondarySchools") or 0),
+            ("tertiary schools", snapshot.get("minimumTertiarySchools") or 0),
+            ("malls", snapshot.get("minimumMalls") or 0),
+            ("hospitals", snapshot.get("minimumHospitals") or 0),
+        ]
+        minimum_text = (
+            ", ".join(f"{value} {label}" for label, value in minimums if value)
+            or "none"
+        )
         profile_summary = " | ".join(
             [
                 f"<b>Profile:</b> {html.escape(profile_name)}",
@@ -151,6 +162,7 @@ class ReportControl:
                 f"{html.escape(str(snapshot.get('workplaceAddress') or '—'))}",
                 f"<b>Commute:</b> "
                 f"{html.escape(str(snapshot.get('preferredCommuteMode') or '—'))}",
+                f"<b>Hard minimums:</b> {html.escape(minimum_text)}",
             ]
         )
 

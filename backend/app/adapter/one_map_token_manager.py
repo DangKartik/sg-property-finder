@@ -56,7 +56,7 @@ class OneMapTokenManager:
         """
         if not email or not password:
             raise OneMapAuthenticationError(
-                "ONEMAP_EMAIL and ONEMAP_PASSWORD must be configured"
+                "ONEMAP_EMAIL and ONEMAP_PASSWORD must be set in the project .env file"
             )
         self.baseUrl = baseUrl.rstrip("/")
         self.email = email
