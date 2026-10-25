@@ -4,12 +4,15 @@ Full-stack neighbourhood recommender for Singapore. This folder is the
 implemented application; `Lab4/Skeleton Code` is the original skeleton and is
 kept only for project history.
 
+**New here?** Follow [`HOW_TO_RUN.md`](HOW_TO_RUN.md) for step-by-step setup,
+dependency installation and run commands.
+
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
 PDF and REST endpoints are implemented and covered by 145 `unittest` tests. The
 React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison,
 enriched PDF export (ReportLab), share-link import, IndexedDB API caching,
 data-refresh control on the map, hard amenity minimums and selection-driven amenity
-markers, with 23 Vitest tests. Formal black-box/white-box testing and Phase 5
+markers, with 27 Vitest tests. Formal black-box/white-box testing and Phase 5
 SLA/E2E documentation are in `docs/`.
 
 ## Structure

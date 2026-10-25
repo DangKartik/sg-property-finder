@@ -90,7 +90,7 @@ make dev
 make backend    # FastAPI only
 make frontend   # Vite only
 make test       # backend unittest suite (145 tests)
-make test-frontend # frontend Vitest suite (23 tests)
+make test-frontend # frontend Vitest suite (27 tests)
 make benchmark  # Phase 5 SLA benchmark
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
@@ -164,7 +164,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 | Hybrid commute shortlist | **Completed** (50 live + spatial heuristics) |
 | 1–10 criterion importance | **Completed** (relative-normalised) |
 | Hard amenity minimums | **Completed** (primary/secondary/tertiary schools, malls, hospitals) |
-| Frontend tests | **Completed** (23 Vitest tests) |
+| Frontend tests | **Completed** (27 Vitest tests) |
 | PDF generation | **Completed** (ReportLab only) |
 | Production deployment/CI | **Not completed** |
 
@@ -408,7 +408,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 ### 4.4 Testing and verification
 
 - **145 backend tests pass** via `make test`.
-- **23 frontend Vitest tests pass** via `npm test`.
+- **27 frontend Vitest tests pass** via `npm test`.
 - Frontend tests cover format/polyline helpers, weight migration, nearby amenity
   filtering/colours, `ApiCache` persistence/pruning, client cache reuse/stale
   fallback, refresh cache invalidation, hard-minimum form submission and top-20
@@ -507,7 +507,7 @@ Supporting scripts:
 - **Comparison outside top 20:** `RankingControl.generateRankedRecommendations`
   accepts an optional `limit`; the comparison endpoint passes `limit=None` so
   subzones outside the displayed top 20 still receive score items.
-- **Frontend tests:** Vitest/jsdom/Testing Library with 23 tests covering format
+- **Frontend tests:** Vitest/jsdom/Testing Library with 27 tests covering format
   helpers, polyline decoding, weight migration, nearby amenity filtering/colours,
   `ApiCache`, client cache reuse/stale fallback, hard-minimum form submission,
   refresh cache invalidation and top-20 `ResultsListUI` rendering.
@@ -590,7 +590,7 @@ Supporting scripts:
 
 10. **Frontend unit testing — resolved 22 October 2026.**
     - Vitest + jsdom + Testing Library are configured.
-    - 23 tests cover format/polyline helpers, weight migration, nearby amenity
+    - 27 tests cover format/polyline helpers, weight migration, nearby amenity
       filtering, `ApiCache`, client cache reuse/stale fallback, hard-minimum
       form submission and `ResultsListUI` rendering.
     - `npm run build` remains the production build check.
@@ -766,7 +766,7 @@ Supporting scripts:
 | Check | Result |
 | --- | --- |
 | `make test` | **145 tests OK** |
-| `npm test` | **23 frontend tests OK** |
+| `npm test` | **27 frontend tests OK** |
 | Black-box validation suite | **37 methods / 68 logical cases OK** — see `docs/BLACK_BOX_TESTING.md` |
 | White-box scoring/ranking suite | **9 tests / 7 basis paths OK** - see `docs/WHITE_BOX_TESTING.md` |
 | SLA benchmark | **Passed** — cold recommendations p95 2.27 s; warm p95 0.28 s; see `docs/SLA_BENCHMARK.md` |

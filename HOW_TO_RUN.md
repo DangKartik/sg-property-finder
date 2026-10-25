@@ -1,0 +1,233 @@
+# How to Run SG Property Finder
+
+A short setup guide for the web app in this folder (`Lab4/revised-skeleton`).
+
+Run every `make` command from the folder that contains the `Makefile` — that is
+the `revised-skeleton` folder.
+
+## 1. Open the app folder
+
+Start from the repository root (`2006-SCMB-D2`).
+
+### Windows (PowerShell)
+
+```powershell
+cd "C:\path\to\2006-SCMB-D2"
+cd Lab4\revised-skeleton
+```
+
+If you are already inside the repository root:
+
+```powershell
+cd Lab4\revised-skeleton
+```
+
+### macOS / Linux
+
+```bash
+cd /path/to/2006-SCMB-D2
+cd Lab4/revised-skeleton
+```
+
+If you are already inside the repository root:
+
+```bash
+cd Lab4/revised-skeleton
+```
+
+Confirm you are in the correct folder:
+
+```powershell
+# Windows
+Get-Location
+Test-Path Makefile
+```
+
+```bash
+# macOS / Linux
+pwd
+ls Makefile
+```
+
+`Test-Path Makefile` should print `True`, and `ls Makefile` should list the file.
+
+## 2. Check the tools
+
+The app needs:
+
+- Python 3.11 or newer
+- Node.js 20 or newer (npm is included)
+- GNU Make
+
+Check the installed versions:
+
+```powershell
+python --version
+node --version
+npm --version
+make --version
+```
+
+If Python or Node.js is missing on Windows, install them with `winget`:
+
+```powershell
+winget install --id Python.Python.3.13 -e --accept-source-agreements --accept-package-agreements
+winget install --id OpenJS.NodeJS.LTS -e --accept-source-agreements --accept-package-agreements
+```
+
+Close and reopen the terminal after installing, then run the version checks
+again.
+
+## 3. Install GNU Make
+
+### Windows (recommended)
+
+`winget` is included with the Windows App Installer. Install GNU Make with:
+
+```powershell
+winget install --id ezwinports.make -e --accept-source-agreements --accept-package-agreements
+```
+
+Close and reopen the terminal, then verify:
+
+```powershell
+make --version
+```
+
+If `ezwinports.make` is unavailable, use the GnuWin32 build instead:
+
+```powershell
+winget install --id GnuWin32.Make -e --accept-source-agreements --accept-package-agreements
+```
+
+If `winget` is not recognised, install **App Installer** from the Microsoft
+Store first.
+
+### macOS
+
+Install the Xcode Command Line Tools, which include `make`:
+
+```bash
+xcode-select --install
+```
+
+Verify:
+
+```bash
+make --version
+```
+
+### Ubuntu / Debian
+
+```bash
+sudo apt update
+sudo apt install -y make
+make --version
+```
+
+### Fedora
+
+```bash
+sudo dnf install -y make
+make --version
+```
+
+If `make` is still not recognised after installation, close and reopen the
+terminal so the updated `PATH` is loaded.
+
+## 4. Create the environment file
+
+Copy the example environment file and fill in the OneMap credentials.
+
+### Windows
+
+```powershell
+Copy-Item .env.example .env
+notepad .env
+```
+
+### macOS / Linux
+
+```bash
+cp .env.example .env
+nano .env
+```
+
+At minimum, set:
+
+```dotenv
+ONEMAP_EMAIL=your-onemap-email
+ONEMAP_PASSWORD=your-onemap-password
+```
+
+`DATA_GOV_SG_API_KEY` is optional and only raises data.gov.sg rate limits.
+Do not commit `.env`; it is already ignored by Git.
+
+## 5. Install the dependencies
+
+From the `revised-skeleton` folder:
+
+```powershell
+make install
+```
+
+This installs the Python backend packages and the frontend npm packages.
+
+On Windows, if the `python` command is not available, use the Python launcher:
+
+```powershell
+make PYTHON=py install
+```
+
+## 6. Run the app
+
+```powershell
+make dev
+```
+
+This starts:
+
+- FastAPI backend: <http://127.0.0.1:8000>
+- Vite frontend: <http://localhost:5173>
+
+The browser should open automatically. If it does not, open
+<http://localhost:5173> manually.
+
+Check that the backend is running:
+
+<http://127.0.0.1:8000/api/v1/health>
+
+Press **Ctrl+C** in the terminal to stop both servers.
+
+## Make command reference
+
+Run these from the `revised-skeleton` folder.
+
+| Command | What it does |
+| --- | --- |
+| `make help` | List all available targets |
+| `make install` | Install backend and frontend dependencies |
+| `make install-backend` | Install only the Python backend dependencies |
+| `make install-frontend` | Install only the frontend npm dependencies |
+| `make dev` | Start FastAPI and Vite together |
+| `make backend` | Start only FastAPI on port 8000 |
+| `make frontend` | Start only Vite on port 5173 |
+| `make test` | Run the backend test suite |
+| `make test-frontend` | Run the frontend Vitest suite |
+| `make build` | Type-check and build the frontend |
+| `make benchmark` | Run the Phase 5 SLA benchmark |
+| `make amenities` | Rebuild `backend/assets/data/amenities.json` |
+| `make clean` | Remove `frontend/dist` and Python caches |
+
+## Troubleshooting
+
+| Problem | Fix |
+| --- | --- |
+| `make` is not recognised | Reopen the terminal, run `make --version`, and reinstall GNU Make if needed |
+| `python` is not recognised | Reopen the terminal, or use `make PYTHON=py install` and `make PYTHON=py dev` |
+| `npm` is not recognised | Install Node.js 20+ and reopen the terminal |
+| Port 8000 or 5173 is already in use | Press **Ctrl+C** in the other running instance, then run `make dev` again |
+| Address search or routes fail | Check `ONEMAP_EMAIL` and `ONEMAP_PASSWORD` in `.env` |
+| Dependencies fail to install | Confirm Python is 3.11+ and Node.js is 20+, then run `make install` again |
+
+For all backend configuration options, see [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md).
