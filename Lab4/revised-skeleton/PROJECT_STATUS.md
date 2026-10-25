@@ -360,7 +360,9 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - hard minimum inputs for primary, secondary and tertiary schools, malls and
     hospitals; subzones below any minimum are discarded before scoring,
   - 1–10 importance sliders per criterion; ratings are normalised by the backend.
-- Saved-plan selector with active badge, disabled delete with tooltip when only one plan exists, and delete confirmation.
+- Top-right plan dropdown showing the current plan; every row has its own Edit and Delete actions, plus delete confirmation and a one-plan guard.
+- Plan creation/editing opens in a centered modal with internal scrolling.
+- Right sidebar is reserved for recommendations; the map occupies the main left column.
 - Map:
   - OneMap tiles,
   - subzone choropleth,
@@ -373,18 +375,19 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - top-20 ranked cards,
   - comparison checkboxes,
   - factsheet button,
-  - warning count.
+  - warning count,
+  - Export Recommendations to PDF button inside the recommendations panel.
 - Share import:
   - reads `?share=`, decodes via `/api/v1/share/decode`,
   - saves the profile to Dexie, activates it and reruns ranking,
   - highlights shared subzone polygons and fills comparison selection.
-- Data panel:
-  - “Refresh data” button calls `POST /api/v1/data/refresh`,
+- Map refresh button:
+  - the “Refresh” button at the bottom-left of the map calls `POST /api/v1/data/refresh`,
   - refreshes subzone/HDB snapshots and rebuilds amenities from the cached
     local POI layer,
   - clears the IndexedDB API cache on success,
-  - reloads amenity points, updates the freshness display and reruns the active
-    ranking.
+  - reloads amenity points, updates the header freshness display and reruns the
+    active ranking.
 - Factsheet modal:
   - multi-flat pricing,
   - town-level proxy badge and note,
@@ -508,10 +511,10 @@ Supporting scripts:
   helpers, polyline decoding, weight migration, nearby amenity filtering/colours,
   `ApiCache`, client cache reuse/stale fallback, hard-minimum form submission,
   refresh cache invalidation and top-20 `ResultsListUI` rendering.
-- **Data refresh UI:** the Data panel exposes a refresh button that calls
+- **Data refresh UI:** the map’s bottom-left “Refresh” button calls
   `POST /api/v1/data/refresh`, refreshes subzone/HDB data, rebuilds amenities
   from the local POI snapshot, clears `ApiCache`, reloads amenity points,
-  updates the status display and reruns the active ranking.
+  updates the header status and reruns the active ranking.
 - **PDF generation:** ReportLab Platypus only; WeasyPrint, its requirement and
   native Pango/GObject dependencies were removed. The report includes profile
   importance weights, per-subzone criterion scores, data dates and caveats.
@@ -720,8 +723,8 @@ Supporting scripts:
 | File | Purpose |
 | --- | --- |
 | `frontend/src/App.tsx` | Application state/orchestration |
-| `frontend/src/boundary/ProfileFormUI.tsx` | Plan form, 1–10 importance ratings, address search |
-| `frontend/src/boundary/ProfileSelectorUI.tsx` | Saved plans/delete guard |
+| `frontend/src/boundary/ProfileFormUI.tsx` | Plan creation/edit modal content, 1-10 importance ratings, address search |
+| `frontend/src/boundary/ProfileSelectorUI.tsx` | Top-right plan dropdown with per-row Edit/Delete |
 | `frontend/src/boundary/ResultsListUI.tsx` | Ranked cards/comparison selection |
 | `frontend/src/boundary/NeighborhoodMapUI.tsx` | Leaflet choropleth, route and selected-subzone amenity markers |
 | `frontend/src/boundary/FactSheetUI.tsx` | Factsheet modal |

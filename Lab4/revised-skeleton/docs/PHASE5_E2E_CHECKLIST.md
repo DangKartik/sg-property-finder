@@ -46,36 +46,36 @@ for Phase 5:
 
 | ID | Check | Expected | Actual | Status |
 | --- | --- | --- | --- | --- |
-| E2E-01 | Initial load and data panel | App loads; 332 subzones, HDB and amenity counts shown | 332 subzones, 243,500 HDB transactions, 1,200 amenities | Pass |
-| E2E-02 | Create plan with hard minimums and address | Plan saves; address resolves; ranking starts | `E2E Phase 5` saved; `PASIR RIS MRT STATION (EW1)` selected; minima all `1`; commute weight `10` | Pass |
+| E2E-01 | Initial load and layout | App loads; top-right plan toolbar, map left and recommendations right render | App loaded; plan toolbar in header, map left, Recommendations panel right | Pass |
+| E2E-02 | Create plan in modal with hard minimums and address | Modal opens; plan saves; address resolves; ranking starts | `E2E Phase 5` saved from the centered modal; `PASIR RIS MRT STATION (EW1)` selected; minima all `1`; commute weight `10` | Pass |
 | E2E-03 | Ranked results | Result cards render; cap respected | Results rendered; 17 cards under the hard filters; top entries were Pasir Ris/Tampines subzones | Pass |
 | E2E-04 | Factsheet grouped amenities | Title-cased category sections with counts | Primary Schools 12, Secondary Schools 10, Tertiary Schools 2, Polyclinics 2, Hospitals 2, Parks 15, Malls 8, MRTs / LRTs 5 | Pass |
 | E2E-05 | Map selection and amenities | Selected subzone reflected; nearby amenities shown | `Selected: TAMPINES EAST`; `Nearby amenities` section present | Pass |
 | E2E-06 | Compare two subzones | Comparison matrix opens with metrics | Overall score, commute, pricing, environment, schools, hospitals, malls and MRT rows rendered; best = TAMPINES EAST | Pass |
 | E2E-07 | Compare more than four | Fifth selection rejected with notification | `Comparison limit reached — Select at most four neighbourhoods.` | Pass |
-| E2E-08 | PDF export | PDF generated with expiry and share URL | `SGPropFinder_Report_2015438c.pdf`, 6.9 KB, expiry shown, share URL populated | Pass |
+| E2E-08 | PDF export from Recommendations panel | Export Recommendations to PDF opens the report modal; PDF generated with expiry and share URL | `SGPropFinder_Report_2015438c.pdf`, 6.9 KB, expiry shown, share URL populated | Pass |
 | E2E-09 | Share URL import | Active plan restored; comparison selection filled | `E2E Phase 5` active; `Compare (2)` filled from shared codes | Pass |
 | E2E-10 | Reload persistence | Saved plan and ranking survive reload | `E2E Pasir Ris` still active after reload; results rendered | Pass |
-| E2E-11 | Delete confirmation and guard | Cancel keeps plan; confirm deletes; last plan protected | Cancel kept `E2E Phase 5`; confirm removed it; one-plan guard disabled delete | Pass |
+| E2E-11 | Delete confirmation and guard | Row Delete opens confirmation; Cancel keeps plan; confirm deletes; last plan protected | Plan-dropdown Delete canceled safely, confirmed deletion of `E2E Phase 5`, one-plan guard disabled delete | Pass |
 | E2E-12 | Invalid form | Missing workplace blocked with message | `Search for and select a workplace address before saving.` | Pass |
 | E2E-13 | Address search failure | Invalid query shows failure notification | `Address search failed — Address not Found. Enter a valid postal code or building name.` | Pass |
-| E2E-14 | Data refresh | Refresh updates sources, rebuilds amenities and reranks | `Data refreshed`; source changed to `Live data.gov.sg`; 332/243,500/1,200; ranking reran | Pass |
+| E2E-14 | Map refresh | Bottom-left Refresh button updates sources, rebuilds amenities and reranks | `Data refreshed`; source changed to `Live data.gov.sg`; ranking reran with 20 results | Pass |
 | E2E-15 | API outage | Failure notification; no blank/crashed UI | `Ranking failed — Cannot reach the backend. Is FastAPI running on port 8000?`; previous results remained visible | Pass |
 | E2E-16 | Health endpoints | Both health paths return 200 | `/health` 200; `/api/v1/health` 200 | Pass |
 | E2E-17 | Report expiry | Expired/missing report returns 404 | `GET /api/v1/reports/download/does-not-exist` → 404 | Pass |
-| E2E-18 | Mobile layout | Single-column layout at 390 px width | `innerWidth=390`; `matchMedia(980px)` and `matchMedia(620px)` true; `.app-grid` one column (354.7 px); header stacked | Pass |
+| E2E-18 | Mobile layout | Single-column layout at 390 px width | `innerWidth=390`; `matchMedia(760px)` and `matchMedia(620px)` true; `.app-grid` one column; header stacked | Pass |
 
 ## 4. Evidence notes
 
 ### E2E-01 — Initial load
 
-The data panel showed:
+The header displayed the data source and freshness:
 
 ```text
-332 subzones loaded
-HDB: 243,500 transactions
-Amenities snapshot: 1,200 points
+Data.gov.sg snapshot · 24/10/2026, 11:32:38 pm
 ```
+
+The map and the Recommendations panel rendered without page-level scrolling.
 
 ### E2E-02 — Plan creation
 
@@ -144,9 +144,9 @@ This removes the plan from this browser's IndexedDB. It cannot be undone.
 `Cancel` preserved the plan; `Delete plan` removed it. With only one plan left,
 the delete button remained disabled with the one-plan guard message.
 
-### E2E-14 — Data refresh
+### E2E-14 — Map refresh
 
-The refresh completed with:
+The bottom-left map Refresh button completed with:
 
 ```text
 Data refreshed
@@ -169,7 +169,7 @@ active and the computed layout was single-column:
 
 ```text
 window.innerWidth = 390
-matchMedia('(max-width: 980px)') = true
+matchMedia('(max-width: 760px)') = true
 matchMedia('(max-width: 620px)') = true
 .app-grid grid-template-columns = 354.667px
 .app-header flex-direction = column

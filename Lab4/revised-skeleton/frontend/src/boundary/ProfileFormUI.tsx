@@ -378,7 +378,7 @@ export function ProfileFormUI({
 
       <fieldset className="field-group">
         <legend>
-          Hard minimums <span className="muted">(subzones below any value are discarded)</span>
+          Amenities
         </legend>
         <div className="minimum-grid">
           {MINIMUM_FIELDS.map(({ key, label, radius }) => (
@@ -400,7 +400,7 @@ export function ProfileFormUI({
         </div>
         <p className="hint">
           Set a value to 0 for no requirement. These are hard filters: a subzone
-          that does not meet every minimum is removed before scoring.
+          that does not meet the specified number of each amenity is excluded automatically.
         </p>
       </fieldset>
 

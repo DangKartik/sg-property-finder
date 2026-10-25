@@ -360,9 +360,18 @@ export default function App() {
             {sourceLabel}
             {subzoneStatus?.dataAsOf && <> · {formatDate(subzoneStatus.dataAsOf)}</>}
           </div>
-          <button className="button" onClick={openExport} disabled={!activeProfile}>
-            Export PDF
-          </button>
+          <ProfileSelectorUI
+            profiles={profiles}
+            activeProfileId={activeProfileId}
+            busy={busy}
+            onSelect={(id) => void handleSelectProfile(id)}
+            onEdit={(id) => {
+              const profile = profiles.find((item) => item.profileId === id) ?? null;
+              setEditingProfile(profile);
+              setShowForm(true);
+            }}
+            onDelete={(id) => void handleDeleteProfile(id)}
+          />
           <button
             className="button primary"
             onClick={() => {
@@ -382,111 +391,6 @@ export default function App() {
         </main>
       ) : (
         <main className="app-grid">
-          <aside className="sidebar">
-            <ProfileSelectorUI
-              profiles={profiles}
-              activeProfileId={activeProfileId}
-              busy={busy}
-              onSelect={(id) => void handleSelectProfile(id)}
-              onCreate={() => {
-                setEditingProfile(null);
-                setShowForm(true);
-              }}
-              onDelete={(id) => void handleDeleteProfile(id)}
-            />
-
-            {activeProfile && !showForm && (
-              <div className="active-plan-actions">
-                <span>
-                  Active: <strong>{activeProfile.profileName}</strong>
-                </span>
-                <button
-                  className="link-button"
-                  onClick={() => {
-                    setEditingProfile(activeProfile);
-                    setShowForm(true);
-                  }}
-                >
-                  Edit
-                </button>
-              </div>
-            )}
-
-            {showForm && (
-              <ProfileFormUI
-                key={editingProfile?.profileId ?? "new-profile"}
-                profileControl={profileControl}
-                addressSearchApi={api}
-                criteria={criteria}
-                initialProfile={editingProfile}
-                onSaved={(id) => void handleSaved(id)}
-                onCancel={() => {
-                  setShowForm(false);
-                  setEditingProfile(null);
-                }}
-                onNotify={notify}
-              />
-            )}
-
-            {!showForm && (
-              <ResultsListUI
-                recommendationSet={recommendations}
-                selectedSubzoneId={selectedSubzoneId}
-                comparisonIds={comparisonIds}
-                loading={busy}
-                onSelect={selectSubzone}
-                onToggleCompare={toggleComparison}
-                onOpenComparison={openComparison}
-                onOpenFactsheet={(code) => setFactsheetCode(code)}
-              />
-            )}
-
-            <section className="panel data-note">
-              <p className="eyebrow">Data</p>
-              <p>
-                {sourceLabel}.{" "}
-                {subzoneStatus?.recordCount
-                  ? `${subzoneStatus.recordCount} subzones loaded.`
-                  : "Subzone snapshot loaded."}
-              </p>
-              {dataStatus?.hdb && (
-                <p className="muted">
-                  HDB: {dataStatus.hdb.recordCount.toLocaleString("en-SG")} transactions
-                  {dataStatus.hdb.isStale ? " · stale fallback" : ""}
-                </p>
-              )}
-              {dataStatus?.amenities ? (
-                <p className="muted">
-                  Amenities snapshot: {dataStatus.amenities.recordCount.toLocaleString("en-SG")} points
-                  {dataStatus.amenities.isStale ? " · stale fallback" : ""}
-                </p>
-              ) : amenities.length > 0 ? (
-                <p className="muted">
-                  Amenities: {amenities.length.toLocaleString("en-SG")} points available
-                </p>
-              ) : null}
-              {subzoneStatus?.isStale && (
-                <p className="warning-text">Snapshot is older than the configured refresh window.</p>
-              )}
-              <div className="data-refresh-row">
-                <button
-                  className="button small"
-                  onClick={() => void handleRefreshData()}
-                  disabled={refreshingData || busy}
-                >
-                  {refreshingData ? "Refreshing…" : "Refresh data"}
-                </button>
-                {refreshingData && (
-                  <span className="muted">Fetching subzone and HDB snapshots…</span>
-                )}
-              </div>
-              <p className="hint">
-                Refreshes subzone and HDB snapshots from data.gov.sg. Amenity data
-                is rebuilt with <code>make amenities</code>.
-              </p>
-            </section>
-          </aside>
-
           <section className="map-column">
             <NeighborhoodMapUI
               mapData={mapData}
@@ -498,6 +402,8 @@ export default function App() {
               routeOrigin={activeProfile?.anchorCoordinates ?? null}
               routeDestination={routeDestination}
               onSelect={selectSubzone}
+              onRefresh={() => void handleRefreshData()}
+              refreshing={refreshingData || busy}
             />
             {selectedSubzoneId && (
               <div className="map-selection-bar">
@@ -510,7 +416,51 @@ export default function App() {
               </div>
             )}
           </section>
+
+          <aside className="sidebar recommendations-sidebar">
+            <ResultsListUI
+              recommendationSet={recommendations}
+              selectedSubzoneId={selectedSubzoneId}
+              comparisonIds={comparisonIds}
+              loading={busy}
+              onSelect={selectSubzone}
+              onToggleCompare={toggleComparison}
+              onOpenComparison={openComparison}
+              onOpenFactsheet={(code) => setFactsheetCode(code)}
+              onExport={openExport}
+              exportDisabled={!activeProfile}
+            />
+          </aside>
         </main>
+      )}
+
+      {showForm && (
+        <div className="modal-backdrop" role="presentation" onMouseDown={() => {
+          setShowForm(false);
+          setEditingProfile(null);
+        }}>
+          <section
+            className="modal plan-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Preference plan editor"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <ProfileFormUI
+              key={editingProfile?.profileId ?? "new-profile"}
+              profileControl={profileControl}
+              addressSearchApi={api}
+              criteria={criteria}
+              initialProfile={editingProfile}
+              onSaved={(id) => void handleSaved(id)}
+              onCancel={() => {
+                setShowForm(false);
+                setEditingProfile(null);
+              }}
+              onNotify={notify}
+            />
+          </section>
+        </div>
       )}
 
       {factsheetCode && activeProfile && (

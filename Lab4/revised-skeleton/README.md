@@ -8,7 +8,7 @@ kept only for project history.
 PDF and REST endpoints are implemented and covered by 145 `unittest` tests. The
 React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison,
 enriched PDF export (ReportLab), share-link import, IndexedDB API caching,
-data-refresh controls, hard amenity minimums and selection-driven amenity
+data-refresh control on the map, hard amenity minimums and selection-driven amenity
 markers, with 23 Vitest tests. Formal black-box/white-box testing and Phase 5
 SLA/E2E documentation are in `docs/`.
 
@@ -135,7 +135,7 @@ revised-skeleton/
 | Diagram class | Location | Note |
 | --- | --- | --- |
 | `ProfileFormUI` | `frontend/src/boundary/ProfileFormUI.tsx` | React component; includes workplace address search. |
-| `ProfileSelectorUI` | `frontend/src/boundary/ProfileSelectorUI.tsx` | React component. |
+| `ProfileSelectorUI` | `frontend/src/boundary/ProfileSelectorUI.tsx` | Top-right plan dropdown with per-row Edit/Delete. |
 | `ResultsListUI` | `frontend/src/boundary/ResultsListUI.tsx` | React component. |
 | `NeighborhoodMapUI` | `frontend/src/boundary/NeighborhoodMapUI.tsx` | React + Leaflet. |
 | `FactSheetUI` | `frontend/src/boundary/FactSheetUI.tsx` | Pricing is keyed by flat type. |
@@ -318,7 +318,7 @@ run instructions, known gaps and recommended next steps.
   PDF/share URLs and REST handlers).
 - **Frontend:** implemented (React 18 + TypeScript + Vite, Leaflet/React-Leaflet,
   Dexie/IndexedDB profiles and API cache, 1–10 preference ratings, hard minimum
-  counts for schools/malls/hospitals, data-refresh controls, selection-driven
+  counts for schools/malls/hospitals, a map refresh control, selection-driven
   amenity markers, responsive UI, comparison matrix, share-link import and PDF
   export).
 - **Data assets:** URA subzones, HDB resale prices, town mapping, regional
@@ -329,7 +329,7 @@ run instructions, known gaps and recommended next steps.
   `ApiCache` uses `/api/v1/data/status` and cache headers for IndexedDB response
   caching. Amenities are generated from data.gov.sg school/park/MRT/polyclinic
   datasets plus OneMap hospital/mall layers and LTA major-mall names; run
-  `make amenities` to rebuild the snapshot. The Data panel refresh also rebuilds
+  `make amenities` to rebuild the snapshot. The map refresh button also rebuilds
   amenity aggregates from the cached local point snapshot.
 
 Run the backend tests from `Lab4/revised-skeleton/backend`:

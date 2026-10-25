@@ -10,6 +10,8 @@ export interface ResultsListUIProps {
   onToggleCompare: (subzoneId: string) => void;
   onOpenComparison: () => void;
   onOpenFactsheet: (subzoneId: string) => void;
+  onExport: () => void;
+  exportDisabled: boolean;
 }
 
 /** Ranked subzone cards; synchronized with the map by subzone code. */
@@ -22,6 +24,8 @@ export function ResultsListUI({
   onToggleCompare,
   onOpenComparison,
   onOpenFactsheet,
+  onExport,
+  exportDisabled,
 }: ResultsListUIProps) {
   const items = recommendationSet?.items ?? [];
 
@@ -38,6 +42,17 @@ export function ResultsListUI({
           onClick={onOpenComparison}
         >
           Compare ({comparisonIds.length})
+        </button>
+      </div>
+
+      <div className="results-tools">
+        <button
+          className="button small"
+          onClick={onExport}
+          disabled={exportDisabled}
+          title="Export the current recommendations as a PDF"
+        >
+          Export Recommendations to PDF
         </button>
       </div>
 
