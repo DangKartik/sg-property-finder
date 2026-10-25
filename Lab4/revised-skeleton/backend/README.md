@@ -35,6 +35,7 @@ snapshots are older than 24 hours. `/api/v1/data/status` exposes source, snapsho
 - `subzones.geojson`
 - `planning_area_to_hdb_town.json`
 - `amenities.json`
+- `tertiary_schools.json`
 - `environment_baselines.json`
 - `hdb_resale.csv`
 - `commute_matrix.json`
@@ -48,11 +49,6 @@ app starts with an empty registry or falls back to the data.gov.sg adapter.
   otherwise (`app/core/geometry.py`).
 - PDF generation uses ReportLab Platypus exclusively. WeasyPrint and its native
   Pango/GObject dependencies are not required.
-
-```bash
-docker build -t sgpropfinder-backend .
-docker run --env-file .env -p 8000:8000 sgpropfinder-backend
-```
 - OneMap credentials are read from `.env` via `Settings.fromEnv()`. Token refresh
   is handled by `OneMapTokenManager` five minutes before expiry.
 - `httpx` is used for parallel async routing when installed; otherwise the

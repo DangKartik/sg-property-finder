@@ -54,7 +54,8 @@ Maps URA planning areas to HDB town names, for example:
 ```
 
 Planning areas without an HDB town should be omitted or mapped to `null`. The
-shipped file is empty on purpose; complete it from HDB's town definitions.
+shipped file is populated with the mapping used by the application; update it
+from HDB's town definitions if the source data changes.
 
 ## `hdb_resale.csv`
 
@@ -169,9 +170,10 @@ Precomputed CBD commute estimates:
 }
 ```
 
-The production matrix should cover all subzones used by the app. Custom
-workplaces use live OneMap routing for a top-50 shortlist; the remainder receive
-straight-line PT estimates so every candidate has a commute value.
+The shipped matrix covers 319/332 subzones. Custom workplaces use live OneMap
+routing for a top-50 shortlist; the remainder receive straight-line PT estimates
+so every candidate has a commute value. Missing matrix entries also use the
+straight-line fallback with `ESTIMATED_COMMUTE_FALLBACK`.
 
 ## Attribution
 

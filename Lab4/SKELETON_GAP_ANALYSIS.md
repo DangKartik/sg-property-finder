@@ -1,5 +1,10 @@
 # Lab4 Skeleton — Gap Analysis
 
+> **Historical document (24 October 2026).** This analysis describes the original
+> `Lab4/Skeleton Code` before the `Lab4/revised-skeleton` implementation. It is
+> retained as project history and is **not** a current status document. See
+> `Lab4/revised-skeleton/PROJECT_STATUS.md` for the implemented application.
+
 **Scope:** `Lab4/Skeleton Code` compared against the class diagram, functional/non-functional requirements and tech stack in the project brief.
 
 **Verdict:** The skeleton is a set of valid Python stubs, but it is **not yet a usable starting point for this application**. It was generated from the older Lab3 class diagram (`FILE_RESPONSIBILITIES.md` says so explicitly), so most class signatures no longer match the current diagram. It also has no FastAPI layer, no React/TypeScript layer, no data-ingestion layer, and several required datasets are absent from the chosen source list.

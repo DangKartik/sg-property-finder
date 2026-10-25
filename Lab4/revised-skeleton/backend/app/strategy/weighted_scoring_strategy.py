@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 from app.control.data_availability_notifier import DataAvailabilityNotifier
 from app.entity.commute_estimate import CommuteEstimate
 from app.entity.criterion_score import CriterionScore

@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from app.entity.subzone import Subzone
 
 class ScoringStrategy(ABC):
-    """Stereotype: Strategy. Abstract strategy interface for computing suitability and criterion scores."""
+    """Stereotype: Strategy. Abstract strategy interface for computing suitability scores."""
 
     @abstractmethod
     def computeSuitabilityScore(self, subzone: Subzone, profile: PreferenceProfile, commute: CommuteEstimate) -> float:

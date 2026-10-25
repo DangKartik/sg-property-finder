@@ -16,7 +16,6 @@ try:
     from shapely.geometry import MultiPolygon as _ShapelyMultiPolygon
     from shapely.geometry import Point as _ShapelyPoint
     from shapely.geometry import Polygon as _ShapelyPolygon
-    from shapely.ops import nearest_points as _nearest_points
 
     SHAPELY_AVAILABLE = True
 except ImportError:  # pragma: no cover - fallback for minimal environments
@@ -24,7 +23,6 @@ except ImportError:  # pragma: no cover - fallback for minimal environments
     _ShapelyMultiPolygon = None  # type: ignore[assignment]
     _ShapelyPoint = None  # type: ignore[assignment]
     _ShapelyPolygon = None  # type: ignore[assignment]
-    _nearest_points = None  # type: ignore[assignment]
 
 EARTH_RADIUS_KM = 6371.0088
 
@@ -117,27 +115,6 @@ def _ringCentroid(ring: Sequence[tuple[float, float]]) -> tuple[float, float]:
     return (cy / (6 * area) / m_per_deg_lat, cx / (6 * area) / m_per_deg_lon)
 
 
-def _closestPointOnSegment(
-    lat: float,
-    lon: float,
-    a: tuple[float, float],
-    b: tuple[float, float],
-) -> tuple[float, float]:
-    """Return the closest point on segment a-b using a local projection."""
-    lat0 = math.radians((lat + a[0] + b[0]) / 3.0)
-    m_per_deg_lat = 110_574.0
-    m_per_deg_lon = 111_320.0 * math.cos(lat0)
-    px, py = lon * m_per_deg_lon, lat * m_per_deg_lat
-    ax, ay = a[1] * m_per_deg_lon, a[0] * m_per_deg_lat
-    bx, by = b[1] * m_per_deg_lon, b[0] * m_per_deg_lat
-    dx, dy = bx - ax, by - ay
-    denom = dx * dx + dy * dy
-    if denom <= 1e-12:
-        return a
-    t = max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / denom))
-    return (a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]))
-
-
 class GeoPolygon:
     """Lightweight polygon/multipolygon supporting the operations used by controls."""
 
@@ -228,24 +205,6 @@ class GeoPolygon:
         lats = [p[0] for p in points]
         lons = [p[1] for p in points]
         return (min(lats), max(lats), min(lons), max(lons))
-
-    def distanceToKm(self, latitude: float, longitude: float) -> float:
-        """Return the shortest distance from a point to the polygon boundary."""
-        if self._shapely is not None:
-            if self.contains(latitude, longitude):
-                return 0.0
-            point = _ShapelyPoint(longitude, latitude)
-            nearest = _nearest_points(self._shapely.boundary, point)[0]
-            return haversineKm(latitude, longitude, nearest.y, nearest.x)
-        best = math.inf
-        for outer, holes in self._parts:
-            for ring in [outer, *holes]:
-                for i in range(len(ring)):
-                    a = ring[i]
-                    b = ring[(i + 1) % len(ring)]
-                    closest = _closestPointOnSegment(latitude, longitude, a, b)
-                    best = min(best, haversineKm(latitude, longitude, closest[0], closest[1]))
-        return 0.0 if self.contains(latitude, longitude) else best
 
     def toGeoJSON(self) -> dict:
         """Return a GeoJSON Polygon or MultiPolygon geometry."""

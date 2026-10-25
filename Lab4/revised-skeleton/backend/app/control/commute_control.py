@@ -19,7 +19,6 @@ from app.entity.types import Coordinates, RetrievalResult
 
 if TYPE_CHECKING:
     from app.adapter.one_map_api_adapter import OneMapApiAdapter
-    from app.container.subzone_registry import SubzoneRegistry
     from app.control.data_availability_notifier import DataAvailabilityNotifier
     from app.entity.subzone import Subzone
 

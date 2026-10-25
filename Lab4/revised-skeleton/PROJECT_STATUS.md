@@ -1,11 +1,11 @@
 # SG Property Finder — Project Status
 
-- **Last updated:** 24 October 2026
+- **Last updated:** 25 October 2026
 - **Repository:** `2006-SCMB-D2`
 - **Application folder:** `Lab4/revised-skeleton/`
 - **Current branch:** `main`
-- **Last commit:** `8130aed` (capitalised amenities factsheet headers)
-- **Working tree:** latest `/health` alias, black-box/white-box suites, Phase 5 benchmark/E2E reports and documentation changes pending commit
+- **Last commit:** `6ba23a2` (cleanup of unused code)
+- **Working tree:** code and documentation cleanup pending commit
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -198,8 +198,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   - point-in-polygon,
   - centroid,
   - representative point,
-  - bounds,
-  - polygon boundary distance.
+  - bounds.
 - `planning_area_to_hdb_town.json` populated.
 - Buffer/count logic for schools (1.0 km), hospitals/polyclinics (2 km), parks (500 m), malls (1 km), MRT (800 m).
 - Town-level HDB pricing proxy accepted and labelled `isTownProxy`.
@@ -409,7 +408,8 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 - **23 frontend Vitest tests pass** via `npm test`.
 - Frontend tests cover format/polyline helpers, weight migration, nearby amenity
   filtering/colours, `ApiCache` persistence/pruning, client cache reuse/stale
-  fallback, refresh cache invalidation and top-20 result rendering.
+  fallback, refresh cache invalidation, hard-minimum form submission and top-20
+  result rendering.
 - Frontend `npm run build` passes (`tsc --noEmit` + Vite production build).
 - Live FastAPI server verified:
   - health true,
@@ -506,14 +506,14 @@ Supporting scripts:
   subzones outside the displayed top 20 still receive score items.
 - **Frontend tests:** Vitest/jsdom/Testing Library with 23 tests covering format
   helpers, polyline decoding, weight migration, nearby amenity filtering/colours,
-  `ApiCache`, client cache reuse/stale fallback, refresh cache invalidation and
-  top-20 `ResultsListUI` rendering.
+  `ApiCache`, client cache reuse/stale fallback, hard-minimum form submission,
+  refresh cache invalidation and top-20 `ResultsListUI` rendering.
 - **Data refresh UI:** the Data panel exposes a refresh button that calls
   `POST /api/v1/data/refresh`, refreshes subzone/HDB data, rebuilds amenities
   from the local POI snapshot, clears `ApiCache`, reloads amenity points,
   updates the status display and reruns the active ranking.
 - **PDF generation:** ReportLab Platypus only; WeasyPrint, its requirement and
-  Docker native dependencies were removed. The report includes profile
+  native Pango/GObject dependencies were removed. The report includes profile
   importance weights, per-subzone criterion scores, data dates and caveats.
 
 ---
@@ -541,7 +541,7 @@ Supporting scripts:
 3. **WeasyPrint — removed 22 October 2026.**
    - `ReportControl` now renders exclusively with ReportLab Platypus.
    - WeasyPrint and its native Pango/GObject dependencies were removed from
-     `requirements.txt` and the Dockerfile.
+     `requirements.txt`.
 
 ### 5.2 Data limitations
 
@@ -588,8 +588,8 @@ Supporting scripts:
 10. **Frontend unit testing — resolved 22 October 2026.**
     - Vitest + jsdom + Testing Library are configured.
     - 23 tests cover format/polyline helpers, weight migration, nearby amenity
-      filtering, `ApiCache`, client cache reuse/stale fallback and
-      `ResultsListUI` rendering.
+      filtering, `ApiCache`, client cache reuse/stale fallback, hard-minimum
+      form submission and `ResultsListUI` rendering.
     - `npm run build` remains the production build check.
 
 ### 5.4 Phase 5 — completed 24 October 2026
@@ -631,17 +631,13 @@ Supporting scripts:
     - Forms have labels, buttons have accessible names, and the map has a text/list alternative via results.
     - No screen-reader or keyboard-only audit has been documented.
 
-17. **OneMap “nearby transport” adapter is not implemented.**
-    - `getNearbyTransport()` raises `NotImplementedError`.
-    - The current app uses the precomputed commute matrix and routing endpoint instead.
-
-18. **Noise-level environment data is not used.**
+17. **Noise-level environment data is not used.**
     - The skeleton originally included `averageNoiseLevelDb`, but no noise dataset is configured.
     - Current environment scoring uses green coverage and PM2.5 baseline.
 
-19. **Cycling commute is intentionally excluded.**
+18. **Cycling commute is intentionally excluded.**
     - `TransitMode` contains `PUBLIC_TRANSIT`, `DRIVING`, `WALKING`.
-    - Cycling paths are still used for amenity/active-mobility indicators.
+    - No cycling-mode commute data is collected or scored.
 
 ---
 
@@ -692,7 +688,7 @@ Supporting scripts:
 - **OneMap tiles** use `https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png`.
 - **PDF generation**: `ReportControl` uses ReportLab Platypus directly; WeasyPrint is no longer imported or installed.
 - **Data payloads can be large:** `/api/v1/subzones/geometry` returns the full 332-subzone FeatureCollection.
-- **Code is committed at `8130aed`** (capitalised factsheet headers). The Phase 5 benchmark/E2E reports, health alias and documentation updates are pending commit.
+- **Code is committed at `6ba23a2`** (cleanup of unused code). The documentation cleanup and remaining dead-code removals are pending commit.
 
 ---
 
@@ -717,7 +713,7 @@ Supporting scripts:
 | `backend/app/control/report_control.py` | PDF/share URL generation |
 | `backend/app/api/handlers.py` | Transport-agnostic REST handlers |
 | `scripts/build_amenities.py` | data.gov.sg + OneMap amenity snapshot builder |
-| `backend/tests/` | 86 unit/integration tests |
+| `backend/tests/` | 145 unit/integration tests |
 
 ### Frontend
 

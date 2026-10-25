@@ -176,18 +176,6 @@ export interface CommuteEstimateDTO {
   routeGeometry: string | null;
 }
 
-/** Subzone geometry and metadata. */
-export interface SubzoneDTO {
-  subzoneCode: string;
-  subzoneName: string;
-  planningAreaName: string;
-  townName: string;
-  boundaryGeoJson: unknown;
-  regionName: string;
-  centroid: CoordinatesDTO;
-  indicators: SubzoneIndicatorsDTO | null;
-}
-
 /** Precomputed numeric features used by scoring. */
 export interface SubzoneIndicatorsDTO {
   nearestParkM: number | null;
@@ -205,8 +193,6 @@ export interface SubzoneIndicatorsDTO {
   mallCount1km: number;
   nearestMrtM: number | null;
   mrtStationCount800m: number;
-  parkConnectorLength1km: number;
-  cyclingPathLength1km: number;
   medianResalePrice: number | null;
   medianPricePerSqm: number | null;
   transactionCount12m: number;

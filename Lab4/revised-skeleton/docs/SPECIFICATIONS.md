@@ -1,7 +1,8 @@
 # Frozen Specification — v1
 
-This file records the rules that implementation must follow. Values marked **OPEN**
-require a product decision and are also listed in `OPEN_ISSUES.md`.
+This file records the frozen rules that implementation follows. Resolved
+decisions and accepted limitations are summarized in `docs/OPEN_ISSUES.md` and
+`PROJECT_STATUS.md`.
 
 ## 1. Criterion catalogue
 
@@ -138,7 +139,7 @@ affect suitability scores. This preserves deterministic rankings.
 - **Subzone anchor:** Shapely `representative_point()` of the URA subzone polygon
   (guaranteed to lie inside the polygon).
 - **Buffer radii:**
-  - Primary/secondary/tertiary schools: 1.0 km (OPEN-01 conflicts with 1.5 km);
+  - Primary/secondary/tertiary schools: 1.0 km;
   - Polyclinics/public hospitals: 2.0 km;
   - Parks/green spaces: 500 m;
   - Shopping malls: 1.0 km;
@@ -225,7 +226,7 @@ All endpoints return the standard envelope:
 | `POST` | `/api/v1/share/decode` | `{ "share": "..." }` | `{ profile, subzoneCodes }` |
 | `POST` | `/api/v1/commute/overlay` | origin, destination, mode | `RouteData` |
 | `POST` | `/api/v1/recommendations` | `ProfileDTO` | `RecommendationSet` |
-| `GET` | `/api/v1/subzones/{code}/factsheet` | profile context (OPEN-10) | `NeighborhoodDetailDTO` |
+| `GET` | `/api/v1/subzones/{code}/factsheet` | profile context | `NeighborhoodDetailDTO` |
 | `POST` | `/api/v1/comparison` | `ProfileDTO`, `subzoneCodes[]` | `ComparisonResult` |
 | `POST` | `/api/v1/reports/pdf` | `ProfileDTO`, `subzoneCodes[]` | `PdfReport` |
 | `GET` | `/api/v1/reports/download/{reportId}` | - | PDF bytes |

@@ -1,7 +1,8 @@
 # Neighbourhood Recommender — Backend + Frontend
 
-Phase 1 skeleton plus Phase 2 backend implementation for the neighbourhood
-recommender. This folder is separate from `Lab4/Skeleton Code`.
+Full-stack neighbourhood recommender for Singapore. This folder is the
+implemented application; `Lab4/Skeleton Code` is the original skeleton and is
+kept only for project history.
 
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
 PDF and REST endpoints are implemented and covered by 145 `unittest` tests. The
@@ -29,7 +30,6 @@ revised-skeleton/
 │   ├── OPEN_ISSUES.md
 │   └── SPECIFICATIONS.md
 ├── backend/
-│   ├── Dockerfile
 │   ├── main.py
 │   ├── requirements.txt
 │   ├── README.md
@@ -45,6 +45,7 @@ revised-skeleton/
 │       ├── core/
 │       │   ├── cache.py
 │       │   ├── geometry.py
+│       │   ├── polyline.py
 │       │   ├── serialization.py
 │       │   └── time.py
 │       ├── services/profile_factory.py
@@ -67,8 +68,7 @@ revised-skeleton/
 │       │   ├── neighborhood_details_control.py
 │       │   ├── ranking_control.py
 │       │   ├── report_control.py
-│       │   ├── retrieval_control.py
-│       │   └── system_startup_control.py
+│       │   └── retrieval_control.py
 │       ├── entity/
 │       │   ├── address_match.py
 │       │   ├── amenity_info.py
@@ -144,7 +144,6 @@ revised-skeleton/
 | `ProfileCatalog` | `frontend/src/container/ProfileCatalog.ts` | Dexie/IndexedDB-backed; async API. |
 | `ApiCache` | `frontend/src/container/ApiCache.ts` | Dexie/IndexedDB API envelope cache with ETag/TTL metadata. |
 | `ProfileControl` | `frontend/src/control/ProfileControl.ts` | Client-side CRUD over Dexie + backend validation. |
-| `SystemStartupControl` | `backend/app/control/system_startup_control.py` | Loads the subzone registry/cache. |
 | `InputValidationControl` | `backend/app/control/input_validation_control.py` | Authoritative validation. |
 | `RankingControl` | `backend/app/control/ranking_control.py` | Stateless; receives a `PreferenceProfile`. |
 | `MapControl` | `backend/app/control/map_control.py` | Returns serialisable `MapData`. |
@@ -220,7 +219,7 @@ Method names keep the diagram's camelCase to make traceability easy. Convert to 
 - `docs/WHITE_BOX_TESTING.md` - CFGs, `V(G)`, basis paths and tests for scoring/ranking.
 - `docs/SLA_BENCHMARK.md` - Phase 5 HTTP/OneMap latency benchmark and results.
 - `docs/PHASE5_E2E_CHECKLIST.md` - 18-check Dialog Map end-to-end checklist.
-- `docs/OPEN_ISSUES.md` — contradictions and data limitations that still need a decision before implementation.
+- `docs/OPEN_ISSUES.md` - accepted data/functional limitations and production-only gaps.
 - `docs/ENVIRONMENT.md` — `.env` setup and variable reference.
 
 ## Environment setup
