@@ -1,11 +1,11 @@
 # SG Property Finder — Project Status
 
-- **Last updated:** 25 October 2026
+- **Last updated:** 26 October 2026
 - **Repository:** `2006-SCMB-D2`
 - **Application folder:** `SGPropertyFinder/`
 - **Current branch:** `main`
 - **Last commit:** `6ba23a2` (cleanup of unused code)
-- **Working tree:** code and documentation cleanup pending commit
+- **Working tree:** testing revision (state-based + data-flow), documentation updates and file reference pending commit
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -89,8 +89,8 @@ make dev
 ```powershell
 make backend    # FastAPI only
 make frontend   # Vite only
-make test       # backend unittest suite (145 tests)
-make test-frontend # frontend Vitest suite (27 tests)
+make test       # backend unittest suite (160 tests)
+make test-frontend # frontend Vitest suite (34 tests)
 make benchmark  # Phase 5 SLA benchmark
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
@@ -153,7 +153,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the SGPropert
 | Phase 2.5 - factsheets, PDF, share URLs | **Completed** (ReportLab) |
 | Phase 2.6 — FastAPI endpoints | **Completed** |
 | Phase 3 — frontend | **Completed** |
-| Phase 4 — formal black-box/white-box testing | **Completed** — EP/BVA and CFG/basis-path documentation |
+| Phase 4 — formal black-box/white-box testing | **Completed** — EP/BVA, state-transition, CFG/basis-path and data-flow documentation |
 | Phase 5 - formal SLA benchmarking/E2E documentation | **Completed** - benchmark and 18-check E2E checklist |
 | Makefile / one-command local run | **Completed** |
 | Real amenities dataset | **Completed** — 1,200 effective points (1,172 base + 28 tertiary); `make amenities` rebuilds it |
@@ -164,7 +164,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the SGPropert
 | Hybrid commute shortlist | **Completed** (50 live + spatial heuristics) |
 | 1–10 criterion importance | **Completed** (relative-normalised) |
 | Hard amenity minimums | **Completed** (primary/secondary/tertiary schools, malls, hospitals) |
-| Frontend tests | **Completed** (27 Vitest tests) |
+| Frontend tests | **Completed** (34 Vitest tests) |
 | PDF generation | **Completed** (ReportLab only) |
 | Production deployment/CI | **Not completed** |
 
@@ -185,9 +185,9 @@ Do **not** run `python -m unittest discover -s backend/tests` from the SGPropert
 - Made `DataAvailabilityNotifier` stateless and removed `ReportControl.lastGeneratedReport`.
 - Added `.env.example`, `.gitignore`, `Settings`, and environment documentation.
 - Specifications live in:
-  - `docs/SPECIFICATIONS.md`
-  - `docs/OPEN_ISSUES.md`
-  - `docs/ENVIRONMENT.md`
+  - `SPECIFICATIONS.md`
+  - `OPEN_ISSUES.md`
+  - `ENVIRONMENT.md`
 
 ### 4.2 Phase 2 — Backend
 
@@ -407,12 +407,12 @@ Do **not** run `python -m unittest discover -s backend/tests` from the SGPropert
 
 ### 4.4 Testing and verification
 
-- **145 backend tests pass** via `make test`.
-- **27 frontend Vitest tests pass** via `npm test`.
+- **160 backend tests pass** via `make test`.
+- **34 frontend Vitest tests pass** via `npm test`.
 - Frontend tests cover format/polyline helpers, weight migration, nearby amenity
   filtering/colours, `ApiCache` persistence/pruning, client cache reuse/stale
-  fallback, refresh cache invalidation, hard-minimum form submission and top-20
-  result rendering.
+  fallback, refresh cache invalidation, hard-minimum form submission, top-20
+  result rendering and the profile lifecycle state machine.
 - Frontend `npm run build` passes (`tsc --noEmit` + Vite production build).
 - Live FastAPI server verified:
   - health true,
@@ -507,10 +507,11 @@ Supporting scripts:
 - **Comparison outside top 20:** `RankingControl.generateRankedRecommendations`
   accepts an optional `limit`; the comparison endpoint passes `limit=None` so
   subzones outside the displayed top 20 still receive score items.
-- **Frontend tests:** Vitest/jsdom/Testing Library with 27 tests covering format
+- **Frontend tests:** Vitest/jsdom/Testing Library with 34 tests covering format
   helpers, polyline decoding, weight migration, nearby amenity filtering/colours,
   `ApiCache`, client cache reuse/stale fallback, hard-minimum form submission,
-  refresh cache invalidation and top-20 `ResultsListUI` rendering.
+  refresh cache invalidation, top-20 `ResultsListUI` rendering and the
+  `ProfileControl` CRUD state machine.
 - **Data refresh UI:** the map’s bottom-left “Refresh” button calls
   `POST /api/v1/data/refresh`, refreshes subzone/HDB data, rebuilds amenities
   from the local POI snapshot, clears `ApiCache`, reloads amenity points,
@@ -572,42 +573,51 @@ Supporting scripts:
 
 ### 5.3 Formal testing documentation
 
-8. **Phase 4 black-box testing documentation — completed 24 October 2026.**
-   - Formal equivalence-class partitioning and boundary-value tables are in
-     `docs/BLACK_BOX_TESTING.md`.
-   - The suite is `backend/tests/test_black_box_validation.py`: 37 test methods
-     and 68 logical cases, all passing.
-   - Covers `InputValidationControl` and the `profileDtoFromDict` parse boundary,
-     including the hard-minimum fields.
+8. **Phase 4 black-box testing documentation — revised 26 October 2026.**
+   - Equivalence-class partitioning, boundary-value analysis and state-transition
+     testing are documented in `BLACK_BOX_TESTING.md`.
+   - `backend/tests/test_black_box_validation.py`: 37 test methods / 68 logical
+     cases for profile validation.
+   - `backend/tests/test_black_box_state.py`: 8 state-transition tests for the
+     report lifecycle (generate, read, export, expire, regenerate, cascade).
+   - `frontend/src/control/ProfileControl.test.ts`: 7 state-transition tests for
+     the browser profile lifecycle (create, read, update, delete, guard, cascade).
+   - Total: 52 test methods / 83 logical cases, all passing. Every case now
+     records Name, Location, Input, Oracle and Log, plus its execution order
+     (independent or cascading).
 
-9. **Phase 4 white-box testing documentation — completed 24 October 2026.**
-   - CFGs, cyclomatic complexity and basis-path tables are in
-     `docs/WHITE_BOX_TESTING.md`.
-   - The suite is `backend/tests/test_white_box.py`: 9 tests covering
-     `WeightedScoringStrategy.computeSuitabilityScore` (`V(G)=2`) and
-     `RankingControl.generateRankedRecommendations` (`V(G)=5`).
-   - All nodes, predicate outcomes and basis paths are exercised.
+9. **Phase 4 white-box testing documentation — revised 26 October 2026.**
+   - CFGs, cyclomatic complexity, basis paths and definition-use tables are in
+     `WHITE_BOX_TESTING.md`.
+   - `backend/tests/test_white_box.py`: 16 tests covering
+     `WeightedScoringStrategy.computeSuitabilityScore` (`V(G)=2`),
+     `RankingControl.generateRankedRecommendations` (`V(G)=5`) and data flow in
+     `WeightedScoringStrategy.scoreCandidates`.
+   - All feasible nodes, predicate outcomes, basis paths and listed DU pairs are
+     exercised. Data-flow analysis found and removed one dead store in
+     `scoreCandidates` (DF-ANOM-01).
 
-10. **Frontend unit testing — resolved 22 October 2026.**
+10. **Frontend unit testing — expanded 26 October 2026.**
     - Vitest + jsdom + Testing Library are configured.
-    - 27 tests cover format/polyline helpers, weight migration, nearby amenity
+    - 34 tests cover format/polyline helpers, weight migration, nearby amenity
       filtering, `ApiCache`, client cache reuse/stale fallback, hard-minimum
-      form submission and `ResultsListUI` rendering.
+      form submission, `ResultsListUI` rendering and the `ProfileControl`
+      black-box profile lifecycle.
     - `npm run build` remains the production build check.
 
 ### 5.4 Phase 5 — completed 24 October 2026
 
 11. **Formal SLA benchmark — completed.**
     - Script: `scripts/benchmark_api.py`.
-    - Results: `docs/sla_benchmark_results.json`.
-    - Report: `docs/SLA_BENCHMARK.md`.
+    - Results: `sla_benchmark_results.json`.
+    - Report: `SLA_BENCHMARK.md`.
     - Cold recommendation p50 1.25 s / p95 2.27 s; warm p50 0.19 s /
       p95 0.28 s; all requests HTTP 200.
     - OneMap cold p50 101 ms / p95 518 ms; 2/10 fallbacks; warm cache hits
       effectively instant.
 
 12. **Dialog Map E2E checklist — completed.**
-    - Report: `docs/PHASE5_E2E_CHECKLIST.md`.
+    - Report: `PHASE5_E2E_CHECKLIST.md`.
     - 18/18 checks passed, covering plan creation, hard minima, ranking,
       grouped factsheet, comparison, PDF/share, persistence, delete guard,
       invalid form, address failure, refresh, simulated outage, health,
@@ -716,7 +726,7 @@ Supporting scripts:
 | `backend/app/control/report_control.py` | PDF/share URL generation |
 | `backend/app/api/handlers.py` | Transport-agnostic REST handlers |
 | `scripts/build_amenities.py` | data.gov.sg + OneMap amenity snapshot builder |
-| `backend/tests/` | 145 unit/integration tests |
+| `backend/tests/` | 160 unit/integration tests; black-box EP/BVA + state and white-box CFG + data-flow suites |
 
 ### Frontend
 
@@ -765,12 +775,12 @@ Supporting scripts:
 
 | Check | Result |
 | --- | --- |
-| `make test` | **145 tests OK** |
-| `npm test` | **27 frontend tests OK** |
-| Black-box validation suite | **37 methods / 68 logical cases OK** — see `docs/BLACK_BOX_TESTING.md` |
-| White-box scoring/ranking suite | **9 tests / 7 basis paths OK** - see `docs/WHITE_BOX_TESTING.md` |
-| SLA benchmark | **Passed** — cold recommendations p95 2.27 s; warm p95 0.28 s; see `docs/SLA_BENCHMARK.md` |
-| Dialog Map E2E | **18/18 checks passed** — see `docs/PHASE5_E2E_CHECKLIST.md` |
+| `make test` | **160 tests OK** |
+| `npm test` | **34 frontend tests OK** |
+| Black-box suites | **52 methods / 83 logical cases OK** — EP/BVA + report/profile state transitions; see `BLACK_BOX_TESTING.md` |
+| White-box suite | **16 tests / 7 basis paths / DU coverage OK** — see `WHITE_BOX_TESTING.md` |
+| SLA benchmark | **Passed** — cold recommendations p95 2.27 s; warm p95 0.28 s; see `SLA_BENCHMARK.md` |
+| Dialog Map E2E | **18/18 checks passed** — see `PHASE5_E2E_CHECKLIST.md` |
 | `make build` / `npm run build` | **Passed** |
 | Live Uvicorn health/ready | **Passed**, 332 subzones |
 | Browser main flow | **Passed** |

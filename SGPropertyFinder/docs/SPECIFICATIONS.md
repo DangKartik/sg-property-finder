@@ -1,7 +1,7 @@
 # Frozen Specification — v1
 
 This file records the frozen rules that implementation follows. Resolved
-decisions and accepted limitations are summarized in `docs/OPEN_ISSUES.md` and
+decisions and accepted limitations are summarized in `OPEN_ISSUES.md` and
 `PROJECT_STATUS.md`.
 
 ## 1. Criterion catalogue

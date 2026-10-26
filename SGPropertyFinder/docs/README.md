@@ -1,25 +1,44 @@
 # Neighbourhood Recommender — Backend + Frontend
 
-Full-stack neighbourhood recommender for Singapore. This folder is the
-implemented application; `Lab4/Skeleton Code` is the original skeleton and is
-kept only for project history.
+Full-stack neighbourhood recommender for Singapore. The application lives in the
+parent `SGPropertyFinder/` folder; `Lab4/Skeleton Code` is the original skeleton
+and is kept only for project history.
 
-**New here?** Follow [`../SETUP_INSTRUCTIONS.md`](../SETUP_INSTRUCTIONS.md) for
+**New here?** Follow [`../../SETUP_INSTRUCTIONS.md`](../../SETUP_INSTRUCTIONS.md) for
 step-by-step setup, dependency installation and run commands.
 
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
-PDF and REST endpoints are implemented and covered by 145 `unittest` tests. The
+PDF and REST endpoints are implemented and covered by 160 `unittest` tests. The
 React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison,
 enriched PDF export (ReportLab), share-link import, IndexedDB API caching,
 data-refresh control on the map, hard amenity minimums and selection-driven amenity
-markers, with 27 Vitest tests. Formal black-box/white-box testing and Phase 5
-SLA/E2E documentation are in `docs/`.
+markers, with 34 Vitest tests. Formal black-box/white-box testing and Phase 5
+SLA/E2E documentation are in this folder.
+
+## Documentation index
+
+All application documentation lives in `SGPropertyFinder/docs/`.
+
+| Document | Contents |
+| --- | --- |
+| [`README.md`](README.md) | This overview: what the app is, structure, classes, setup and run commands. |
+| [`BACKEND.md`](BACKEND.md) | Backend run/test instructions, test inventory and implementation notes. |
+| [`FRONTEND.md`](FRONTEND.md) | Frontend run/build instructions and implemented features. |
+| [`DATA_ASSETS.md`](DATA_ASSETS.md) | Data sources, snapshot formats and regeneration rules. |
+| [`PROJECT_STATUS.md`](PROJECT_STATUS.md) | Handover status, completed work, gaps, frozen decisions and verification. |
+| [`SPECIFICATIONS.md`](SPECIFICATIONS.md) | Frozen scoring, budget, environment, geography, commute, snapshot and API rules. |
+| [`ENVIRONMENT.md`](ENVIRONMENT.md) | `.env` setup and environment-variable reference. |
+| [`BLACK_BOX_TESTING.md`](BLACK_BOX_TESTING.md) | EP/BVA and state-transition testing with detailed test cases and execution order. |
+| [`WHITE_BOX_TESTING.md`](WHITE_BOX_TESTING.md) | CFGs, cyclomatic complexity, basis paths and data-flow testing. |
+| [`FILE_REFERENCE.md`](FILE_REFERENCE.md) | What every backend, frontend, test, data and configuration file is for. |
+| [`SLA_BENCHMARK.md`](SLA_BENCHMARK.md) | Phase 5 latency benchmark method and results. |
+| [`PHASE5_E2E_CHECKLIST.md`](PHASE5_E2E_CHECKLIST.md) | 18-check system/acceptance end-to-end checklist. |
+| [`OPEN_ISSUES.md`](OPEN_ISSUES.md) | Accepted limitations and production-only gaps. |
 
 ## Structure
 
 ```text
 SGPropertyFinder/
-├── README.md
 ├── Makefile
 ├── .env.example
 ├── .gitignore
@@ -29,14 +48,22 @@ SGPropertyFinder/
 │   ├── dev.py
 │   └── test_backend.py
 ├── docs/
+│   ├── README.md
+│   ├── BACKEND.md
+│   ├── DATA_ASSETS.md
+│   ├── FRONTEND.md
+│   ├── PROJECT_STATUS.md
+│   ├── BLACK_BOX_TESTING.md
 │   ├── ENVIRONMENT.md
+│   ├── FILE_REFERENCE.md
 │   ├── OPEN_ISSUES.md
-│   └── SPECIFICATIONS.md
+│   ├── PHASE5_E2E_CHECKLIST.md
+│   ├── SLA_BENCHMARK.md
+│   ├── SPECIFICATIONS.md
+│   └── WHITE_BOX_TESTING.md
 ├── backend/
 │   ├── main.py
 │   ├── requirements.txt
-│   ├── README.md
-│   ├── assets/data/README.md
 │   ├── assets/data/planning_area_to_hdb_town.json
 │   ├── tests/
 │   │   ├── fixtures/
@@ -215,15 +242,10 @@ SGPropertyFinder/
 
 Method names keep the diagram's camelCase to make traceability easy. Convert to PEP 8 snake_case later if desired.
 
-## Specification documents
+## Documentation
 
-- `docs/SPECIFICATIONS.md` — frozen scoring, budget, environment, geography, commute, snapshot and API rules.
-- `docs/BLACK_BOX_TESTING.md` - formal EP/BVA, expected/actual matrix and results for profile validation.
-- `docs/WHITE_BOX_TESTING.md` - CFGs, `V(G)`, basis paths and tests for scoring/ranking.
-- `docs/SLA_BENCHMARK.md` - Phase 5 HTTP/OneMap latency benchmark and results.
-- `docs/PHASE5_E2E_CHECKLIST.md` - 18-check Dialog Map end-to-end checklist.
-- `docs/OPEN_ISSUES.md` - accepted data/functional limitations and production-only gaps.
-- `docs/ENVIRONMENT.md` — `.env` setup and variable reference.
+All application documentation is in this `docs/` folder. See the
+[Documentation index](#documentation-index) above for the full list.
 
 ## Environment setup
 
@@ -254,7 +276,7 @@ make backend    # FastAPI only
 make frontend   # Vite only
 make test          # backend unittest suite
 make test-frontend # frontend Vitest suite
-make benchmark     # Phase 5 SLA benchmark (docs/SLA_BENCHMARK.md)
+make benchmark     # Phase 5 SLA benchmark (SLA_BENCHMARK.md)
 make build         # frontend type-check + production build
 make clean
 make help

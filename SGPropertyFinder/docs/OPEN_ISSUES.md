@@ -5,7 +5,7 @@
 - **Scope:** this is a school project; production-only gaps are listed separately.
 
 All original `OPEN-01`–`OPEN-25` decisions have been resolved and are frozen in
-`docs/SPECIFICATIONS.md`. The implementation, tests and Phase 4/5 evidence are
+`SPECIFICATIONS.md`. The implementation, tests and Phase 4/5 evidence are
 summarized in `PROJECT_STATUS.md`.
 
 ## Accepted data limitations
@@ -26,7 +26,7 @@ summarized in `PROJECT_STATUS.md`.
 4. **Fallback commute routes are not cached.**
    - Live route estimates are cached; straight-line fallbacks are recomputed.
    - This causes occasional tail latency in repeated rankings (documented in
-     `docs/SLA_BENCHMARK.md`).
+     `SLA_BENCHMARK.md`).
 
 5. **`BUKIT TIMAH` and `OUT OF BOUNDS` mappings follow the supplied mapping.**
    - They may not correspond to HDB town pricing data and can produce

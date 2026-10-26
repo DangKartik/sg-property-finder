@@ -13,7 +13,7 @@ from dataclasses import asdict, is_dataclass
 from datetime import date, datetime, timedelta, timezone
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Callable
 from urllib.parse import urlencode
 
 from app.container.report_store import ReportStore
@@ -36,6 +36,7 @@ class ReportControl:
         reportStore: ReportStore | None = None,
         reportDir: Path | str | None = None,
         publicBaseUrl: str = "",
+        clock: Callable[[], datetime] | None = None,
     ) -> None:
         """Create the report control with a short-lived report store."""
         self.notifier = notifier
@@ -43,6 +44,7 @@ class ReportControl:
         self.reportDir = Path(reportDir) if reportDir else Path(tempfile.mkdtemp(prefix="sgpropfinder-reports-"))
         self.reportDir.mkdir(parents=True, exist_ok=True)
         self.publicBaseUrl = publicBaseUrl.rstrip("/")
+        self._clock = clock or (lambda: datetime.now(timezone.utc))
 
     def generatePdfReport(
         self,
@@ -51,7 +53,7 @@ class ReportControl:
     ) -> PdfReport:
         """Render a PDF, store it locally and return secure download metadata."""
         report_id = uuid.uuid4().hex
-        generated = datetime.now(timezone.utc)
+        generated = self._clock()
         expires = generated + timedelta(minutes=15)
         filename = f"SGPropFinder_Report_{report_id[:8]}.pdf"
         path = self.reportDir / filename

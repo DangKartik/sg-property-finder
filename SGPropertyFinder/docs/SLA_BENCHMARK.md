@@ -3,7 +3,7 @@
 - **Date:** 24 October 2026
 - **Scope:** HTTP API latency and live OneMap commute routing
 - **Benchmark script:** `scripts/benchmark_api.py`
-- **Raw results:** `docs/sla_benchmark_results.json`
+- **Raw results:** `sla_benchmark_results.json`
 
 ---
 
