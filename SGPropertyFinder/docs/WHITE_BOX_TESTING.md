@@ -270,7 +270,7 @@ Documented structural behaviours:
 ## 9. Reproduction
 
 ```powershell
-cd Lab4/revised-skeleton/backend
+cd SGPropertyFinder/backend
 python -m unittest tests.test_white_box -v
 ```
 
@@ -285,7 +285,7 @@ OK
 Full backend regression suite:
 
 ```powershell
-cd Lab4/revised-skeleton
+cd SGPropertyFinder
 make test
 ```
 

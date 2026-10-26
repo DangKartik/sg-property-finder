@@ -1,9 +1,12 @@
 # How to Run SG Property Finder
 
-A short setup guide for the web app in this folder (`Lab4/revised-skeleton`).
+A short setup guide for the web app in `SGPropertyFinder/`.
+
+The application was moved from `Lab4/revised-skeleton/` to `SGPropertyFinder/`;
+all commands below use the new location.
 
 Run every `make` command from the folder that contains the `Makefile` — that is
-the `revised-skeleton` folder.
+the `SGPropertyFinder` folder.
 
 ## 1. Open the app folder
 
@@ -13,26 +16,26 @@ Start from the repository root (`2006-SCMB-D2`).
 
 ```powershell
 cd "C:\path\to\2006-SCMB-D2"
-cd Lab4\revised-skeleton
+cd SGPropertyFinder
 ```
 
 If you are already inside the repository root:
 
 ```powershell
-cd Lab4\revised-skeleton
+cd SGPropertyFinder
 ```
 
 ### macOS / Linux
 
 ```bash
 cd /path/to/2006-SCMB-D2
-cd Lab4/revised-skeleton
+cd SGPropertyFinder
 ```
 
 If you are already inside the repository root:
 
 ```bash
-cd Lab4/revised-skeleton
+cd SGPropertyFinder
 ```
 
 Confirm you are in the correct folder:
@@ -165,7 +168,7 @@ Do not commit `.env`; it is already ignored by Git.
 
 ## 5. Install the dependencies
 
-From the `revised-skeleton` folder:
+From the `SGPropertyFinder` folder:
 
 ```powershell
 make install
@@ -201,7 +204,7 @@ Press **Ctrl+C** in the terminal to stop both servers.
 
 ## Make command reference
 
-Run these from the `revised-skeleton` folder.
+Run these from the `SGPropertyFinder` folder.
 
 | Command | What it does |
 | --- | --- |
@@ -230,4 +233,4 @@ Run these from the `revised-skeleton` folder.
 | Address search or routes fail | Check `ONEMAP_EMAIL` and `ONEMAP_PASSWORD` in `.env` |
 | Dependencies fail to install | Confirm Python is 3.11+ and Node.js is 20+, then run `make install` again |
 
-For all backend configuration options, see [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md).
+For all backend configuration options, see [`SGPropertyFinder/docs/ENVIRONMENT.md`](SGPropertyFinder/docs/ENVIRONMENT.md).

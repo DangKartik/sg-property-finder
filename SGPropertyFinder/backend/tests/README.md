@@ -1,6 +1,6 @@
 # Backend tests
 
-Run from `Lab4/revised-skeleton/backend`:
+Run from `SGPropertyFinder/backend`:
 
 ```bash
 python -m unittest discover -s tests -v

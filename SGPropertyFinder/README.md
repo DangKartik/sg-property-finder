@@ -4,8 +4,8 @@ Full-stack neighbourhood recommender for Singapore. This folder is the
 implemented application; `Lab4/Skeleton Code` is the original skeleton and is
 kept only for project history.
 
-**New here?** Follow [`HOW_TO_RUN.md`](HOW_TO_RUN.md) for step-by-step setup,
-dependency installation and run commands.
+**New here?** Follow [`../SETUP_INSTRUCTIONS.md`](../SETUP_INSTRUCTIONS.md) for
+step-by-step setup, dependency installation and run commands.
 
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
 PDF and REST endpoints are implemented and covered by 145 `unittest` tests. The
@@ -18,7 +18,7 @@ SLA/E2E documentation are in `docs/`.
 ## Structure
 
 ```text
-revised-skeleton/
+SGPropertyFinder/
 ├── README.md
 ├── Makefile
 ├── .env.example
@@ -228,7 +228,7 @@ Method names keep the diagram's camelCase to make traceability easy. Convert to 
 ## Environment setup
 
 ```bash
-cd Lab4/revised-skeleton
+cd SGPropertyFinder
 cp .env.example .env
 ```
 
@@ -239,7 +239,7 @@ cp .env.example .env
 GNU Make is installed locally via winget (`ezwinports.make`).
 
 ```powershell
-cd Lab4/revised-skeleton
+cd SGPropertyFinder
 make install
 make dev
 ```
@@ -265,7 +265,7 @@ make help
 Terminal 1 — backend:
 
 ```powershell
-cd Lab4/revised-skeleton/backend
+cd SGPropertyFinder/backend
 python -m pip install -r requirements.txt
 python -m uvicorn main:app --reload --port 8000
 ```
@@ -273,7 +273,7 @@ python -m uvicorn main:app --reload --port 8000
 Terminal 2 — frontend:
 
 ```powershell
-cd Lab4/revised-skeleton/frontend
+cd SGPropertyFinder/frontend
 npm install
 npm run dev
 ```
@@ -284,21 +284,21 @@ Verify the backend at **http://127.0.0.1:8000/api/v1/health**.
 Run backend tests with:
 
 ```bash
-cd Lab4/revised-skeleton/backend
+cd SGPropertyFinder/backend
 python -m unittest discover -s tests -v
 ```
 
 Build the frontend with:
 
 ```bash
-cd Lab4/revised-skeleton/frontend
+cd SGPropertyFinder/frontend
 npm run build
 ```
 
 Run frontend tests with:
 
 ```bash
-cd Lab4/revised-skeleton/frontend
+cd SGPropertyFinder/frontend
 npm test
 ```
 
@@ -335,7 +335,7 @@ run instructions, known gaps and recommended next steps.
   `make amenities` to rebuild the snapshot. The map refresh button also rebuilds
   amenity aggregates from the cached local point snapshot.
 
-Run the backend tests from `Lab4/revised-skeleton/backend`:
+Run the backend tests from `SGPropertyFinder/backend`:
 
 ```bash
 python -m unittest discover -s tests -v

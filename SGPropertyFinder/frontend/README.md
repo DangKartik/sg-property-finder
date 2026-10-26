@@ -5,7 +5,7 @@ React 18 + TypeScript + Vite client for SG Property Finder.
 ## Run
 
 ```bash
-cd Lab4/revised-skeleton/frontend
+cd SGPropertyFinder/frontend
 npm install
 npm run dev
 ```
@@ -16,7 +16,7 @@ Open http://localhost:5173. Vite proxies `/api` to the backend at
 Start the backend first:
 
 ```bash
-cd Lab4/revised-skeleton/backend
+cd SGPropertyFinder/backend
 python -m uvicorn main:app --reload --port 8000
 ```
 

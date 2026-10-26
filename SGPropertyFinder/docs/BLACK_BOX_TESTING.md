@@ -200,7 +200,7 @@ Documented behaviours:
 ## 10. Reproduction
 
 ```powershell
-cd Lab4/revised-skeleton/backend
+cd SGPropertyFinder/backend
 python -m unittest tests.test_black_box_validation -v
 ```
 
@@ -215,7 +215,7 @@ OK
 Full backend regression suite:
 
 ```powershell
-cd Lab4/revised-skeleton
+cd SGPropertyFinder
 make test
 ```
 

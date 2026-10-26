@@ -169,7 +169,7 @@ cold sample of only five requests makes cold p99 indicative only.
 ## 8. Reproduce
 
 ```powershell
-cd Lab4/revised-skeleton
+cd SGPropertyFinder
 python scripts/benchmark_api.py --spawn-server --warm-samples 50 `
   --output docs/sla_benchmark_results.json
 ```

@@ -3,7 +3,7 @@
 ## Setup
 
 ```bash
-cd Lab4/revised-skeleton
+cd SGPropertyFinder
 cp .env.example .env
 ```
 

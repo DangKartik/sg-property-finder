@@ -2,7 +2,7 @@
 
 - **Last updated:** 25 October 2026
 - **Repository:** `2006-SCMB-D2`
-- **Application folder:** `Lab4/revised-skeleton/`
+- **Application folder:** `SGPropertyFinder/`
 - **Current branch:** `main`
 - **Last commit:** `6ba23a2` (cleanup of unused code)
 - **Working tree:** code and documentation cleanup pending commit
@@ -71,7 +71,7 @@ People choosing where to live in Singapore who want a data-driven comparison of:
 ### One command
 
 ```powershell
-cd C:\Users\Lucas\Documents\GitHub\2006-SCMB-D2\Lab4\revised-skeleton
+cd C:\Users\Lucas\Documents\GitHub\2006-SCMB-D2\SGPropertyFinder
 make install
 make dev
 ```
@@ -101,12 +101,12 @@ make help
 
 ```powershell
 # Terminal 1
-cd Lab4/revised-skeleton/backend
+cd SGPropertyFinder/backend
 python -m pip install -r requirements.txt
 python -m uvicorn main:app --reload --port 8000
 
 # Terminal 2
-cd Lab4/revised-skeleton/frontend
+cd SGPropertyFinder/frontend
 npm install
 npm run dev
 ```
@@ -126,18 +126,18 @@ GET http://127.0.0.1:8000/api/v1/data/status
 Run backend tests with:
 
 ```powershell
-cd Lab4/revised-skeleton
+cd SGPropertyFinder
 make test
 ```
 
 or directly from `backend/`:
 
 ```powershell
-cd Lab4/revised-skeleton/backend
+cd SGPropertyFinder/backend
 python -m unittest discover -s tests -v
 ```
 
-Do **not** run `python -m unittest discover -s backend/tests` from the revised-skeleton root: the tests import `tests.support` and expect `backend/` on `sys.path`.
+Do **not** run `python -m unittest discover -s backend/tests` from the SGPropertyFinder root: the tests import `tests.support` and expect `backend/` on `sys.path`.
 
 ---
 
@@ -449,7 +449,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 
 ### 4.5 Makefile
 
-`Lab4/revised-skeleton/Makefile`:
+`SGPropertyFinder/Makefile`:
 
 - `install`
 - `dev`
@@ -678,7 +678,7 @@ Supporting scripts:
 - **Amenities snapshot:** `make amenities` rebuilds `backend/assets/data/amenities.json` from data.gov.sg and OneMap. It needs the OneMap credentials in `.env`; it geocodes school postal codes and queries OneMap themes/search. `POST /api/v1/data/refresh` instead rebuilds from the cached local point snapshot, adds subzone `aggregates`, and requires no network call.
 - **Tertiary-school supplement:** `backend/assets/data/tertiary_schools.json` holds 28 JC/university points and is merged into `amenities.json` at load time. Editing it changes tertiary counts without regenerating the full snapshot. `make amenities` also merges it into the generated file.
 - **Start order matters:** backend first, then frontend. `make dev` handles both.
-- **`make test`** is the reliable way to run backend tests from the revised-skeleton root.
+- **`make test`** is the reliable way to run backend tests from the SGPropertyFinder root.
 - **Backend startup is ~4 seconds** because it loads 332 subzones, indexes 243k HDB rows and joins 1,200 amenity points.
 - **Ranking uses local snapshots first.** `DatasetService.refreshIfStale()` refreshes from data.gov.sg after the configured age. Force a live refresh with:
   ```text
