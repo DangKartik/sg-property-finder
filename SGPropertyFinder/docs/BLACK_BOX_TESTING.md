@@ -385,7 +385,7 @@ make test
 make test-frontend
 ```
 
-At the time of writing: backend **160 tests OK**; frontend **34 tests OK**.
+At the time of writing: backend **167 tests OK**; frontend **39 tests OK**.
 
 ## 11. Limitations and next steps
 

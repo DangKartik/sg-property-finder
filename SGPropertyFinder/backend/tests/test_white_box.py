@@ -251,6 +251,18 @@ class GenerateRankedRecommendationsWhiteBoxTests(unittest.TestCase):
         self.assertEqual(len(result.items), 3)
         self.assertEqual(result.warnings, [])
 
+    def test_wb_rr_08_insufficient_data_subzone_is_excluded(self) -> None:
+        self.registry.getSubzone("BEDOK01").dataAvailable = False
+        control, commute = self.control([])
+
+        result = control.generateRankedRecommendations(self.profile, limit=None)
+
+        self.assertNotIn("BEDOK01", [item.subzoneId for item in result.items])
+        self.assertEqual(
+            [subzone.subzoneCode for subzone in commute.calls[0]["subzones"]],
+            ["TAMPINES01", "JURONG01"],
+        )
+
 
 class ScoringDataFlowWhiteBoxTests(unittest.TestCase):
     """Definition-use tests for WeightedScoringStrategy.scoreCandidates."""

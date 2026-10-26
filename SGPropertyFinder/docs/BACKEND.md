@@ -25,7 +25,7 @@ OneMap or data.gov.sg.
 | `test_validation.py` | flat types, address lookup, weight boundaries |
 | `test_black_box_validation.py` | formal EP/BVA profile-validation suite (37 methods, 68 logical cases) |
 | `test_black_box_state.py` | report-lifecycle state-transition suite (8 tests, independent + cascading) |
-| `test_white_box.py` | CFG/basis-path plus data-flow suite for scoring and ranking (16 tests) |
+| `test_white_box.py` | CFG/basis-path plus data-flow suite for scoring and ranking (17 tests) |
 | `test_polyline.py` | encoded-polyline decoding and multi-leg route merging |
 | `test_report.py` | PDF bytes, secure metadata, export, share URL |
 | `test_api_handlers.py` | address, recommendations, factsheet, comparison, report, geometry, criteria |

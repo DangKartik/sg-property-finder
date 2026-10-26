@@ -39,6 +39,9 @@ different origin, set `VITE_API_BASE_URL` to the backend origin when building.
 - Saved-plan selector with active badge and guarded delete confirmation.
 - OneMap/Leaflet basemap, URA subzone choropleth, card-to-polygon highlighting,
   transit/driving route overlays and selection-driven nearby amenity markers.
+- Insufficient-data subzones are muted/dashed on the map; clicking one shows a
+  bottom notification instead of selecting it or opening a factsheet. Their
+  factsheet action is shown as an “Insufficient data” label, not a button.
 - Ranked recommendation sidebar with comparison selection.
 - Factsheet modal with multi-flat-type pricing, town-proxy note, amenities,
   environment and data warnings.
@@ -48,7 +51,7 @@ different origin, set `VITE_API_BASE_URL` to the backend origin when building.
 - Data panel refresh button that refreshes subzone/HDB snapshots, rebuilds
   amenities from the local POI snapshot, clears the API cache and reruns the
   active ranking.
-- Vitest/jsdom/Testing Library suite with 34 tests, including the black-box
+- Vitest/jsdom/Testing Library suite with 39 tests, including the black-box
   `ProfileControl` profile-lifecycle state machine.
 - Reusable notification modal for validation and API errors.
 - Profile plans persist in IndexedDB through Dexie. `ApiCache` stores API

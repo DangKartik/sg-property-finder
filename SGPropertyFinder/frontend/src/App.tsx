@@ -23,6 +23,7 @@ import type {
 } from "./types/dto";
 import { formatDate } from "./utils/format";
 import { nearbyAmenities } from "./utils/amenities";
+import { unavailableSubzoneIds as listUnavailableSubzoneIds } from "./utils/subzones";
 
 const profileCatalog = new ProfileCatalog();
 const profileControl = new ProfileControl(profileCatalog, api);
@@ -48,6 +49,7 @@ export default function App() {
   const [comparisonOpen, setComparisonOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [notification, setNotification] = useState<NotificationState | null>(null);
+  const [bottomNotice, setBottomNotice] = useState<string | null>(null);
   const [route, setRoute] = useState<RouteDataDTO | null>(null);
   const [busy, setBusy] = useState(false);
   const [refreshingData, setRefreshingData] = useState(false);
@@ -58,18 +60,60 @@ export default function App() {
     setNotification({ title, message });
   }, []);
 
+  useEffect(() => {
+    if (!bottomNotice) return;
+    const timer = window.setTimeout(() => setBottomNotice(null), 4500);
+    return () => window.clearTimeout(timer);
+  }, [bottomNotice]);
+
+  const showInsufficientDataNotice = useCallback(
+    (subzoneId: string) => {
+      const name = findSubzoneName(mapData, subzoneId);
+      setBottomNotice(`Insufficient data for ${name}. Select another neighbourhood.`);
+    },
+    [mapData],
+  );
+
   const activeProfile = useMemo(
     () => profiles.find((profile) => profile.profileId === activeProfileId) ?? null,
     [profiles, activeProfileId],
   );
 
+  const unavailableIds = useMemo(
+    () => listUnavailableSubzoneIds(mapData),
+    [mapData],
+  );
+  const unavailableSet = useMemo(
+    () => new Set(unavailableIds),
+    [unavailableIds],
+  );
+
+  useEffect(() => {
+    if (selectedSubzoneId && unavailableSet.has(selectedSubzoneId)) {
+      setSelectedSubzoneId(null);
+      setFactsheetCode(null);
+    }
+  }, [selectedSubzoneId, unavailableSet]);
+
+  const visibleRecommendations = useMemo(() => {
+    if (!recommendations) return null;
+    const items = recommendations.items
+      .filter((item) => !unavailableSet.has(item.subzoneId))
+      .map((item, index) => ({ ...item, rank: index + 1 }));
+    const warnings = recommendations.warnings.filter(
+      (warning) =>
+        warning.subzoneCode === null || !unavailableSet.has(warning.subzoneCode),
+    );
+    return { ...recommendations, items, warnings };
+  }, [recommendations, unavailableSet]);
+
   const scores = useMemo(() => {
     const next: Record<string, number> = {};
-    (recommendations?.items ?? []).forEach((item) => {
+    (visibleRecommendations?.items ?? []).forEach((item) => {
       next[item.subzoneId] = item.totalScore;
     });
     return next;
-  }, [recommendations]);
+  }, [visibleRecommendations]);
 
   const routeDestination = useMemo(
     () => (mapData && selectedSubzoneId ? featureCenter(mapData, selectedSubzoneId) : null),
@@ -171,7 +215,8 @@ export default function App() {
         ]);
         if (!mounted) return;
         setCriteria(requireData(criteriaEnvelope));
-        setMapData(requireData(mapEnvelope));
+        const loadedMapData = requireData(mapEnvelope);
+        setMapData(loadedMapData);
         if (amenitiesEnvelope?.success && amenitiesEnvelope.data) {
           setAmenities(amenitiesEnvelope.data);
         }
@@ -196,9 +241,13 @@ export default function App() {
           setEditingProfile(null);
           await runRanking(savedProfile);
           if (!mounted) return;
-          setSharedSubzoneIds(scenario.subzoneCodes);
-          setComparisonIds(scenario.subzoneCodes.slice(0, 4));
-          setSelectedSubzoneId(scenario.subzoneCodes[0] ?? null);
+          const unavailable = new Set(listUnavailableSubzoneIds(loadedMapData));
+          const sharedCodes = scenario.subzoneCodes.filter(
+            (code) => !unavailable.has(code),
+          );
+          setSharedSubzoneIds(sharedCodes);
+          setComparisonIds(sharedCodes.slice(0, 4));
+          setSelectedSubzoneId(sharedCodes[0] ?? null);
           const url = new URL(window.location.href);
           url.searchParams.delete("share");
           window.history.replaceState({}, "", url.toString());
@@ -303,7 +352,15 @@ export default function App() {
   }
 
   function selectSubzone(subzoneId: string) {
+    if (unavailableSet.has(subzoneId)) {
+      setSelectedSubzoneId(null);
+      setFactsheetCode(null);
+      setRoute(null);
+      showInsufficientDataNotice(subzoneId);
+      return;
+    }
     setSelectedSubzoneId(subzoneId);
+    setBottomNotice(null);
     window.setTimeout(() => {
       document
         .getElementById(`result-${subzoneId}`)
@@ -311,7 +368,24 @@ export default function App() {
     }, 30);
   }
 
+  function openFactsheet(subzoneId: string) {
+    if (unavailableSet.has(subzoneId)) {
+      setSelectedSubzoneId(null);
+      setFactsheetCode(null);
+      setRoute(null);
+      showInsufficientDataNotice(subzoneId);
+      return;
+    }
+    setFactsheetCode(subzoneId);
+    setBottomNotice(null);
+  }
+
   function toggleComparison(subzoneId: string) {
+    if (unavailableSet.has(subzoneId)) {
+      showInsufficientDataNotice(subzoneId);
+      return;
+    }
+    setBottomNotice(null);
     setComparisonIds((current) => {
       if (current.includes(subzoneId)) {
         return current.filter((id) => id !== subzoneId);
@@ -397,6 +471,7 @@ export default function App() {
               scores={scores}
               selectedSubzoneId={selectedSubzoneId}
               highlightedSubzoneIds={sharedSubzoneIds}
+              unavailableSubzoneIds={unavailableIds}
               amenities={focusedAmenities}
               route={route}
               routeOrigin={activeProfile?.anchorCoordinates ?? null}
@@ -410,23 +485,28 @@ export default function App() {
                 <span>
                   Selected: <strong>{findSubzoneName(mapData, selectedSubzoneId)}</strong>
                 </span>
-                <button className="button small" onClick={() => setFactsheetCode(selectedSubzoneId)}>
-                  Open factsheet
-                </button>
+                {unavailableSet.has(selectedSubzoneId) ? (
+                  <span className="insufficient-data-label">Insufficient data</span>
+                ) : (
+                  <button className="button small" onClick={() => openFactsheet(selectedSubzoneId)}>
+                    Open factsheet
+                  </button>
+                )}
               </div>
             )}
           </section>
 
           <aside className="sidebar recommendations-sidebar">
             <ResultsListUI
-              recommendationSet={recommendations}
+              recommendationSet={visibleRecommendations}
               selectedSubzoneId={selectedSubzoneId}
               comparisonIds={comparisonIds}
+              unavailableSubzoneIds={unavailableIds}
               loading={busy}
               onSelect={selectSubzone}
               onToggleCompare={toggleComparison}
               onOpenComparison={openComparison}
-              onOpenFactsheet={(code) => setFactsheetCode(code)}
+              onOpenFactsheet={openFactsheet}
               onExport={openExport}
               exportDisabled={!activeProfile}
             />
@@ -485,12 +565,18 @@ export default function App() {
       <ExportReportUI
         open={exportOpen}
         profile={activeProfile}
-        recommendationSet={recommendations}
+        recommendationSet={visibleRecommendations}
         subzoneCodes={comparisonIds}
         reportApi={api}
         onClose={() => setExportOpen(false)}
         onNotify={notify}
       />
+
+      {bottomNotice && (
+        <div className="bottom-toast" role="status" aria-live="polite">
+          {bottomNotice}
+        </div>
+      )}
 
       {notification && (
         <NotificationModalUI

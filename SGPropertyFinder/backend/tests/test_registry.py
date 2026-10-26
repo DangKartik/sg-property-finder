@@ -40,6 +40,16 @@ class SubzoneRegistryTests(unittest.TestCase):
         properties = [f["properties"] for f in collection["features"]]
         self.assertIn(87.5, [item["score"] for item in properties])
 
+    def test_feature_collection_marks_insufficient_data(self) -> None:
+        self.registry.getSubzone("TAMPINES01").dataAvailable = False
+        collection = self.registry.toFeatureCollection()
+        properties = {
+            feature["properties"]["subzoneCode"]: feature["properties"]
+            for feature in collection["features"]
+        }
+        self.assertFalse(properties["TAMPINES01"]["dataAvailable"])
+        self.assertTrue(properties["BEDOK01"]["dataAvailable"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from app.control.data_availability_notifier import DataAvailabilityNotifier
     from app.entity.preference_profile import PreferenceProfile
     from app.entity.recommendation_set import RecommendationSet
+    from app.entity.subzone import Subzone
     from app.strategy.scoring_strategy import ScoringStrategy
 
 
@@ -41,6 +42,14 @@ class RankingControl:
         self.dataSnapshotId = dataSnapshotId
         self.dataAsOf = dataAsOf or datetime.now(timezone.utc)
 
+    def _rankableSubzones(self) -> list["Subzone"]:
+        """Return subzones that have enough source data to rank."""
+        return [
+            subzone
+            for subzone in self.subzoneRegistry.getAllSubzones()
+            if subzone.dataAvailable
+        ]
+
     def generateRankedRecommendations(
         self,
         profile: PreferenceProfile,
@@ -48,10 +57,10 @@ class RankingControl:
     ) -> RecommendationSet:
         """Generate sorted recommendations for a profile.
 
-        Every subzone remains in the scoring cohort. Public transport near the
-        CBD uses the precomputed matrix (with an estimated fallback for missing
-        entries); driving/walking and custom workplaces use live OneMap routing.
-        Subzones without a commute estimate are scored with that criterion
+        Only subzones marked `dataAvailable` enter the scoring cohort. Public
+        transport near the CBD uses the precomputed matrix; driving/walking and
+        custom workplaces use live OneMap routing. Subzones without a commute
+        estimate from the live/heuristic path are scored with that criterion
         treated as missing and reweighted.
 
         Args:
@@ -61,7 +70,7 @@ class RankingControl:
         """
         from app.entity.recommendation_set import RecommendationSet
 
-        subzones = self.subzoneRegistry.getAllSubzones()
+        subzones = self._rankableSubzones()
         origin = profile.anchorCoordinates or Coordinates(CBD_LATITUDE, CBD_LONGITUDE)
         mode = profile.preferredCommuteMode
         commute_result = self.commuteControl.retrieveCommutesSync(

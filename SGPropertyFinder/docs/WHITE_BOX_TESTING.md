@@ -8,7 +8,7 @@
   - `WeightedScoringStrategy.scoreCandidates` — supporting data flow
 - **Test suite:** `backend/tests/test_white_box.py`
 - **Execution:** `python -m unittest tests.test_white_box -v`
-- **Result:** **16 tests — all passed**
+- **Result:** **17 tests — all passed**
 
 ---
 
@@ -34,6 +34,7 @@ including the ranking → scoring boundary.
 
 - `WeightedScoringStrategy.computeSuitabilityScore` — CFG and DU analysis.
 - `RankingControl.generateRankedRecommendations` — CFG and DU analysis.
+- `RankingControl._rankableSubzones` — availability guard covered by WB-RR-08.
 - `WeightedScoringStrategy.scoreCandidates` — DU analysis for the decision-
   relevant variables (`eligible`, `raw_by_criterion`, `commute`, `raw`,
   `warning_list`, `available_weight`, `raw_rows`, `normalised`,
@@ -138,10 +139,10 @@ Location abbreviation: `WB` = `backend/tests/test_white_box.py`.
 
 The method:
 
-1. loads all subzones;
+1. loads only subzones marked `dataAvailable` through `_rankableSubzones()`;
 2. chooses the profile anchor or falls back to the CBD;
 3. retrieves commute estimates synchronously;
-4. scores every candidate;
+4. scores every available candidate;
 5. applies the optional result limit;
 6. retains warnings whose `subzoneCode` is global (`None`) or belongs to a
    retained item;
@@ -154,7 +155,7 @@ it affects which warnings reach the result.
 
 ```mermaid
 flowchart TD
-    A[1 Start: subzones = registry.getAllSubzones] --> B{2 anchorCoordinates?}
+    A[1 Start: subzones = _rankableSubzones] --> B{2 anchorCoordinates?}
     B -- yes --> C[3 origin = anchor]
     B -- no --> D[4 origin = CBD]
     C --> E[5 mode = preferredCommuteMode]
@@ -180,7 +181,7 @@ flowchart TD
 
 | Node | Statement group |
 | --- | --- |
-| 1 | Import `RecommendationSet`; `subzones = getAllSubzones()` |
+| 1 | Import `RecommendationSet`; `subzones = self._rankableSubzones()` (filters `dataAvailable`) |
 | 2 | Predicate: `profile.anchorCoordinates` truthy |
 | 3 | `origin = profile.anchorCoordinates` |
 | 4 | `origin = Coordinates(CBD_LATITUDE, CBD_LONGITUDE)` |
@@ -242,6 +243,16 @@ inside the false branch of node 8.
 | WB-RR-05 | Limit zero | `WB::GenerateRankedRecommendationsWhiteBoxTests::test_wb_rr_05_limit_zero_returns_no_items` | `limit=0`; global + retained warnings | No items; only global warning retained | `items=[]; warnings=[None]` | Pass |
 | WB-RR-06 | Negative limit | `WB::GenerateRankedRecommendationsWhiteBoxTests::test_wb_rr_06_negative_limit_is_clamped_to_zero` | `limit=-5` | `max(0, limit)` produces no items | `items=[]` | Pass |
 
+### 5.7 Availability guard
+
+`_rankableSubzones()` filters out entities whose `dataAvailable` flag is false
+before the CFG starts. This guard is outside the main method graph but is part of
+the public ranking behaviour.
+
+| ID | Name | Location | Input | Oracle | Log | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| WB-RR-08 | Insufficient-data subzone is excluded | `WB::GenerateRankedRecommendationsWhiteBoxTests::test_wb_rr_08_insufficient_data_subzone_is_excluded` | BEDOK01 marked `dataAvailable=false` | BEDOK01 absent from items and commute cohort | `items exclude BEDOK01; commute cohort=[TAMPINES01,JURONG01]` | Pass |
+
 ## 6. Data-flow testing
 
 ### 6.1 Definitions, uses and coverage criteria
@@ -279,29 +290,29 @@ Line numbers refer to `backend/app/control/ranking_control.py`.
 
 | Pair | Variable | Definition | Use | Kind | Covered by |
 | --- | --- | --- | --- | --- | --- |
-| DF-RR-01 | `subzones` | 64 | 67: commute call argument | c-use | WB-RR-01/02, WB-DF-RR-01 |
-| DF-RR-02 | `subzones` | 64 | 78: scoring candidate cohort | c-use | All RR tests |
-| DF-RR-03 | `origin` | 65 | 68: commute call argument | c-use | WB-RR-01/02, WB-DF-RR-01 |
-| DF-RR-04 | `mode` | 66 | 70: commute call argument | c-use | All RR tests |
-| DF-RR-05 | `commute_result` | 67 | 74: warnings | c-use | All RR tests |
-| DF-RR-06 | `commute_result` | 67 | 82: commute data | c-use | All RR tests |
-| DF-RR-07 | `warnings` | 74 | 80: scoring warning argument | c-use | WB-RR-01/04, WB-DF-RR-01 |
-| DF-RR-08 | `warnings` | 74 | 87: filter input | c-use | WB-RR-01/04, WB-DF-RR-01 |
-| DF-RR-09 | `candidates` | 78 | 80: scoring candidate argument | c-use | All RR tests |
-| DF-RR-10 | `all_items` | 79 | 85: `limit is None` branch | c-use | WB-RR-01/02/04/07 |
-| DF-RR-11 | `all_items` | 79 | 85: numeric-limit slice | c-use | WB-RR-03/05/06 |
-| DF-RR-12 | `items` | 85 | 86: retained codes | c-use | All RR tests |
-| DF-RR-13 | `items` | 85 | 97: result items | c-use | All RR tests |
-| DF-RR-14 | `retained_codes` | 86 | 90: warning filter predicate | p-use | WB-RR-01/04/05, WB-DF-RR-02 |
-| DF-RR-15 | `result` | 92 | 101: `sortByRank` | c-use | All RR tests |
-| DF-RR-16 | `result` | 92 | 102: return | c-use | All RR tests |
-| DF-RR-17 | `profile` | Parameter entry | 65: anchor predicate | p-use | WB-RR-01/02 |
-| DF-RR-18 | `profile` | Parameter entry | 81: scoring argument | c-use | All RR tests |
-| DF-RR-19 | `profile` | Parameter entry | 93/99: ID and snapshot | c-use | All RR tests, WB-DF-RR-01 |
-| DF-RR-20 | `limit` | Parameter entry | 85: `limit is None` predicate | p-use | WB-RR-01/03/05/06 |
-| DF-RR-21 | `warning` | 89: loop variable | 90: filter predicate | p-use | WB-RR-01/04, WB-DF-RR-01 |
-| DF-RR-22 | `warning` | 89: loop variable | 88: output expression | c-use | WB-RR-01/04, WB-DF-RR-01 |
-| DF-RR-23 | `item` | 86: comprehension variable | 86: `item.subzoneId` | c-use | All RR tests |
+| DF-RR-01 | `subzones` | 73 | 76: commute call argument | c-use | WB-RR-01/02, WB-DF-RR-01 |
+| DF-RR-02 | `subzones` | 73 | 87: scoring candidate cohort | c-use | All RR tests |
+| DF-RR-03 | `origin` | 74 | 77: commute call argument | c-use | WB-RR-01/02, WB-DF-RR-01 |
+| DF-RR-04 | `mode` | 75 | 79: commute call argument | c-use | All RR tests |
+| DF-RR-05 | `commute_result` | 76 | 83: warnings | c-use | All RR tests |
+| DF-RR-06 | `commute_result` | 76 | 91: commute data | c-use | All RR tests |
+| DF-RR-07 | `warnings` | 83 | 89: scoring warning argument | c-use | WB-RR-01/04, WB-DF-RR-01 |
+| DF-RR-08 | `warnings` | 83 | 96: filter input | c-use | WB-RR-01/04, WB-DF-RR-01 |
+| DF-RR-09 | `candidates` | 87 | 89: scoring candidate argument | c-use | All RR tests |
+| DF-RR-10 | `all_items` | 88 | 94: `limit is None` branch | c-use | WB-RR-01/02/04/07 |
+| DF-RR-11 | `all_items` | 88 | 94: numeric-limit slice | c-use | WB-RR-03/05/06 |
+| DF-RR-12 | `items` | 94 | 95: retained codes | c-use | All RR tests |
+| DF-RR-13 | `items` | 94 | 106: result items | c-use | All RR tests |
+| DF-RR-14 | `retained_codes` | 95 | 99: warning filter predicate | p-use | WB-RR-01/04/05, WB-DF-RR-02 |
+| DF-RR-15 | `result` | 101 | 110: `sortByRank` | c-use | All RR tests |
+| DF-RR-16 | `result` | 101 | 111: return | c-use | All RR tests |
+| DF-RR-17 | `profile` | Parameter entry | 74: anchor predicate | p-use | WB-RR-01/02 |
+| DF-RR-18 | `profile` | Parameter entry | 90: scoring argument | c-use | All RR tests |
+| DF-RR-19 | `profile` | Parameter entry | 102/108: ID and snapshot | c-use | All RR tests, WB-DF-RR-01 |
+| DF-RR-20 | `limit` | Parameter entry | 94: `limit is None` predicate | p-use | WB-RR-01/03/05/06 |
+| DF-RR-21 | `warning` | 98: loop variable | 99: filter predicate | p-use | WB-RR-01/04, WB-DF-RR-01 |
+| DF-RR-22 | `warning` | 98: loop variable | 97: output expression | c-use | WB-RR-01/04, WB-DF-RR-01 |
+| DF-RR-23 | `item` | 95: comprehension variable | 95: `item.subzoneId` | c-use | All RR tests |
 
 ### 6.4 DU pairs — `scoreCandidates` (supporting unit)
 
@@ -350,10 +361,10 @@ the dead-store cleanup described in section 8.
 | Unit / technique | `V(G)` | Basis paths | Tests |
 | --- | --- | --- | --- |
 | `computeSuitabilityScore` — control flow | 2 | 2 | WB-CSS-01, WB-CSS-02 |
-| `generateRankedRecommendations` — control flow | 5 | 5 + 2 boundary extras | WB-RR-01…07 |
+| `generateRankedRecommendations` — control flow | 5 | 5 + 2 boundary extras + availability guard | WB-RR-01…08 |
 | `scoreCandidates` — data flow | — | — | WB-DF-SC-01…04 |
 | Ranking boundary — data flow | — | — | WB-DF-RR-01…03 |
-| **Total** | — | **7 basis paths** | **16 tests** |
+| **Total** | — | **7 basis paths** | **17 tests** |
 
 Coverage was established by test design and assertions rather than a
 line-coverage tool. Every CFG node is reached by at least one basis path, every
@@ -406,7 +417,7 @@ python -m unittest tests.test_white_box -v
 Observed summary:
 
 ```text
-Ran 16 tests in 0.040s
+Ran 17 tests in 0.040s
 
 OK
 ```
@@ -421,7 +432,7 @@ make test
 Observed summary at the time of writing:
 
 ```text
-Ran 160 tests
+Ran 167 tests
 OK
 ```
 
@@ -435,8 +446,8 @@ npm test
 Observed summary at the time of writing:
 
 ```text
-Test Files 10 passed (10)
-Tests 34 passed (34)
+Test Files 11 passed (11)
+Tests 39 passed (39)
 ```
 
 ## 10. Traceability

@@ -29,6 +29,7 @@ export interface NeighborhoodMapUIProps {
   scores: Record<string, number>;
   selectedSubzoneId: string | null;
   highlightedSubzoneIds?: string[];
+  unavailableSubzoneIds?: string[];
   amenities?: AmenityPointDTO[];
   route: RouteDataDTO | null;
   routeOrigin: CoordinatesDTO | null;
@@ -46,6 +47,7 @@ export function NeighborhoodMapUI({
   scores,
   selectedSubzoneId,
   highlightedSubzoneIds = [],
+  unavailableSubzoneIds = [],
   amenities = [],
   route,
   routeOrigin,
@@ -84,8 +86,14 @@ export function NeighborhoodMapUI({
         : [];
   const mapStyle = useMemo(
     () => (feature: Feature | undefined) =>
-      styleFeature(feature, scores, selectedSubzoneId, highlightedSubzoneIds),
-    [scores, selectedSubzoneId, highlightedSubzoneIds],
+      styleFeature(
+        feature,
+        scores,
+        selectedSubzoneId,
+        highlightedSubzoneIds,
+        unavailableSubzoneIds,
+      ),
+    [scores, selectedSubzoneId, highlightedSubzoneIds, unavailableSubzoneIds],
   );
 
   return (
@@ -106,7 +114,9 @@ export function NeighborhoodMapUI({
           <GeoJSON
             data={mapData.geojson as GeoJsonObject}
             style={mapStyle}
-            onEachFeature={(feature, layer) => bindFeature(feature, layer, onSelect)}
+            onEachFeature={(feature, layer) =>
+              bindFeature(feature, layer, onSelect, unavailableSubzoneIds)
+            }
           />
         )}
         {visibleAmenities.map((amenity, index) => {
@@ -193,17 +203,20 @@ function styleFeature(
   scores: Record<string, number>,
   selectedId: string | null,
   highlightedIds: string[],
+  unavailableIds: string[],
 ): PathOptions {
   const code = (feature?.properties as { subzoneCode?: string } | undefined)?.subzoneCode;
   const score = code ? scores[code] : undefined;
   const selected = code === selectedId;
   const highlighted = code ? highlightedIds.includes(code) : false;
+  const unavailable = code ? unavailableIds.includes(code) : false;
   return {
-    fillColor: scoreColor(score),
+    fillColor: unavailable ? "#64748b" : scoreColor(score),
     fillOpacity:
       score === undefined ? 0.18 : selected ? 0.82 : highlighted ? 0.78 : 0.55,
-    color: selected ? "#000000" : highlighted ? "#f59e0b" : "#ffffff",
+    color: selected ? "#000000" : highlighted ? "#f59e0b" : unavailable ? "#94a3b8" : "#ffffff",
     weight: selected ? 3 : highlighted ? 2.5 : 1,
+    dashArray: unavailable ? "4 4" : undefined,
     opacity: 0.9,
     lineJoin: "round",
   };
@@ -213,6 +226,7 @@ function bindFeature(
   feature: Feature | undefined,
   layer: Layer,
   onSelect: (subzoneId: string) => void,
+  unavailableIds: string[],
 ): void {
   const properties = (feature?.properties ?? {}) as {
     subzoneCode?: string;
@@ -221,8 +235,11 @@ function bindFeature(
   if (!properties.subzoneCode) {
     return;
   }
+  const unavailable = unavailableIds.includes(properties.subzoneCode);
   layer.bindTooltip(
-    `<strong>${escapeHtml(properties.subzoneName ?? properties.subzoneCode)}</strong><br/>Click for factsheet`,
+    `<strong>${escapeHtml(properties.subzoneName ?? properties.subzoneCode)}</strong><br/>${
+      unavailable ? "Insufficient data — selection unavailable" : "Click for factsheet"
+    }`,
     { sticky: true },
   );
   layer.on("click", () => onSelect(properties.subzoneCode as string));

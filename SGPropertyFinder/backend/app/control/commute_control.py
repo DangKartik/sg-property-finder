@@ -70,10 +70,16 @@ class CommuteControl:
         self.matrixPath = Path(matrixPath) if matrixPath else None
         self.cache = cache or TTLCache(maxsize=2048, ttl=7 * 24 * 3600)
         self.matrix: dict[str, Any] = {}
+        self.insufficientDataSubzoneCodes: set[str] = set()
         if self.matrixPath and self.matrixPath.exists():
             payload = json.loads(self.matrixPath.read_text(encoding="utf-8"))
             if isinstance(payload, dict):
                 self.matrix = payload.get("subzones") or payload.get("matrix") or payload
+                metadata = payload.get("metadata") or {}
+                for error in metadata.get("errors") or []:
+                    code = str(error.get("subzoneCode") or "").strip()
+                    if code:
+                        self.insufficientDataSubzoneCodes.add(code)
             else:
                 self.matrix = {}
 

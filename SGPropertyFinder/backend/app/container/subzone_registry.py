@@ -123,6 +123,7 @@ class SubzoneRegistry:
                         "townName": subzone.townName,
                         "regionName": subzone.regionName,
                         "score": score_map.get(subzone.subzoneCode),
+                        "dataAvailable": subzone.dataAvailable,
                     },
                 }
             )

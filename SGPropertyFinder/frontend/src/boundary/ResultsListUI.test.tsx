@@ -84,4 +84,27 @@ describe("ResultsListUI", () => {
 
     expect(screen.getByText(/1 data warning/i)).toBeInTheDocument();
   });
+
+  it("replaces the factsheet button with insufficient-data text", () => {
+    render(
+      <ResultsListUI
+        recommendationSet={recommendationSet(1)}
+        selectedSubzoneId={null}
+        comparisonIds={[]}
+        unavailableSubzoneIds={["SZ1"]}
+        loading={false}
+        onSelect={vi.fn()}
+        onToggleCompare={vi.fn()}
+        onOpenComparison={vi.fn()}
+        onOpenFactsheet={vi.fn()}
+        onExport={vi.fn()}
+        exportDisabled={false}
+      />,
+    );
+
+    expect(screen.getByText("Insufficient data")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /view factsheet/i }),
+    ).not.toBeInTheDocument();
+  });
 });

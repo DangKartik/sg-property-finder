@@ -170,10 +170,11 @@ Precomputed CBD commute estimates:
 }
 ```
 
-The shipped matrix covers 319/332 subzones. Custom workplaces use live OneMap
-routing for a top-50 shortlist; the remainder receive straight-line PT estimates
-so every candidate has a commute value. Missing matrix entries also use the
-straight-line fallback with `ESTIMATED_COMMUTE_FALLBACK`.
+The shipped matrix covers 319/332 subzones. The 13 missing entries are recorded
+in `metadata.errors`, marked unavailable, and excluded from ranking/factsheet
+selection. Custom workplaces use live OneMap routing for a top-50 shortlist; the
+remainder receive straight-line PT estimates so every ranked candidate has a
+commute value.
 
 ## Attribution
 

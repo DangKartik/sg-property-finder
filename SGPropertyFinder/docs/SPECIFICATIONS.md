@@ -167,8 +167,13 @@ affect suitability scores. This preserves deterministic rankings.
   use live OneMap routing; the remainder use spatial heuristic estimates with a
   **1.35× road factor** for driving and a **1.20× path factor** for walking.
   The PT matrix is never used.
-- **Failure / missing matrix entry:** use a straight-line distance estimate,
-  keep the subzone eligible for ranking, and attach a
+- **Unavailable matrix subzones:** subzones listed in
+  `commute_matrix.json.metadata.errors` are marked `dataAvailable=false`. They are
+  excluded from ranking and comparison, cannot open a factsheet, and appear on the
+  map with an “insufficient data” notification. They are not scored with a
+  straight-line proxy.
+- **Failure during live routing:** for an otherwise available subzone, use a
+  straight-line distance estimate, keep the subzone eligible, and attach a
   `DataAvailabilityWarning` with code `ESTIMATED_COMMUTE_FALLBACK`. Heuristic
   shortlist outliers carry the same warning.
 
@@ -242,6 +247,8 @@ HTTP status mapping:
 - `503` required data snapshot unavailable.
 
 Error responses use `success=false`, `data=null`, `error={code,message,details}`.
+`INSUFFICIENT_DATA` is returned when a factsheet or comparison requests a
+subzone marked `dataAvailable=false`.
 
 ## 9. PDF report contract
 

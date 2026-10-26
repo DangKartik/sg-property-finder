@@ -53,14 +53,14 @@ server-side state is the short-lived PDF report store.
 
 | File | Purpose |
 | --- | --- |
-| `backend/app/api/handlers.py` | Transport-agnostic handler functions used by FastAPI and tests: `validateProfile`, `recommendations`, `factsheet`, `comparison`, `searchAddress`, `commuteOverlay`, `generateReport`, `geometry`, `criteria`, `amenities`, `dataStatus`, `refreshData`, `reportPath`, `decodeShareLink`, `health`, `ready`. Also defines `ok()`/`fail()` envelope helpers. |
+| `backend/app/api/handlers.py` | Transport-agnostic handler functions used by FastAPI and tests: `validateProfile`, `recommendations`, `factsheet`, `comparison`, `searchAddress`, `commuteOverlay`, `generateReport`, `geometry`, `criteria`, `amenities`, `dataStatus`, `refreshData`, `reportPath`, `decodeShareLink`, `health`, `ready`. Enforces insufficient-data guards and defines `ok()`/`fail()` envelope helpers. |
 
 ### 2.3 Control layer
 
 | File | Purpose |
 | --- | --- |
 | `backend/app/control/amenity_retrieval_control.py` | Loads the amenity snapshot plus tertiary-school supplement; counts schools, hospitals, parks, malls and MRT within their buffer radii; returns per-subzone indicators, all map points, status metadata and a local rebuild. |
-| `backend/app/control/commute_control.py` | Resolves commute estimates: CBD public-transport matrix, live OneMap routing for the nearest 50 candidates, spatial heuristics for the remainder, straight-line fallback and warnings. Caches live results. |
+| `backend/app/control/commute_control.py` | Resolves commute estimates: CBD public-transport matrix, live OneMap routing for the nearest 50 candidates, spatial heuristics for the remainder, straight-line fallback and warnings. Exposes `insufficientDataSubzoneCodes` from matrix metadata and caches live results. |
 | `backend/app/control/comparison_control.py` | Compares two to four subzones, enforces the 2–4 limit and returns comparison items plus full factsheet details. |
 | `backend/app/control/data_availability_notifier.py` | Stateless factory for `DataAvailabilityWarning` objects (missing source data, stale cache, partial data, estimated fallback, valid zero). |
 | `backend/app/control/environment_retrieval_control.py` | Reads deterministic regional green-coverage and PM2.5 baselines for scoring; attaches display-only live PM2.5/UVI/forecast values. |
@@ -68,7 +68,7 @@ server-side state is the short-lived PDF report store.
 | `backend/app/control/input_validation_control.py` | Authoritative profile validation: name, budget, flat types, workplace/anchor, address lookup, criterion IDs/rating range, hard minimums and commute mode. Returns field-level errors. |
 | `backend/app/control/map_control.py` | Builds `MapData` (GeoJSON, scores, centre), returns one subzone boundary and creates commute route overlays. |
 | `backend/app/control/neighborhood_details_control.py` | Aggregates pricing, amenities, environment, commute, warnings and pricing notes into one `NeighborhoodDetailDTO` for the factsheet. |
-| `backend/app/control/ranking_control.py` | Orchestrates commute retrieval, scoring, top-20 limiting, warning filtering, snapshot metadata and deterministic ranking output. |
+| `backend/app/control/ranking_control.py` | Orchestrates commute retrieval, available-subzone filtering, scoring, top-20 limiting, warning filtering, snapshot metadata and deterministic ranking output. |
 | `backend/app/control/report_control.py` | Generates ReportLab PDFs, stores them with a 15-minute expiry, exports copies, creates shareable base64 URLs and renders profile weights, criterion scores, dates, caveats and warnings. Supports an injected clock for tests. |
 | `backend/app/control/retrieval_control.py` | Abstract template-method base for dataset retrieval: fetch, parse, missing-data handling and warning creation. |
 
@@ -100,7 +100,7 @@ server-side state is the short-lived PDF report store.
 
 | File | Purpose |
 | --- | --- |
-| `backend/app/container/subzone_registry.py` | In-memory URA subzone registry: load GeoJSON, lookup by code, point-in-polygon search, register subzones and export a scored FeatureCollection for Leaflet. |
+| `backend/app/container/subzone_registry.py` | In-memory URA subzone registry: load GeoJSON, lookup by code, point-in-polygon search, register subzones and export a scored FeatureCollection with `dataAvailable` flags for Leaflet. |
 | `backend/app/container/town_mapping.py` | Loads `planning_area_to_hdb_town.json` and resolves a URA planning area to an HDB town for pricing. |
 | `backend/app/container/report_store.py` | Maps report IDs to temporary PDF paths and expiry timestamps; removes expired entries and files; accepts an injectable clock for deterministic expiry tests. |
 
@@ -133,7 +133,7 @@ server-side state is the short-lived PDF report store.
 | `backend/app/entity/preference_profile.py` | `PreferenceProfile`: full saved plan and lookup of a criterion importance rating. |
 | `backend/app/entity/recommendation_item.py` | `RecommendationItem`: subzone identity, rank, total score and criterion score rows. |
 | `backend/app/entity/recommendation_set.py` | `RecommendationSet`: profile snapshot, snapshot metadata, items and warnings; provides add/get/sort helpers. |
-| `backend/app/entity/subzone.py` | `Subzone`: code, name, planning area, HDB town, geometry, representative point and optional indicators. |
+| `backend/app/entity/subzone.py` | `Subzone`: code, name, planning area, HDB town, geometry, representative point, optional indicators and `dataAvailable` flag. |
 | `backend/app/entity/subzone_indicators.py` | Numeric features consumed by scoring: amenity counts, distances, green coverage, PM2.5, pricing and timestamps. |
 | `backend/app/entity/types.py` | Shared value objects: `Coordinates`, `ValidationError`, `ValidationResult`, `RetrievalResult`, `MapData`, `RouteData` and `RawResponse`. |
 
@@ -179,7 +179,7 @@ server-side state is the short-lived PDF report store.
 | `backend/tests/test_scoring_ranking.py` | Budget filter, normalisation, missing-data renormalisation, tie-break, ranking cap and comparison outside top 20. |
 | `backend/tests/test_token_manager.py` | OneMap token caching, expiry and refresh-after-invalid-token. |
 | `backend/tests/test_validation.py` | Direct validator unit tests for flat types, address lookup, weight bounds and minimum counts. |
-| `backend/tests/test_white_box.py` | **Updated:** CFG/basis-path tests plus data-flow tests for scoring and ranking (16 tests). |
+| `backend/tests/test_white_box.py` | **Updated:** CFG/basis-path tests plus data-flow tests for scoring and ranking (17 tests). |
 | `backend/tests/fixtures/subzones.geojson` | Three-subzone fixture used by every backend test. |
 | `backend/tests/fixtures/amenities.json` | 16-point amenity fixture covering every category. |
 | `backend/tests/fixtures/hdb_resale.csv` | Small HDB resale fixture with town/flat-type rows. |
@@ -206,7 +206,7 @@ server-side state is the short-lived PDF report store.
 | File | Purpose |
 | --- | --- |
 | `frontend/src/main.tsx` | React entry point: imports Leaflet CSS and global styles, mounts `<App />` in StrictMode. |
-| `frontend/src/App.tsx` | Application state and orchestration: loads criteria/map/amenities/status, restores profiles from IndexedDB, handles share-link import, ranking, profile create/edit/delete, map/result/factsheet/comparison/report state, data refresh and notifications. |
+| `frontend/src/App.tsx` | Application state and orchestration: loads criteria/map/amenities/status, restores profiles from IndexedDB, handles share-link import, ranking, profile create/edit/delete, map/result/factsheet/comparison/report state, insufficient-data bottom notices, data refresh and notifications. |
 | `frontend/src/styles.css` | Responsive layout, panels, modal, map, form, results and notification styles. |
 | `frontend/src/vite-env.d.ts` | Vite client type declarations. |
 
@@ -224,8 +224,8 @@ server-side state is the short-lived PDF report store.
 | --- | --- |
 | `frontend/src/boundary/ProfileFormUI.tsx` | Create/edit plan modal: budget, flat types, address search/selection, commute mode, 1–10 importance sliders, five hard-minimum inputs and save/validation handling. |
 | `frontend/src/boundary/ProfileSelectorUI.tsx` | Top-right plan picker with active plan, per-row Edit/Delete, delete confirmation, one-plan guard and portal-based modal. |
-| `frontend/src/boundary/ResultsListUI.tsx` | Ranked recommendation cards, comparison checkboxes, factsheet button, warning counts and PDF export button. |
-| `frontend/src/boundary/NeighborhoodMapUI.tsx` | Leaflet/React-Leaflet map: OneMap tiles, subzone choropleth, selected/highlighted polygons, route overlay, refresh control and selection-driven nearby amenity markers. |
+| `frontend/src/boundary/ResultsListUI.tsx` | Ranked recommendation cards, comparison checkboxes, factsheet action (replaced by an “Insufficient data” label for unavailable codes), warning counts and PDF export button. |
+| `frontend/src/boundary/NeighborhoodMapUI.tsx` | Leaflet/React-Leaflet map: OneMap tiles, subzone choropleth, selected/highlighted polygons, unavailable-data styling/tooltips, route overlay, refresh control and selection-driven nearby amenity markers. |
 | `frontend/src/boundary/FactSheetUI.tsx` | Factsheet modal: multi-flat pricing, town-proxy badge, environment values, grouped amenities with distances, commute details and warnings. |
 | `frontend/src/boundary/ComparisonUI.tsx` | Side-by-side comparison matrix for two to four subzones. |
 | `frontend/src/boundary/ExportReportUI.tsx` | PDF export modal: generate report, binary download, expiry display and share URL copy. |
@@ -257,10 +257,12 @@ server-side state is the short-lived PDF report store.
 | `frontend/src/utils/amenities.ts` | Amenity category groups, colours, nearby filtering (2 km) and grouping for the map/factsheet. |
 | `frontend/src/utils/format.ts` | Price/number/date formatting and score-to-colour mapping. |
 | `frontend/src/utils/polyline.ts` | Client-side encoded-polyline decoding for route overlays. |
+| `frontend/src/utils/subzones.ts` | Reads `dataAvailable` flags from map GeoJSON and returns unavailable subzone codes. |
 | `frontend/src/utils/weights.ts` | 1–10 importance clamping/defaults, legacy 0–100 migration and profile weight normalisation. |
 | `frontend/src/utils/amenities.test.ts` | Tests category grouping, nearby filtering and colours. |
 | `frontend/src/utils/format.test.ts` | Tests price, number, date and score formatting. |
 | `frontend/src/utils/polyline.test.ts` | Tests polyline decoding. |
+| `frontend/src/utils/subzones.test.ts` | Tests extraction of unavailable subzone codes from map GeoJSON. |
 | `frontend/src/utils/weights.test.ts` | Tests clamping, defaults and legacy weight migration. |
 | `frontend/src/test/setup.ts` | Vitest setup: `jest-dom` matchers and `fake-indexeddb` for Dexie tests. |
 

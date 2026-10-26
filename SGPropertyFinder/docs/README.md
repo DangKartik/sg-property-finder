@@ -8,12 +8,12 @@ and is kept only for project history.
 step-by-step setup, dependency installation and run commands.
 
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
-PDF and REST endpoints are implemented and covered by 160 `unittest` tests. The
+PDF and REST endpoints are implemented and covered by 167 `unittest` tests. The
 React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison,
 enriched PDF export (ReportLab), share-link import, IndexedDB API caching,
-data-refresh control on the map, hard amenity minimums and selection-driven amenity
-markers, with 34 Vitest tests. Formal black-box/white-box testing and Phase 5
-SLA/E2E documentation are in this folder.
+data-refresh control on the map, hard amenity minimums, selection-driven amenity
+markers and insufficient-data selection guards, with 39 Vitest tests. Formal
+black-box/white-box testing and Phase 5 SLA/E2E documentation are in this folder.
 
 ## Documentation index
 
@@ -157,6 +157,7 @@ SGPropertyFinder/
             ├── amenities.ts
             ├── format.ts
             ├── polyline.ts
+            ├── subzones.ts
             └── weights.ts
 ```
 

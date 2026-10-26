@@ -222,6 +222,40 @@ class RankingTests(unittest.TestCase):
         self.assertEqual(len(full.items), 25)
         self.assertEqual(full.items[-1].subzoneId, "TOP24")
 
+    def test_insufficient_data_subzones_are_not_ranked(self) -> None:
+        registry = attach_indicators(load_registry())
+        registry.getSubzone("TAMPINES01").dataAvailable = False
+
+        class StubScoring:
+            def scoreCandidates(self, subzones, profile, commutes, warnings):
+                return [
+                    RecommendationItem(
+                        subzoneId=subzone.subzoneCode,
+                        subzoneName=subzone.subzoneName,
+                        rank=index + 1,
+                        totalScore=100 - index,
+                    )
+                    for index, subzone in enumerate(subzones)
+                ]
+
+        class StubCommute:
+            def __init__(self) -> None:
+                self.codes: list[str] = []
+
+            def retrieveCommutesSync(
+                self, origin, subzones, mode, departureTime=None, topK=50
+            ):
+                self.codes = [subzone.subzoneCode for subzone in subzones]
+                return RetrievalResult({}, [])
+
+        commute = StubCommute()
+        control = RankingControl(registry, StubScoring(), commute)
+        result = control.generateRankedRecommendations(make_profile(), limit=None)
+
+        self.assertNotIn("TAMPINES01", [item.subzoneId for item in result.items])
+        self.assertEqual(set(commute.codes), {"BEDOK01", "JURONG01"})
+        self.assertEqual(len(result.items), 2)
+
     def test_comparison_can_score_subzones_outside_the_top_twenty(self) -> None:
         items = [
             RecommendationItem(

@@ -23,6 +23,7 @@ class Subzone:
     regionName: str
     centroid: Coordinates
     indicators: SubzoneIndicators | None = None
+    dataAvailable: bool = True
 
     def getSubzoneCode(self) -> str:
         """Return the subzone code."""

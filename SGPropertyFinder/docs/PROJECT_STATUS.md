@@ -4,8 +4,8 @@
 - **Repository:** `2006-SCMB-D2`
 - **Application folder:** `SGPropertyFinder/`
 - **Current branch:** `main`
-- **Last commit:** `6ba23a2` (cleanup of unused code)
-- **Working tree:** testing revision (state-based + data-flow), documentation updates and file reference pending commit
+- **Last commit:** `fe0a40a` (centralised documentation)
+- **Working tree:** insufficient-data selection guard, verification updates and documentation changes pending commit
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -89,8 +89,8 @@ make dev
 ```powershell
 make backend    # FastAPI only
 make frontend   # Vite only
-make test       # backend unittest suite (160 tests)
-make test-frontend # frontend Vitest suite (34 tests)
+make test       # backend unittest suite (167 tests)
+make test-frontend # frontend Vitest suite (39 tests)
 make benchmark  # Phase 5 SLA benchmark
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
@@ -164,7 +164,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the SGPropert
 | Hybrid commute shortlist | **Completed** (50 live + spatial heuristics) |
 | 1–10 criterion importance | **Completed** (relative-normalised) |
 | Hard amenity minimums | **Completed** (primary/secondary/tertiary schools, malls, hospitals) |
-| Frontend tests | **Completed** (34 Vitest tests) |
+| Frontend tests | **Completed** (39 Vitest tests) |
 | PDF generation | **Completed** (ReportLab only) |
 | Production deployment/CI | **Not completed** |
 
@@ -268,8 +268,9 @@ Do **not** run `python -m unittest discover -s backend/tests` from the SGPropert
   strategy: the 50 nearest subzones receive live OneMap routing; the remainder
   receive spatial heuristic estimates with a 1.35× road factor for driving, a
   1.20× path factor for walking and a 1.00× factor for public transport.
-- 319/332 subzones covered; the 13 no-route entries fall back to a straight-line
-  estimate with `ESTIMATED_COMMUTE_FALLBACK` and remain eligible for ranking.
+- 319/332 subzones covered; the 13 no-route entries are marked
+  `dataAvailable=false`, excluded from ranking/comparison, and blocked from
+  factsheet selection on the map with an “insufficient data” bottom notification.
 - Next-weekday 08:30 SGT departure.
 - Async parallel routing for the live shortlist; failures and heuristic outliers
   carry `ESTIMATED_COMMUTE_FALLBACK` warnings.
@@ -407,12 +408,13 @@ Do **not** run `python -m unittest discover -s backend/tests` from the SGPropert
 
 ### 4.4 Testing and verification
 
-- **160 backend tests pass** via `make test`.
-- **34 frontend Vitest tests pass** via `npm test`.
+- **167 backend tests pass** via `make test`.
+- **39 frontend Vitest tests pass** via `npm test`.
 - Frontend tests cover format/polyline helpers, weight migration, nearby amenity
   filtering/colours, `ApiCache` persistence/pruning, client cache reuse/stale
   fallback, refresh cache invalidation, hard-minimum form submission, top-20
-  result rendering and the profile lifecycle state machine.
+  result rendering, unavailable-subzone extraction and the profile lifecycle
+  state machine.
 - Frontend `npm run build` passes (`tsc --noEmit` + Vite production build).
 - Live FastAPI server verified:
   - health true,
@@ -478,13 +480,14 @@ Supporting scripts:
   and custom-workplace public transport use the hybrid shortlist: 50 nearest
   subzones live, remainder spatial heuristic with 1.35× driving / 1.20× walking
   / 1.00× PT multipliers.
-- **Estimated fallback for missing matrix entries:** the 13 subzones without a
-  matrix entry receive a straight-line estimate and an
-  `ESTIMATED_COMMUTE_FALLBACK` warning instead of being excluded.
-- **No silent candidate dropping:** `RankingControl` scores every candidate;
-  every candidate now receives a commute estimate (live or straight-line
-  fallback), so the commute criterion is weighted consistently instead of being
-  skipped for out-of-shortlist subzones.
+- **Insufficient-data exclusion:** the 13 subzones without a matrix entry are
+  marked `dataAvailable=false` from `commute_matrix.json.metadata.errors`, removed
+  from the ranking cohort, blocked from comparison/factsheet endpoints, and shown
+  on the map with a bottom notification instead of opening a factsheet.
+- **No silent candidate dropping:** `RankingControl` scores every otherwise
+  available candidate; candidates with live or heuristic commute estimates still
+  receive the commute criterion, so values are weighted consistently for ranked
+  subzones.
 - **Share URL import:** new `POST /api/v1/share/decode` endpoint. On startup,
   `App.tsx` reads `?share=`, decodes the scenario, saves the profile to Dexie,
   activates it, reruns ranking, selects the first shared subzone, fills the
@@ -502,16 +505,21 @@ Supporting scripts:
   `NeighborhoodMapUI` hides them until a subzone is selected, then shows only
   amenities within 2 km of that subzone with category colours, counts and
   tooltips.
+- **Insufficient-data map guard:** the 13 unavailable subzones are rendered
+  muted/dashed. Clicking one does not select it or open the factsheet bar;
+  `App.tsx` shows a bottom toast explaining that insufficient data is available.
+  If an unavailable card is ever present in stale data, its factsheet button is
+  replaced with an “Insufficient data” label and its Compare checkbox is disabled.
 - **Mall coverage:** the amenity builder adds LTA Carpark Rates major-mall names
   and a named supplement, taking the snapshot from 66 to 143 malls.
 - **Comparison outside top 20:** `RankingControl.generateRankedRecommendations`
   accepts an optional `limit`; the comparison endpoint passes `limit=None` so
   subzones outside the displayed top 20 still receive score items.
-- **Frontend tests:** Vitest/jsdom/Testing Library with 34 tests covering format
+- **Frontend tests:** Vitest/jsdom/Testing Library with 39 tests covering format
   helpers, polyline decoding, weight migration, nearby amenity filtering/colours,
   `ApiCache`, client cache reuse/stale fallback, hard-minimum form submission,
-  refresh cache invalidation, top-20 `ResultsListUI` rendering and the
-  `ProfileControl` CRUD state machine.
+  refresh cache invalidation, top-20 `ResultsListUI` rendering, unavailable-subzone
+  extraction and the `ProfileControl` CRUD state machine.
 - **Data refresh UI:** the map’s bottom-left “Refresh” button calls
   `POST /api/v1/data/refresh`, refreshes subzone/HDB data, rebuilds amenities
   from the local POI snapshot, clears `ApiCache`, reloads amenity points,
@@ -561,12 +569,13 @@ Supporting scripts:
 
 6. **Commute matrix coverage is 319/332.**
    - 13 subzones returned OneMap HTTP 404/no route (mostly islands/out-of-bounds).
-   - They are recorded in `commute_matrix.json.metadata.errors` and now use a
-     straight-line estimate with an `ESTIMATED_COMMUTE_FALLBACK` warning instead
-     of being excluded from ranking.
+   - They are recorded in `commute_matrix.json.metadata.errors`, marked
+     `dataAvailable=false`, and excluded from ranking, comparison and factsheet
+     selection. The map shows them in a muted style and a bottom notification
+     explains that insufficient data is available.
    - Driving/walking and custom-workplace public transport use the hybrid
      shortlist (50 live + spatial estimates); CBD public transport retains the
-     matrix/fallback path.
+     matrix path for available subzones.
 
 7. **`BUKIT TIMAH` and `OUT OF BOUNDS` mappings.**
    - These follow the supplied mapping but may not correspond to HDB town pricing data; such subzones can produce missing-price warnings.
@@ -589,7 +598,7 @@ Supporting scripts:
 9. **Phase 4 white-box testing documentation — revised 26 October 2026.**
    - CFGs, cyclomatic complexity, basis paths and definition-use tables are in
      `WHITE_BOX_TESTING.md`.
-   - `backend/tests/test_white_box.py`: 16 tests covering
+   - `backend/tests/test_white_box.py`: 17 tests covering
      `WeightedScoringStrategy.computeSuitabilityScore` (`V(G)=2`),
      `RankingControl.generateRankedRecommendations` (`V(G)=5`) and data flow in
      `WeightedScoringStrategy.scoreCandidates`.
@@ -599,7 +608,7 @@ Supporting scripts:
 
 10. **Frontend unit testing — expanded 26 October 2026.**
     - Vitest + jsdom + Testing Library are configured.
-    - 34 tests cover format/polyline helpers, weight migration, nearby amenity
+    - 39 tests cover format/polyline helpers, weight migration, nearby amenity
       filtering, `ApiCache`, client cache reuse/stale fallback, hard-minimum
       form submission, `ResultsListUI` rendering and the `ProfileControl`
       black-box profile lifecycle.
@@ -669,7 +678,7 @@ Supporting scripts:
 | Data refresh | `DATA_MAX_AGE_HOURS=24`; local snapshots + live refresh; amenities rebuilt from local POI snapshot |
 | Commute matrix | `PUBLIC_TRANSIT` near the CBD only; other modes/origins use the hybrid shortlist |
 | Hybrid shortlist | Top 50 live; remainder uses 1.35× driving / 1.20× walking / 1.00× PT heuristic |
-| Missing commute entry | Straight-line estimate + `ESTIMATED_COMMUTE_FALLBACK` |
+| Missing commute entry | `dataAvailable=false`; excluded from ranking/comparison/factsheet; map shows insufficient-data notification |
 | Hard amenity minimums | Primary/secondary/tertiary schools 1 km; malls 1 km; hospitals 2 km; 0 means disabled |
 | Tertiary schools | JCs, Millennia Institute, mixed-level JC/IB schools and autonomous universities; 28-point local supplement |
 | Ranking result size | Top 20 items; remaining results discarded |
@@ -726,7 +735,7 @@ Supporting scripts:
 | `backend/app/control/report_control.py` | PDF/share URL generation |
 | `backend/app/api/handlers.py` | Transport-agnostic REST handlers |
 | `scripts/build_amenities.py` | data.gov.sg + OneMap amenity snapshot builder |
-| `backend/tests/` | 160 unit/integration tests; black-box EP/BVA + state and white-box CFG + data-flow suites |
+| `backend/tests/` | 167 unit/integration tests; black-box EP/BVA + state and white-box CFG + data-flow suites |
 
 ### Frontend
 
@@ -775,10 +784,10 @@ Supporting scripts:
 
 | Check | Result |
 | --- | --- |
-| `make test` | **160 tests OK** |
-| `npm test` | **34 frontend tests OK** |
+| `make test` | **167 tests OK** |
+| `npm test` | **39 frontend tests OK** |
 | Black-box suites | **52 methods / 83 logical cases OK** — EP/BVA + report/profile state transitions; see `BLACK_BOX_TESTING.md` |
-| White-box suite | **16 tests / 7 basis paths / DU coverage OK** — see `WHITE_BOX_TESTING.md` |
+| White-box suite | **17 tests / 7 basis paths / DU coverage OK** — see `WHITE_BOX_TESTING.md` |
 | SLA benchmark | **Passed** — cold recommendations p95 2.27 s; warm p95 0.28 s; see `SLA_BENCHMARK.md` |
 | Dialog Map E2E | **18/18 checks passed** — see `PHASE5_E2E_CHECKLIST.md` |
 | `make build` / `npm run build` | **Passed** |
@@ -793,7 +802,7 @@ Supporting scripts:
 | Amenities-missing fallback | **Passed**, school/amenity criteria excluded and reweighted |
 | Commute mode gating | **Passed**, driving/walking no longer read the PT matrix |
 | Hybrid commute shortlist | **Passed**, 50 live calls + heuristic remainder with road/path factors |
-| Missing matrix fallback | **Passed**, 13 warnings attached; subzones remain ranked |
+| Insufficient-data exclusion | **Passed**, 13 subzones removed from ranking/factsheet; map shows bottom notification |
 | Share decode + import | **Passed**, endpoint returns profile/codes; frontend build succeeds |
 | Ranking result cap | **Passed**, response returns exactly the top 20 items |
 | Comparison outside top 20 | **Passed**, comparison requests the full internal ranking |

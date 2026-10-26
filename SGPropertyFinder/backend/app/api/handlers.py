@@ -32,6 +32,12 @@ def fail(code: str, message: str, details: Any = None) -> ApiEnvelope[Any]:
     )
 
 
+def _hasInsufficientData(subzoneCode: str, context: AppContext) -> bool:
+    """Return whether a subzone is explicitly marked as lacking data."""
+    subzone = context.registry.subzones.get(subzoneCode)
+    return subzone is not None and not subzone.dataAvailable
+
+
 def searchAddress(query: str, context: AppContext) -> ApiEnvelope[Any]:
     """Handle workplace address search."""
     if not query or not query.strip():
@@ -76,6 +82,11 @@ def factsheet(
     parsed, error = _profileFromPayload(profilePayload, context)
     if error is not None:
         return error
+    if _hasInsufficientData(subzoneCode, context):
+        return fail(
+            "INSUFFICIENT_DATA",
+            "Insufficient data is available for this subzone.",
+        )
     try:
         detail = context.detailsControl.fetchNeighborhoodDetails(subzoneCode, parsed)
     except KeyError:
@@ -94,6 +105,14 @@ def comparison(
     parsed, error = _profileFromPayload(profilePayload, context)
     if error is not None:
         return error
+    unavailable = [
+        code for code in subzoneCodes if _hasInsufficientData(code, context)
+    ]
+    if unavailable:
+        return fail(
+            "INSUFFICIENT_DATA",
+            "Insufficient data is available for: " + ", ".join(unavailable),
+        )
     try:
         result = context.comparisonControl.compare(parsed, subzoneCodes)
     except ValueError as exc:
