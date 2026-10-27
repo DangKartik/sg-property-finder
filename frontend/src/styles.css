@@ -318,6 +318,35 @@ input[type="range"] { accent-color: var(--teal); width: 100%; }
   color: var(--muted); font-size: 0.83rem;
 }
 .map-selection-bar strong { color: var(--ink); }
+.bottom-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 3000;
+  max-width: min(560px, calc(100vw - 32px));
+  padding: 11px 18px;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.28);
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-align: center;
+  pointer-events: none;
+}
+.insufficient-data-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #fef3f2;
+  color: var(--danger);
+  border: 1px solid #fecdca;
+  font-size: 0.74rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
 .leaflet-container:focus:not(:focus-visible),
 .leaflet-interactive:focus:not(:focus-visible) {
   outline: none;

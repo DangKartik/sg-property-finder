@@ -148,7 +148,7 @@ async function request<T>(
 
 function cacheKeyFor(method: string, path: string, body: BodyInit | null | undefined): string {
   const bodyKey = body ? `:${hashString(String(body))}` : "";
-  return `v1:${method}:${path}${bodyKey}`;
+  return `v2:${method}:${path}${bodyKey}`;
 }
 
 function hashString(value: string): string {

@@ -70,10 +70,10 @@ describe("api client IndexedDB cache", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     await api.getCriteria();
-    expect(await apiCache.get("v1:GET:/api/v1/criteria")).toBeDefined();
+    expect(await apiCache.get("v2:GET:/api/v1/criteria")).toBeDefined();
 
     await api.refreshData();
-    expect(await apiCache.get("v1:GET:/api/v1/criteria")).toBeUndefined();
+    expect(await apiCache.get("v2:GET:/api/v1/criteria")).toBeUndefined();
   });
 
   it("uses the cached envelope when the network is unavailable", async () => {
@@ -91,7 +91,7 @@ describe("api client IndexedDB cache", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     await api.getAmenities();
-    const cached = await apiCache.get("v1:GET:/api/v1/amenities");
+    const cached = await apiCache.get("v2:GET:/api/v1/amenities");
 
     expect(cached).toBeDefined();
     if (cached) {

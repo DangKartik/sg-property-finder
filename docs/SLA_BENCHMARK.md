@@ -3,7 +3,7 @@
 - **Date:** 24 October 2026
 - **Scope:** HTTP API latency and live OneMap commute routing
 - **Benchmark script:** `scripts/benchmark_api.py`
-- **Raw results:** `docs/sla_benchmark_results.json`
+- **Raw results:** `sla_benchmark_results.json`
 
 ---
 
@@ -169,7 +169,7 @@ cold sample of only five requests makes cold p99 indicative only.
 ## 8. Reproduce
 
 ```powershell
-cd Lab4/revised-skeleton
+cd SGPropertyFinder
 python scripts/benchmark_api.py --spawn-server --warm-samples 50 `
   --output docs/sla_benchmark_results.json
 ```

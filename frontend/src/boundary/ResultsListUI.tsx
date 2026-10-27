@@ -5,6 +5,7 @@ export interface ResultsListUIProps {
   recommendationSet: RecommendationSetDTO | null;
   selectedSubzoneId: string | null;
   comparisonIds: string[];
+  unavailableSubzoneIds?: string[];
   loading: boolean;
   onSelect: (subzoneId: string) => void;
   onToggleCompare: (subzoneId: string) => void;
@@ -19,6 +20,7 @@ export function ResultsListUI({
   recommendationSet,
   selectedSubzoneId,
   comparisonIds,
+  unavailableSubzoneIds = [],
   loading,
   onSelect,
   onToggleCompare,
@@ -68,6 +70,7 @@ export function ResultsListUI({
         {items.map((item) => {
           const selected = item.subzoneId === selectedSubzoneId;
           const inComparison = comparisonIds.includes(item.subzoneId);
+          const unavailable = unavailableSubzoneIds.includes(item.subzoneId);
           return (
             <article
               id={`result-${item.subzoneId}`}
@@ -95,23 +98,32 @@ export function ResultsListUI({
                   <span style={{ width: `${Math.max(2, item.totalScore)}%` }} />
                 </div>
                 <div className="result-actions">
-                  <button
-                    className="link-button"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onOpenFactsheet(item.subzoneId);
-                    }}
-                  >
-                    View factsheet
-                  </button>
+                  {unavailable ? (
+                    <span className="insufficient-data-label">Insufficient data</span>
+                  ) : (
+                    <button
+                      className="link-button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onOpenFactsheet(item.subzoneId);
+                      }}
+                    >
+                      View factsheet
+                    </button>
+                  )}
                   <label
                     className="compare-toggle"
                     onClick={(event) => event.stopPropagation()}
-                    title="Add this neighbourhood to the comparison matrix"
+                    title={
+                      unavailable
+                        ? "Insufficient data for comparison"
+                        : "Add this neighbourhood to the comparison matrix"
+                    }
                   >
                     <input
                       type="checkbox"
                       checked={inComparison}
+                      disabled={unavailable}
                       onChange={() => onToggleCompare(item.subzoneId)}
                     />
                     Compare

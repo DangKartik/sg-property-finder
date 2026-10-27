@@ -1,11 +1,11 @@
 # Open Issues and Known Limitations
 
-- **Last updated:** 25 October 2026
+- **Last updated:** 26 October 2026
 - **Status:** no open correctness or API-contract issues.
 - **Scope:** this is a school project; production-only gaps are listed separately.
 
 All original `OPEN-01`–`OPEN-25` decisions have been resolved and are frozen in
-`docs/SPECIFICATIONS.md`. The implementation, tests and Phase 4/5 evidence are
+`SPECIFICATIONS.md`. The implementation, tests and Phase 4/5 evidence are
 summarized in `PROJECT_STATUS.md`.
 
 ## Accepted data limitations
@@ -20,13 +20,14 @@ summarized in `PROJECT_STATUS.md`.
 
 3. **Commute matrix covers 319/332 subzones.**
    - The 13 missing entries are mainly islands/out-of-bounds.
-   - They receive a straight-line estimate and an
-     `ESTIMATED_COMMUTE_FALLBACK` warning.
+   - They are marked `dataAvailable=false`, excluded from rankings/comparisons and
+     cannot open a factsheet. Clicking them on the map shows a bottom notification
+     saying that insufficient data is available.
 
 4. **Fallback commute routes are not cached.**
    - Live route estimates are cached; straight-line fallbacks are recomputed.
    - This causes occasional tail latency in repeated rankings (documented in
-     `docs/SLA_BENCHMARK.md`).
+     `SLA_BENCHMARK.md`).
 
 5. **`BUKIT TIMAH` and `OUT OF BOUNDS` mappings follow the supplied mapping.**
    - They may not correspond to HDB town pricing data and can produce

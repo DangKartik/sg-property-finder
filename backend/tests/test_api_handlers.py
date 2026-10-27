@@ -81,6 +81,29 @@ class ApiHandlerTests(unittest.TestCase):
         self.assertTrue(result.success, result.error)
         self.assertIn("4 ROOM", result.data["pricing"])
 
+    def test_factsheet_rejects_subzone_with_insufficient_data(self) -> None:
+        self.context.registry.getSubzone("TAMPINES01").dataAvailable = False
+        result = handlers.factsheet("TAMPINES01", profilePayload(), self.context)
+        self.assertFalse(result.success)
+        self.assertEqual(result.error.code, "INSUFFICIENT_DATA")
+
+    def test_recommendations_exclude_subzone_with_insufficient_data(self) -> None:
+        self.context.registry.getSubzone("TAMPINES01").dataAvailable = False
+        result = handlers.recommendations(profilePayload(), self.context)
+        self.assertTrue(result.success, result.error)
+        self.assertNotIn(
+            "TAMPINES01",
+            [item["subzoneId"] for item in result.data["items"]],
+        )
+
+    def test_comparison_rejects_subzone_with_insufficient_data(self) -> None:
+        self.context.registry.getSubzone("TAMPINES01").dataAvailable = False
+        result = handlers.comparison(
+            profilePayload(), ["TAMPINES01", "BEDOK01"], self.context
+        )
+        self.assertFalse(result.success)
+        self.assertEqual(result.error.code, "INSUFFICIENT_DATA")
+
     def test_comparison(self) -> None:
         result = handlers.comparison(
             profilePayload(), ["TAMPINES01", "BEDOK01"], self.context

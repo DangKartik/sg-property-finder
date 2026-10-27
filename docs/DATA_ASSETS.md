@@ -5,7 +5,7 @@ source. `DatasetService` checks their age on startup and refreshes the subzone
 and HDB datasets from data.gov.sg when they are older than 24 hours. Live
 environment readings come from the data.gov.sg real-time APIs.
 
-`bootstrap.buildContext()` looks for these files in this directory:
+`bootstrap.buildContext()` looks for these files in `backend/assets/data/`:
 
 ```text
 subzones.geojson
@@ -170,10 +170,11 @@ Precomputed CBD commute estimates:
 }
 ```
 
-The shipped matrix covers 319/332 subzones. Custom workplaces use live OneMap
-routing for a top-50 shortlist; the remainder receive straight-line PT estimates
-so every candidate has a commute value. Missing matrix entries also use the
-straight-line fallback with `ESTIMATED_COMMUTE_FALLBACK`.
+The shipped matrix covers 319/332 subzones. The 13 missing entries are recorded
+in `metadata.errors`, marked unavailable, and excluded from ranking/factsheet
+selection. Custom workplaces use live OneMap routing for a top-50 shortlist; the
+remainder receive straight-line PT estimates so every ranked candidate has a
+commute value.
 
 ## Attribution
 

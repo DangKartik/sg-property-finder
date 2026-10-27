@@ -83,7 +83,6 @@ class WeightedScoringStrategy(ScoringStrategy):
 
         items: list[RecommendationItem] = []
         for subzone in eligible:
-            commute = commutes.get(subzone.subzoneCode)
             criterion_scores: list[CriterionScore] = []
             available_weight = 0.0
             raw_rows: list[tuple[str, float, str, float, bool]] = []

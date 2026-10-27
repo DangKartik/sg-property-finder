@@ -1,11 +1,11 @@
 # SG Property Finder — Project Status
 
-- **Last updated:** 25 October 2026
+- **Last updated:** 26 October 2026
 - **Repository:** `2006-SCMB-D2`
-- **Application folder:** `Lab4/revised-skeleton/`
+- **Application folder:** `SGPropertyFinder/`
 - **Current branch:** `main`
-- **Last commit:** `6ba23a2` (cleanup of unused code)
-- **Working tree:** code and documentation cleanup pending commit
+- **Last commit:** `fe0a40a` (centralised documentation)
+- **Working tree:** insufficient-data selection guard, verification updates and documentation changes pending commit
 
 This document is intended as the handover/context file for a new conversation or a new developer joining the project.
 
@@ -71,7 +71,7 @@ People choosing where to live in Singapore who want a data-driven comparison of:
 ### One command
 
 ```powershell
-cd C:\Users\Lucas\Documents\GitHub\2006-SCMB-D2\Lab4\revised-skeleton
+cd C:\Users\Lucas\Documents\GitHub\2006-SCMB-D2\SGPropertyFinder
 make install
 make dev
 ```
@@ -89,8 +89,8 @@ make dev
 ```powershell
 make backend    # FastAPI only
 make frontend   # Vite only
-make test       # backend unittest suite (145 tests)
-make test-frontend # frontend Vitest suite (27 tests)
+make test       # backend unittest suite (162 tests)
+make test-frontend # frontend Vitest suite (39 tests)
 make benchmark  # Phase 5 SLA benchmark
 make build      # frontend type-check + production build
 make clean      # remove dist and Python caches
@@ -101,12 +101,12 @@ make help
 
 ```powershell
 # Terminal 1
-cd Lab4/revised-skeleton/backend
+cd SGPropertyFinder/backend
 python -m pip install -r requirements.txt
 python -m uvicorn main:app --reload --port 8000
 
 # Terminal 2
-cd Lab4/revised-skeleton/frontend
+cd SGPropertyFinder/frontend
 npm install
 npm run dev
 ```
@@ -126,18 +126,18 @@ GET http://127.0.0.1:8000/api/v1/data/status
 Run backend tests with:
 
 ```powershell
-cd Lab4/revised-skeleton
+cd SGPropertyFinder
 make test
 ```
 
 or directly from `backend/`:
 
 ```powershell
-cd Lab4/revised-skeleton/backend
+cd SGPropertyFinder/backend
 python -m unittest discover -s tests -v
 ```
 
-Do **not** run `python -m unittest discover -s backend/tests` from the revised-skeleton root: the tests import `tests.support` and expect `backend/` on `sys.path`.
+Do **not** run `python -m unittest discover -s backend/tests` from the SGPropertyFinder root: the tests import `tests.support` and expect `backend/` on `sys.path`.
 
 ---
 
@@ -153,7 +153,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 | Phase 2.5 - factsheets, PDF, share URLs | **Completed** (ReportLab) |
 | Phase 2.6 — FastAPI endpoints | **Completed** |
 | Phase 3 — frontend | **Completed** |
-| Phase 4 — formal black-box/white-box testing | **Completed** — EP/BVA and CFG/basis-path documentation |
+| Phase 4 — formal black-box/white-box testing | **Completed** — EP/BVA, state-transition, CFG/basis-path and data-flow documentation |
 | Phase 5 - formal SLA benchmarking/E2E documentation | **Completed** - benchmark and 18-check E2E checklist |
 | Makefile / one-command local run | **Completed** |
 | Real amenities dataset | **Completed** — 1,200 effective points (1,172 base + 28 tertiary); `make amenities` rebuilds it |
@@ -164,7 +164,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 | Hybrid commute shortlist | **Completed** (50 live + spatial heuristics) |
 | 1–10 criterion importance | **Completed** (relative-normalised) |
 | Hard amenity minimums | **Completed** (primary/secondary/tertiary schools, malls, hospitals) |
-| Frontend tests | **Completed** (27 Vitest tests) |
+| Frontend tests | **Completed** (39 Vitest tests) |
 | PDF generation | **Completed** (ReportLab only) |
 | Production deployment/CI | **Not completed** |
 
@@ -185,9 +185,9 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 - Made `DataAvailabilityNotifier` stateless and removed `ReportControl.lastGeneratedReport`.
 - Added `.env.example`, `.gitignore`, `Settings`, and environment documentation.
 - Specifications live in:
-  - `docs/SPECIFICATIONS.md`
-  - `docs/OPEN_ISSUES.md`
-  - `docs/ENVIRONMENT.md`
+  - `SPECIFICATIONS.md`
+  - `OPEN_ISSUES.md`
+  - `ENVIRONMENT.md`
 
 ### 4.2 Phase 2 — Backend
 
@@ -268,8 +268,9 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
   strategy: the 50 nearest subzones receive live OneMap routing; the remainder
   receive spatial heuristic estimates with a 1.35× road factor for driving, a
   1.20× path factor for walking and a 1.00× factor for public transport.
-- 319/332 subzones covered; the 13 no-route entries fall back to a straight-line
-  estimate with `ESTIMATED_COMMUTE_FALLBACK` and remain eligible for ranking.
+- 319/332 subzones covered; the 13 no-route entries are marked
+  `dataAvailable=false`, excluded from ranking/comparison, and blocked from
+  factsheet selection on the map with an “insufficient data” bottom notification.
 - Next-weekday 08:30 SGT departure.
 - Async parallel routing for the live shortlist; failures and heuristic outliers
   carry `ESTIMATED_COMMUTE_FALLBACK` warnings.
@@ -407,12 +408,13 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 
 ### 4.4 Testing and verification
 
-- **145 backend tests pass** via `make test`.
-- **27 frontend Vitest tests pass** via `npm test`.
+- **162 backend tests pass** via `make test`.
+- **39 frontend Vitest tests pass** via `npm test`.
 - Frontend tests cover format/polyline helpers, weight migration, nearby amenity
   filtering/colours, `ApiCache` persistence/pruning, client cache reuse/stale
-  fallback, refresh cache invalidation, hard-minimum form submission and top-20
-  result rendering.
+  fallback, refresh cache invalidation, hard-minimum form submission, top-20
+  result rendering, unavailable-subzone extraction and the profile lifecycle
+  state machine.
 - Frontend `npm run build` passes (`tsc --noEmit` + Vite production build).
 - Live FastAPI server verified:
   - health true,
@@ -449,7 +451,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the revised-s
 
 ### 4.5 Makefile
 
-`Lab4/revised-skeleton/Makefile`:
+`SGPropertyFinder/Makefile`:
 
 - `install`
 - `dev`
@@ -478,13 +480,14 @@ Supporting scripts:
   and custom-workplace public transport use the hybrid shortlist: 50 nearest
   subzones live, remainder spatial heuristic with 1.35× driving / 1.20× walking
   / 1.00× PT multipliers.
-- **Estimated fallback for missing matrix entries:** the 13 subzones without a
-  matrix entry receive a straight-line estimate and an
-  `ESTIMATED_COMMUTE_FALLBACK` warning instead of being excluded.
-- **No silent candidate dropping:** `RankingControl` scores every candidate;
-  every candidate now receives a commute estimate (live or straight-line
-  fallback), so the commute criterion is weighted consistently instead of being
-  skipped for out-of-shortlist subzones.
+- **Insufficient-data exclusion:** the 13 subzones without a matrix entry are
+  marked `dataAvailable=false` from `commute_matrix.json.metadata.errors`, removed
+  from the ranking cohort, blocked from comparison/factsheet endpoints, and shown
+  on the map with a bottom notification instead of opening a factsheet.
+- **No silent candidate dropping:** `RankingControl` scores every otherwise
+  available candidate; candidates with live or heuristic commute estimates still
+  receive the commute criterion, so values are weighted consistently for ranked
+  subzones.
 - **Share URL import:** new `POST /api/v1/share/decode` endpoint. On startup,
   `App.tsx` reads `?share=`, decodes the scenario, saves the profile to Dexie,
   activates it, reruns ranking, selects the first shared subzone, fills the
@@ -502,15 +505,21 @@ Supporting scripts:
   `NeighborhoodMapUI` hides them until a subzone is selected, then shows only
   amenities within 2 km of that subzone with category colours, counts and
   tooltips.
+- **Insufficient-data map guard:** the 13 unavailable subzones are rendered
+  muted/dashed. Clicking one does not select it or open the factsheet bar;
+  `App.tsx` shows a bottom toast explaining that insufficient data is available.
+  If an unavailable card is ever present in stale data, its factsheet button is
+  replaced with an “Insufficient data” label and its Compare checkbox is disabled.
 - **Mall coverage:** the amenity builder adds LTA Carpark Rates major-mall names
   and a named supplement, taking the snapshot from 66 to 143 malls.
 - **Comparison outside top 20:** `RankingControl.generateRankedRecommendations`
   accepts an optional `limit`; the comparison endpoint passes `limit=None` so
   subzones outside the displayed top 20 still receive score items.
-- **Frontend tests:** Vitest/jsdom/Testing Library with 27 tests covering format
+- **Frontend tests:** Vitest/jsdom/Testing Library with 39 tests covering format
   helpers, polyline decoding, weight migration, nearby amenity filtering/colours,
   `ApiCache`, client cache reuse/stale fallback, hard-minimum form submission,
-  refresh cache invalidation and top-20 `ResultsListUI` rendering.
+  refresh cache invalidation, top-20 `ResultsListUI` rendering, unavailable-subzone
+  extraction and the `ProfileControl` CRUD state machine.
 - **Data refresh UI:** the map’s bottom-left “Refresh” button calls
   `POST /api/v1/data/refresh`, refreshes subzone/HDB data, rebuilds amenities
   from the local POI snapshot, clears `ApiCache`, reloads amenity points,
@@ -560,54 +569,64 @@ Supporting scripts:
 
 6. **Commute matrix coverage is 319/332.**
    - 13 subzones returned OneMap HTTP 404/no route (mostly islands/out-of-bounds).
-   - They are recorded in `commute_matrix.json.metadata.errors` and now use a
-     straight-line estimate with an `ESTIMATED_COMMUTE_FALLBACK` warning instead
-     of being excluded from ranking.
+   - They are recorded in `commute_matrix.json.metadata.errors`, marked
+     `dataAvailable=false`, and excluded from ranking, comparison and factsheet
+     selection. The map shows them in a muted style and a bottom notification
+     explains that insufficient data is available.
    - Driving/walking and custom-workplace public transport use the hybrid
      shortlist (50 live + spatial estimates); CBD public transport retains the
-     matrix/fallback path.
+     matrix path for available subzones.
 
 7. **`BUKIT TIMAH` and `OUT OF BOUNDS` mappings.**
    - These follow the supplied mapping but may not correspond to HDB town pricing data; such subzones can produce missing-price warnings.
 
 ### 5.3 Formal testing documentation
 
-8. **Phase 4 black-box testing documentation — completed 24 October 2026.**
-   - Formal equivalence-class partitioning and boundary-value tables are in
-     `docs/BLACK_BOX_TESTING.md`.
-   - The suite is `backend/tests/test_black_box_validation.py`: 37 test methods
-     and 68 logical cases, all passing.
-   - Covers `InputValidationControl` and the `profileDtoFromDict` parse boundary,
-     including the hard-minimum fields.
+8. **Phase 4 black-box testing documentation — revised 26 October 2026.**
+   - Equivalence-class partitioning, boundary-value analysis and state-transition
+     testing are documented in `BLACK_BOX_TESTING.md`.
+   - `backend/tests/test_black_box_validation.py`: 37 test methods / 68 logical
+     cases for profile validation.
+   - `backend/tests/test_black_box_state.py`: 8 state-transition tests for the
+     report lifecycle (generate, read, export, expire, regenerate, cascade).
+   - `frontend/src/control/ProfileControl.test.ts`: 7 state-transition tests for
+     the browser profile lifecycle (create, read, update, delete, guard, cascade).
+   - Total: 52 test methods / 83 logical cases, all passing. Every case now
+     records Name, Location, Input, Oracle and Log, plus its execution order
+     (independent or cascading).
 
-9. **Phase 4 white-box testing documentation — completed 24 October 2026.**
-   - CFGs, cyclomatic complexity and basis-path tables are in
-     `docs/WHITE_BOX_TESTING.md`.
-   - The suite is `backend/tests/test_white_box.py`: 9 tests covering
-     `WeightedScoringStrategy.computeSuitabilityScore` (`V(G)=2`) and
-     `RankingControl.generateRankedRecommendations` (`V(G)=5`).
-   - All nodes, predicate outcomes and basis paths are exercised.
+9. **Phase 4 white-box testing documentation — revised 26 October 2026.**
+   - CFGs, cyclomatic complexity, basis paths and definition-use tables are in
+     `WHITE_BOX_TESTING.md`.
+   - `backend/tests/test_white_box.py`: 22 tests covering the two complex methods
+     `WeightedScoringStrategy.scoreCandidates` (`V(G)=6`) and
+     `RankingControl.generateRankedRecommendations` (`V(G)=5`), plus the
+     supporting `computeSuitabilityScore` wrapper (`V(G)=2`) and data-flow pairs.
+   - All feasible nodes, predicate outcomes, basis paths and listed DU pairs are
+     exercised. Data-flow analysis found and removed one dead store in
+     `scoreCandidates` (DF-ANOM-01).
 
-10. **Frontend unit testing — resolved 22 October 2026.**
+10. **Frontend unit testing — expanded 26 October 2026.**
     - Vitest + jsdom + Testing Library are configured.
-    - 27 tests cover format/polyline helpers, weight migration, nearby amenity
+    - 39 tests cover format/polyline helpers, weight migration, nearby amenity
       filtering, `ApiCache`, client cache reuse/stale fallback, hard-minimum
-      form submission and `ResultsListUI` rendering.
+      form submission, `ResultsListUI` rendering and the `ProfileControl`
+      black-box profile lifecycle.
     - `npm run build` remains the production build check.
 
 ### 5.4 Phase 5 — completed 24 October 2026
 
 11. **Formal SLA benchmark — completed.**
     - Script: `scripts/benchmark_api.py`.
-    - Results: `docs/sla_benchmark_results.json`.
-    - Report: `docs/SLA_BENCHMARK.md`.
+    - Results: `sla_benchmark_results.json`.
+    - Report: `SLA_BENCHMARK.md`.
     - Cold recommendation p50 1.25 s / p95 2.27 s; warm p50 0.19 s /
       p95 0.28 s; all requests HTTP 200.
     - OneMap cold p50 101 ms / p95 518 ms; 2/10 fallbacks; warm cache hits
       effectively instant.
 
 12. **Dialog Map E2E checklist — completed.**
-    - Report: `docs/PHASE5_E2E_CHECKLIST.md`.
+    - Report: `PHASE5_E2E_CHECKLIST.md`.
     - 18/18 checks passed, covering plan creation, hard minima, ranking,
       grouped factsheet, comparison, PDF/share, persistence, delete guard,
       invalid form, address failure, refresh, simulated outage, health,
@@ -659,7 +678,7 @@ Supporting scripts:
 | Data refresh | `DATA_MAX_AGE_HOURS=24`; local snapshots + live refresh; amenities rebuilt from local POI snapshot |
 | Commute matrix | `PUBLIC_TRANSIT` near the CBD only; other modes/origins use the hybrid shortlist |
 | Hybrid shortlist | Top 50 live; remainder uses 1.35× driving / 1.20× walking / 1.00× PT heuristic |
-| Missing commute entry | Straight-line estimate + `ESTIMATED_COMMUTE_FALLBACK` |
+| Missing commute entry | `dataAvailable=false`; excluded from ranking/comparison/factsheet; map shows insufficient-data notification |
 | Hard amenity minimums | Primary/secondary/tertiary schools 1 km; malls 1 km; hospitals 2 km; 0 means disabled |
 | Tertiary schools | JCs, Millennia Institute, mixed-level JC/IB schools and autonomous universities; 28-point local supplement |
 | Ranking result size | Top 20 items; remaining results discarded |
@@ -678,7 +697,7 @@ Supporting scripts:
 - **Amenities snapshot:** `make amenities` rebuilds `backend/assets/data/amenities.json` from data.gov.sg and OneMap. It needs the OneMap credentials in `.env`; it geocodes school postal codes and queries OneMap themes/search. `POST /api/v1/data/refresh` instead rebuilds from the cached local point snapshot, adds subzone `aggregates`, and requires no network call.
 - **Tertiary-school supplement:** `backend/assets/data/tertiary_schools.json` holds 28 JC/university points and is merged into `amenities.json` at load time. Editing it changes tertiary counts without regenerating the full snapshot. `make amenities` also merges it into the generated file.
 - **Start order matters:** backend first, then frontend. `make dev` handles both.
-- **`make test`** is the reliable way to run backend tests from the revised-skeleton root.
+- **`make test`** is the reliable way to run backend tests from the SGPropertyFinder root.
 - **Backend startup is ~4 seconds** because it loads 332 subzones, indexes 243k HDB rows and joins 1,200 amenity points.
 - **Ranking uses local snapshots first.** `DatasetService.refreshIfStale()` refreshes from data.gov.sg after the configured age. Force a live refresh with:
   ```text
@@ -716,7 +735,7 @@ Supporting scripts:
 | `backend/app/control/report_control.py` | PDF/share URL generation |
 | `backend/app/api/handlers.py` | Transport-agnostic REST handlers |
 | `scripts/build_amenities.py` | data.gov.sg + OneMap amenity snapshot builder |
-| `backend/tests/` | 145 unit/integration tests |
+| `backend/tests/` | 162 unit/integration tests; black-box EP/BVA + state and white-box CFG + data-flow suites |
 
 ### Frontend
 
@@ -765,12 +784,12 @@ Supporting scripts:
 
 | Check | Result |
 | --- | --- |
-| `make test` | **145 tests OK** |
-| `npm test` | **27 frontend tests OK** |
-| Black-box validation suite | **37 methods / 68 logical cases OK** — see `docs/BLACK_BOX_TESTING.md` |
-| White-box scoring/ranking suite | **9 tests / 7 basis paths OK** - see `docs/WHITE_BOX_TESTING.md` |
-| SLA benchmark | **Passed** — cold recommendations p95 2.27 s; warm p95 0.28 s; see `docs/SLA_BENCHMARK.md` |
-| Dialog Map E2E | **18/18 checks passed** — see `docs/PHASE5_E2E_CHECKLIST.md` |
+| `make test` | **162 tests OK** |
+| `npm test` | **39 frontend tests OK** |
+| Black-box suites | **52 methods / 83 logical cases OK** — EP/BVA + report/profile state transitions; see `BLACK_BOX_TESTING.md` |
+| White-box suite | **22 tests / 13 basis paths / DU coverage OK** — see `WHITE_BOX_TESTING.md` |
+| SLA benchmark | **Passed** — cold recommendations p95 2.27 s; warm p95 0.28 s; see `SLA_BENCHMARK.md` |
+| Dialog Map E2E | **18/18 checks passed** — see `PHASE5_E2E_CHECKLIST.md` |
 | `make build` / `npm run build` | **Passed** |
 | Live Uvicorn health/ready | **Passed**, 332 subzones |
 | Browser main flow | **Passed** |
@@ -783,7 +802,7 @@ Supporting scripts:
 | Amenities-missing fallback | **Passed**, school/amenity criteria excluded and reweighted |
 | Commute mode gating | **Passed**, driving/walking no longer read the PT matrix |
 | Hybrid commute shortlist | **Passed**, 50 live calls + heuristic remainder with road/path factors |
-| Missing matrix fallback | **Passed**, 13 warnings attached; subzones remain ranked |
+| Insufficient-data exclusion | **Passed**, 13 subzones removed from ranking/factsheet; map shows bottom notification |
 | Share decode + import | **Passed**, endpoint returns profile/codes; frontend build succeeds |
 | Ranking result cap | **Passed**, response returns exactly the top 20 items |
 | Comparison outside top 20 | **Passed**, comparison requests the full internal ranking |

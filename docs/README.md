@@ -1,25 +1,46 @@
 # Neighbourhood Recommender — Backend + Frontend
 
-Full-stack neighbourhood recommender for Singapore. This folder is the
-implemented application; `Lab4/Skeleton Code` is the original skeleton and is
-kept only for project history.
+Full-stack neighbourhood recommender for Singapore. The application lives in the
+parent `SGPropertyFinder/` folder; `Lab4/Skeleton Code` is the original skeleton
+and is kept only for project history.
 
-**New here?** Follow [`HOW_TO_RUN.md`](HOW_TO_RUN.md) for step-by-step setup,
-dependency installation and run commands.
+**New here?** Follow [`../../SETUP_INSTRUCTIONS.md`](../../SETUP_INSTRUCTIONS.md) for
+step-by-step setup, dependency installation and run commands.
 
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
-PDF and REST endpoints are implemented and covered by 145 `unittest` tests. The
+PDF and REST endpoints are implemented and covered by 162 `unittest` tests. The
 React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison,
 enriched PDF export (ReportLab), share-link import, IndexedDB API caching,
-data-refresh control on the map, hard amenity minimums and selection-driven amenity
-markers, with 27 Vitest tests. Formal black-box/white-box testing and Phase 5
-SLA/E2E documentation are in `docs/`.
+data-refresh control on the map, hard amenity minimums, selection-driven amenity
+markers and insufficient-data selection guards, with 39 Vitest tests. Formal
+black-box/white-box testing and Phase 5 SLA/E2E documentation are in this folder.
+
+## Documentation index
+
+All application documentation lives in `SGPropertyFinder/docs/`.
+
+| Document | Contents |
+| --- | --- |
+| [`README.md`](README.md) | This overview: what the app is, structure, classes, setup and run commands. |
+| [`BACKEND.md`](BACKEND.md) | Backend run/test instructions, test inventory and implementation notes. |
+| [`BACKEND_CLASS_REFERENCE.md`](BACKEND_CLASS_REFERENCE.md) | Backend classes, design intent and key public methods. |
+| [`FRONTEND.md`](FRONTEND.md) | Frontend run/build instructions and implemented features. |
+| [`FRONTEND_CLASS_REFERENCE.md`](FRONTEND_CLASS_REFERENCE.md) | Frontend classes/components, props, design intent and key public methods. |
+| [`DATA_ASSETS.md`](DATA_ASSETS.md) | Data sources, snapshot formats and regeneration rules. |
+| [`PROJECT_STATUS.md`](PROJECT_STATUS.md) | Handover status, completed work, gaps, frozen decisions and verification. |
+| [`SPECIFICATIONS.md`](SPECIFICATIONS.md) | Frozen scoring, budget, environment, geography, commute, snapshot and API rules. |
+| [`ENVIRONMENT.md`](ENVIRONMENT.md) | `.env` setup and environment-variable reference. |
+| [`BLACK_BOX_TESTING.md`](BLACK_BOX_TESTING.md) | EP/BVA and state-transition testing with detailed test cases and execution order. |
+| [`WHITE_BOX_TESTING.md`](WHITE_BOX_TESTING.md) | CFGs, cyclomatic complexity, basis paths and data-flow testing. |
+| [`FILE_REFERENCE.md`](FILE_REFERENCE.md) | What every backend, frontend, test, data and configuration file is for. |
+| [`SLA_BENCHMARK.md`](SLA_BENCHMARK.md) | Phase 5 latency benchmark method and results. |
+| [`PHASE5_E2E_CHECKLIST.md`](PHASE5_E2E_CHECKLIST.md) | 18-check system/acceptance end-to-end checklist. |
+| [`OPEN_ISSUES.md`](OPEN_ISSUES.md) | Accepted limitations and production-only gaps. |
 
 ## Structure
 
 ```text
-revised-skeleton/
-├── README.md
+SGPropertyFinder/
 ├── Makefile
 ├── .env.example
 ├── .gitignore
@@ -29,14 +50,24 @@ revised-skeleton/
 │   ├── dev.py
 │   └── test_backend.py
 ├── docs/
+│   ├── README.md
+│   ├── BACKEND.md
+│   ├── BACKEND_CLASS_REFERENCE.md
+│   ├── DATA_ASSETS.md
+│   ├── FRONTEND.md
+│   ├── FRONTEND_CLASS_REFERENCE.md
+│   ├── PROJECT_STATUS.md
+│   ├── BLACK_BOX_TESTING.md
 │   ├── ENVIRONMENT.md
+│   ├── FILE_REFERENCE.md
 │   ├── OPEN_ISSUES.md
-│   └── SPECIFICATIONS.md
+│   ├── PHASE5_E2E_CHECKLIST.md
+│   ├── SLA_BENCHMARK.md
+│   ├── SPECIFICATIONS.md
+│   └── WHITE_BOX_TESTING.md
 ├── backend/
 │   ├── main.py
 │   ├── requirements.txt
-│   ├── README.md
-│   ├── assets/data/README.md
 │   ├── assets/data/planning_area_to_hdb_town.json
 │   ├── tests/
 │   │   ├── fixtures/
@@ -130,6 +161,7 @@ revised-skeleton/
             ├── amenities.ts
             ├── format.ts
             ├── polyline.ts
+            ├── subzones.ts
             └── weights.ts
 ```
 
@@ -215,20 +247,15 @@ revised-skeleton/
 
 Method names keep the diagram's camelCase to make traceability easy. Convert to PEP 8 snake_case later if desired.
 
-## Specification documents
+## Documentation
 
-- `docs/SPECIFICATIONS.md` — frozen scoring, budget, environment, geography, commute, snapshot and API rules.
-- `docs/BLACK_BOX_TESTING.md` - formal EP/BVA, expected/actual matrix and results for profile validation.
-- `docs/WHITE_BOX_TESTING.md` - CFGs, `V(G)`, basis paths and tests for scoring/ranking.
-- `docs/SLA_BENCHMARK.md` - Phase 5 HTTP/OneMap latency benchmark and results.
-- `docs/PHASE5_E2E_CHECKLIST.md` - 18-check Dialog Map end-to-end checklist.
-- `docs/OPEN_ISSUES.md` - accepted data/functional limitations and production-only gaps.
-- `docs/ENVIRONMENT.md` — `.env` setup and variable reference.
+All application documentation is in this `docs/` folder. See the
+[Documentation index](#documentation-index) above for the full list.
 
 ## Environment setup
 
 ```bash
-cd Lab4/revised-skeleton
+cd SGPropertyFinder
 cp .env.example .env
 ```
 
@@ -239,7 +266,7 @@ cp .env.example .env
 GNU Make is installed locally via winget (`ezwinports.make`).
 
 ```powershell
-cd Lab4/revised-skeleton
+cd SGPropertyFinder
 make install
 make dev
 ```
@@ -254,7 +281,7 @@ make backend    # FastAPI only
 make frontend   # Vite only
 make test          # backend unittest suite
 make test-frontend # frontend Vitest suite
-make benchmark     # Phase 5 SLA benchmark (docs/SLA_BENCHMARK.md)
+make benchmark     # Phase 5 SLA benchmark (SLA_BENCHMARK.md)
 make build         # frontend type-check + production build
 make clean
 make help
@@ -265,7 +292,7 @@ make help
 Terminal 1 — backend:
 
 ```powershell
-cd Lab4/revised-skeleton/backend
+cd SGPropertyFinder/backend
 python -m pip install -r requirements.txt
 python -m uvicorn main:app --reload --port 8000
 ```
@@ -273,7 +300,7 @@ python -m uvicorn main:app --reload --port 8000
 Terminal 2 — frontend:
 
 ```powershell
-cd Lab4/revised-skeleton/frontend
+cd SGPropertyFinder/frontend
 npm install
 npm run dev
 ```
@@ -284,21 +311,21 @@ Verify the backend at **http://127.0.0.1:8000/api/v1/health**.
 Run backend tests with:
 
 ```bash
-cd Lab4/revised-skeleton/backend
+cd SGPropertyFinder/backend
 python -m unittest discover -s tests -v
 ```
 
 Build the frontend with:
 
 ```bash
-cd Lab4/revised-skeleton/frontend
+cd SGPropertyFinder/frontend
 npm run build
 ```
 
 Run frontend tests with:
 
 ```bash
-cd Lab4/revised-skeleton/frontend
+cd SGPropertyFinder/frontend
 npm test
 ```
 
@@ -335,7 +362,7 @@ run instructions, known gaps and recommended next steps.
   `make amenities` to rebuild the snapshot. The map refresh button also rebuilds
   amenity aggregates from the cached local point snapshot.
 
-Run the backend tests from `Lab4/revised-skeleton/backend`:
+Run the backend tests from `SGPropertyFinder/backend`:
 
 ```bash
 python -m unittest discover -s tests -v

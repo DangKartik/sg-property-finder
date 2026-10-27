@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import json
+import tempfile
 import unittest
 from dataclasses import replace
 from datetime import datetime
+from pathlib import Path
 
 from app.control.commute_control import CommuteControl
 from app.control.data_availability_notifier import DataAvailabilityNotifier
@@ -95,6 +98,34 @@ class CommuteTests(unittest.TestCase):
         self.assertEqual(
             result.warnings[0].code,
             DataAvailabilityCode.ESTIMATED_COMMUTE_FALLBACK,
+        )
+
+    def test_matrix_metadata_exposes_insufficient_data_subzones(self) -> None:
+        payload = {
+            "metadata": {
+                "errors": [
+                    {"subzoneCode": "WISZ01", "error": "HTTP 404"},
+                    {"subzoneCode": "CBSZ01", "error": "HTTP 404"},
+                ]
+            },
+            "matrix": {
+                "TAMPINES01": {
+                    "CBD": {
+                        "durationMinutes": 35,
+                        "distanceKm": 14.2,
+                        "transferCount": 1,
+                    }
+                }
+            },
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "commute_matrix.json"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            control = CommuteControl(self.adapter, matrixPath=path)
+
+        self.assertEqual(
+            control.insufficientDataSubzoneCodes,
+            {"WISZ01", "CBSZ01"},
         )
 
     def test_live_routing_failure_uses_estimated_fallback(self) -> None:

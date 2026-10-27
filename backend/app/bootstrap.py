@@ -125,6 +125,11 @@ def buildContext(
         notifier,
         matrixPath=base_dir / "commute_matrix.json",
     )
+    for code in commute.insufficientDataSubzoneCodes:
+        try:
+            registry.getSubzone(code).dataAvailable = False
+        except KeyError:
+            continue
     scoring = WeightedScoringStrategy()
     dataset_status = dataset_service.status()
     subzone_status = dataset_status.get("subzones") or {}

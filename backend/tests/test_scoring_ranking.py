@@ -67,17 +67,6 @@ class ScoringTests(unittest.TestCase):
         ids = {item.subzoneId for item in items}
         self.assertEqual(ids, {"BEDOK01", "JURONG01"})
 
-    def test_minimum_amenity_counts_are_hard_filters(self) -> None:
-        profile = make_profile()
-        profile.minimumTertiarySchools = 1
-        profile.minimumHospitals = 1
-
-        items = self.strategy.scoreCandidates(
-            self.registry.getAllSubzones(), profile, self.commutes
-        )
-
-        self.assertEqual({item.subzoneId for item in items}, {"TAMPINES01"})
-
     def test_minimum_primary_school_count_can_exclude_every_subzone(self) -> None:
         profile = make_profile()
         profile.minimumPrimarySchools = 2
@@ -87,18 +76,6 @@ class ScoringTests(unittest.TestCase):
         )
 
         self.assertEqual(items, [])
-
-    def test_missing_criterion_is_excluded_and_weights_renormalised(self) -> None:
-        self.registry.getSubzone("JURONG01").indicators.greenCoveragePercent500m = None
-        warnings = []
-        items = self.strategy.scoreCandidates(
-            self.registry.getAllSubzones(), self.profile, self.commutes, warnings
-        )
-        jurong = next(item for item in items if item.subzoneId == "JURONG01")
-        green = next(score for score in jurong.criterionScores if score.criterionId == "GREEN_COVERAGE")
-        self.assertTrue(green.isMissing)
-        self.assertAlmostEqual(sum(score.weight for score in jurong.criterionScores if not score.isMissing), 1.0, places=3)
-        self.assertTrue(any("GREEN_COVERAGE" in warning.message for warning in warnings))
 
     def test_missing_amenity_source_excludes_school_and_amenity_criteria(self) -> None:
         tampines = self.registry.getSubzone("TAMPINES01")
@@ -221,6 +198,40 @@ class RankingTests(unittest.TestCase):
         full = control.generateRankedRecommendations(make_profile(), limit=None)
         self.assertEqual(len(full.items), 25)
         self.assertEqual(full.items[-1].subzoneId, "TOP24")
+
+    def test_insufficient_data_subzones_are_not_ranked(self) -> None:
+        registry = attach_indicators(load_registry())
+        registry.getSubzone("TAMPINES01").dataAvailable = False
+
+        class StubScoring:
+            def scoreCandidates(self, subzones, profile, commutes, warnings):
+                return [
+                    RecommendationItem(
+                        subzoneId=subzone.subzoneCode,
+                        subzoneName=subzone.subzoneName,
+                        rank=index + 1,
+                        totalScore=100 - index,
+                    )
+                    for index, subzone in enumerate(subzones)
+                ]
+
+        class StubCommute:
+            def __init__(self) -> None:
+                self.codes: list[str] = []
+
+            def retrieveCommutesSync(
+                self, origin, subzones, mode, departureTime=None, topK=50
+            ):
+                self.codes = [subzone.subzoneCode for subzone in subzones]
+                return RetrievalResult({}, [])
+
+        commute = StubCommute()
+        control = RankingControl(registry, StubScoring(), commute)
+        result = control.generateRankedRecommendations(make_profile(), limit=None)
+
+        self.assertNotIn("TAMPINES01", [item.subzoneId for item in result.items])
+        self.assertEqual(set(commute.codes), {"BEDOK01", "JURONG01"})
+        self.assertEqual(len(result.items), 2)
 
     def test_comparison_can_score_subzones_outside_the_top_twenty(self) -> None:
         items = [

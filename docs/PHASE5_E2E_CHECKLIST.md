@@ -191,4 +191,4 @@ matchMedia('(max-width: 620px)') = true
 ## 6. Sign-off
 
 All 18 checks passed in the tested environment. Phase 5 is complete; the SLA
-benchmark is in `docs/SLA_BENCHMARK.md`.
+benchmark is in `SLA_BENCHMARK.md`.
