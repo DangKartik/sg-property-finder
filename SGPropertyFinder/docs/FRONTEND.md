@@ -1,6 +1,7 @@
 # Frontend
 
-React 18 + TypeScript + Vite client for SG Property Finder.
+React 18 + TypeScript + Vite client for SG Property Finder. See
+`FRONTEND_CLASS_REFERENCE.md` for component/class design intent and props.
 
 ## Run
 

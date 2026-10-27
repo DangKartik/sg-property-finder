@@ -178,8 +178,7 @@ server-side state is the short-lived PDF report store.
 | `backend/tests/test_report.py` | PDF bytes, secure metadata, export, share URL and PDF content. |
 | `backend/tests/test_scoring_ranking.py` | Budget filter, normalisation, missing-data renormalisation, tie-break, ranking cap and comparison outside top 20. |
 | `backend/tests/test_token_manager.py` | OneMap token caching, expiry and refresh-after-invalid-token. |
-| `backend/tests/test_validation.py` | Direct validator unit tests for flat types, address lookup, weight bounds and minimum counts. |
-| `backend/tests/test_white_box.py` | **Updated:** CFG/basis-path tests plus data-flow tests for scoring and ranking (17 tests). |
+| `backend/tests/test_white_box.py` | **Updated:** CFG/basis-path tests plus data-flow tests for scoring and ranking (22 tests). |
 | `backend/tests/fixtures/subzones.geojson` | Three-subzone fixture used by every backend test. |
 | `backend/tests/fixtures/amenities.json` | 16-point amenity fixture covering every category. |
 | `backend/tests/fixtures/hdb_resale.csv` | Small HDB resale fixture with town/flat-type rows. |
@@ -286,7 +285,9 @@ All application documentation is kept in `SGPropertyFinder/docs/`.
 | --- | --- |
 | `docs/README.md` | Documentation index plus the full application overview, structure, commands and implementation status. |
 | `docs/BACKEND.md` | Backend run instructions, test inventory and implementation notes. |
+| `docs/BACKEND_CLASS_REFERENCE.md` | Backend classes, design intent, key public methods and usage flows. |
 | `docs/FRONTEND.md` | Frontend run/build instructions and implemented features. |
+| `docs/FRONTEND_CLASS_REFERENCE.md` | Frontend classes/components, props, design intent, key methods and user flows. |
 | `docs/DATA_ASSETS.md` | Data sources, snapshot formats, categories and regeneration rules. |
 | `docs/PROJECT_STATUS.md` | Handover document: completed work, frozen decisions, known gaps and verification summary. |
 | `docs/SPECIFICATIONS.md` | Frozen scoring, budget, environment, geography, commute, snapshot and API rules. |

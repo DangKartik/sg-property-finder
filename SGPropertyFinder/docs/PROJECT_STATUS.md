@@ -89,7 +89,7 @@ make dev
 ```powershell
 make backend    # FastAPI only
 make frontend   # Vite only
-make test       # backend unittest suite (167 tests)
+make test       # backend unittest suite (162 tests)
 make test-frontend # frontend Vitest suite (39 tests)
 make benchmark  # Phase 5 SLA benchmark
 make build      # frontend type-check + production build
@@ -408,7 +408,7 @@ Do **not** run `python -m unittest discover -s backend/tests` from the SGPropert
 
 ### 4.4 Testing and verification
 
-- **167 backend tests pass** via `make test`.
+- **162 backend tests pass** via `make test`.
 - **39 frontend Vitest tests pass** via `npm test`.
 - Frontend tests cover format/polyline helpers, weight migration, nearby amenity
   filtering/colours, `ApiCache` persistence/pruning, client cache reuse/stale
@@ -598,10 +598,10 @@ Supporting scripts:
 9. **Phase 4 white-box testing documentation — revised 26 October 2026.**
    - CFGs, cyclomatic complexity, basis paths and definition-use tables are in
      `WHITE_BOX_TESTING.md`.
-   - `backend/tests/test_white_box.py`: 17 tests covering
-     `WeightedScoringStrategy.computeSuitabilityScore` (`V(G)=2`),
-     `RankingControl.generateRankedRecommendations` (`V(G)=5`) and data flow in
-     `WeightedScoringStrategy.scoreCandidates`.
+   - `backend/tests/test_white_box.py`: 22 tests covering the two complex methods
+     `WeightedScoringStrategy.scoreCandidates` (`V(G)=6`) and
+     `RankingControl.generateRankedRecommendations` (`V(G)=5`), plus the
+     supporting `computeSuitabilityScore` wrapper (`V(G)=2`) and data-flow pairs.
    - All feasible nodes, predicate outcomes, basis paths and listed DU pairs are
      exercised. Data-flow analysis found and removed one dead store in
      `scoreCandidates` (DF-ANOM-01).
@@ -735,7 +735,7 @@ Supporting scripts:
 | `backend/app/control/report_control.py` | PDF/share URL generation |
 | `backend/app/api/handlers.py` | Transport-agnostic REST handlers |
 | `scripts/build_amenities.py` | data.gov.sg + OneMap amenity snapshot builder |
-| `backend/tests/` | 167 unit/integration tests; black-box EP/BVA + state and white-box CFG + data-flow suites |
+| `backend/tests/` | 162 unit/integration tests; black-box EP/BVA + state and white-box CFG + data-flow suites |
 
 ### Frontend
 
@@ -784,10 +784,10 @@ Supporting scripts:
 
 | Check | Result |
 | --- | --- |
-| `make test` | **167 tests OK** |
+| `make test` | **162 tests OK** |
 | `npm test` | **39 frontend tests OK** |
 | Black-box suites | **52 methods / 83 logical cases OK** — EP/BVA + report/profile state transitions; see `BLACK_BOX_TESTING.md` |
-| White-box suite | **17 tests / 7 basis paths / DU coverage OK** — see `WHITE_BOX_TESTING.md` |
+| White-box suite | **22 tests / 13 basis paths / DU coverage OK** — see `WHITE_BOX_TESTING.md` |
 | SLA benchmark | **Passed** — cold recommendations p95 2.27 s; warm p95 0.28 s; see `SLA_BENCHMARK.md` |
 | Dialog Map E2E | **18/18 checks passed** — see `PHASE5_E2E_CHECKLIST.md` |
 | `make build` / `npm run build` | **Passed** |

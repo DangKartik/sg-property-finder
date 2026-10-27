@@ -264,6 +264,127 @@ class GenerateRankedRecommendationsWhiteBoxTests(unittest.TestCase):
         )
 
 
+class ScoreCandidatesBasisPathTests(unittest.TestCase):
+    """Basis paths for WeightedScoringStrategy.scoreCandidates."""
+
+    def setUp(self) -> None:
+        self.registry = attach_indicators(load_registry())
+        self.strategy = WeightedScoringStrategy()
+        self.profile = make_profile()
+        self.commutes = {
+            "TAMPINES01": CommuteEstimate(35, 14.2, 1, TransitMode.PUBLIC_TRANSIT),
+            "BEDOK01": CommuteEstimate(28, 11.8, 1, TransitMode.PUBLIC_TRANSIT),
+            "JURONG01": CommuteEstimate(45, 19.5, 2, TransitMode.PUBLIC_TRANSIT),
+        }
+
+    def test_wb_sc_bp_01_all_criteria_available_produces_items(self) -> None:
+        items = self.strategy.scoreCandidates(
+            self.registry.getAllSubzones(), self.profile, self.commutes
+        )
+
+        self.assertEqual(len(items), 3)
+        for item in items:
+            self.assertEqual(
+                sum(1 for score in item.criterionScores if not score.isMissing),
+                5,
+            )
+            self.assertAlmostEqual(
+                sum(score.weight for score in item.criterionScores),
+                1.0,
+                places=3,
+            )
+
+    def test_wb_sc_bp_02_amenity_minimum_removes_candidate(self) -> None:
+        profile = make_profile()
+        profile.minimumTertiarySchools = 1
+        profile.minimumHospitals = 1
+
+        items = self.strategy.scoreCandidates(
+            self.registry.getAllSubzones(), profile, self.commutes
+        )
+
+        self.assertEqual([item.subzoneId for item in items], ["TAMPINES01"])
+
+    def test_wb_sc_bp_03_zero_weights_produce_no_items(self) -> None:
+        profile = make_profile(
+            weights={
+                "PRICE": 0,
+                "COMMUTE_TIME": 0,
+                "SCHOOL_PROXIMITY": 0,
+                "GREEN_COVERAGE": 0,
+                "AMENITIES_DENSITY": 0,
+            }
+        )
+        warnings: list[DataAvailabilityWarning] = []
+
+        items = self.strategy.scoreCandidates(
+            self.registry.getAllSubzones(), profile, self.commutes, warnings
+        )
+
+        self.assertEqual(items, [])
+        self.assertTrue(
+            any(warning.datasetCode == "SCORING" for warning in warnings)
+        )
+
+    def test_wb_sc_bp_04_missing_criterion_renormalises_weights(self) -> None:
+        self.registry.getSubzone("JURONG01").indicators.greenCoveragePercent500m = None
+        warnings: list[DataAvailabilityWarning] = []
+
+        items = self.strategy.scoreCandidates(
+            self.registry.getAllSubzones(), self.profile, self.commutes, warnings
+        )
+
+        jurong = next(item for item in items if item.subzoneId == "JURONG01")
+        green = next(
+            score
+            for score in jurong.criterionScores
+            if score.criterionId == "GREEN_COVERAGE"
+        )
+        self.assertTrue(green.isMissing)
+        self.assertAlmostEqual(
+            sum(
+                score.weight
+                for score in jurong.criterionScores
+                if not score.isMissing
+            ),
+            1.0,
+            places=3,
+        )
+        self.assertTrue(any("GREEN_COVERAGE" in warning.message for warning in warnings))
+
+    def test_wb_sc_bp_05_no_available_criteria_skips_item(self) -> None:
+        subzone = self.registry.getSubzone("TAMPINES01")
+        indicators = subzone.indicators
+        assert indicators is not None
+        indicators.medianResalePrice = None
+        indicators.medianPriceByFlatType = {}
+        indicators.greenCoveragePercent500m = None
+        indicators.amenityDataAvailable = False
+        warnings: list[DataAvailabilityWarning] = []
+
+        items = self.strategy.scoreCandidates(
+            [subzone], self.profile, {}, warnings
+        )
+
+        self.assertEqual(items, [])
+        self.assertTrue(
+            any(
+                warning.subzoneCode == "TAMPINES01"
+                and warning.message == "No criteria have a positive weight and available data"
+                for warning in warnings
+            )
+        )
+
+    def test_wb_sc_bp_06_budget_filter_removes_all_candidates(self) -> None:
+        profile = make_profile(budgetMax=1000)
+
+        items = self.strategy.scoreCandidates(
+            self.registry.getAllSubzones(), profile, self.commutes
+        )
+
+        self.assertEqual(items, [])
+
+
 class ScoringDataFlowWhiteBoxTests(unittest.TestCase):
     """Definition-use tests for WeightedScoringStrategy.scoreCandidates."""
 
@@ -336,28 +457,6 @@ class ScoringDataFlowWhiteBoxTests(unittest.TestCase):
             any(
                 warning.subzoneCode == "JURONG01"
                 and "GREEN_COVERAGE" in warning.message
-                for warning in warnings
-            )
-        )
-
-    def test_wb_df_sc_04_zero_available_weight_skips_item_and_warns(self) -> None:
-        strategy = WeightedScoringStrategy()
-        subzone = self.registry.getSubzone("TAMPINES01")
-        indicators = subzone.indicators
-        assert indicators is not None
-        indicators.medianResalePrice = None
-        indicators.medianPriceByFlatType = {}
-        indicators.greenCoveragePercent500m = None
-        indicators.amenityDataAvailable = False
-        warnings: list[DataAvailabilityWarning] = []
-
-        items = strategy.scoreCandidates([subzone], self.profile, {}, warnings)
-
-        self.assertEqual(items, [])
-        self.assertTrue(
-            any(
-                warning.subzoneCode == "TAMPINES01"
-                and warning.message == "No criteria have a positive weight and available data"
                 for warning in warnings
             )
         )

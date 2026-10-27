@@ -12,6 +12,18 @@
 
 ---
 
+## 0. Assignment requirement mapping
+
+| Requirement | Evidence in this document |
+| --- | --- |
+| 3.2.1 — EP/BVA for one important control class | `InputValidationControl` is tested through the `handlers.validateProfile` boundary; EP classes and BVA tables are in sections 5.1–5.2 and 6. |
+| 3.2.2 — basis path testing for two complex methods | Covered in `WHITE_BOX_TESTING.md`: `WeightedScoringStrategy.scoreCandidates` (`V(G)=6`) and `RankingControl.generateRankedRecommendations` (`V(G)=5`). |
+| 3.2.3 — minimise test cases | One baseline payload, one-factor-at-a-time classes and boundary values; no full cross-product. The minimisation rationale is in section 4.4. |
+| 3.2.4 — execute and document results | Every table records Input, Oracle and Log; section 10 records execution summaries. |
+| Test report format | Each row is a test case with Name, Location, Input, Oracle, Log and Status. |
+
+---
+
 ## 1. Objective
 
 Show that the externally observable behaviour matches the specification, so any
@@ -64,7 +76,7 @@ the linked documents so the level boundaries stay clear.
 
 | Level | What it means here | Evidence |
 | --- | --- | --- |
-| **Unit** | One class or pure helper with stubs | `backend/tests/test_validation.py`, `test_scoring_ranking.py`, `test_report.py`, `test_polyline.py`; `frontend/src/utils/*.test.ts`, `ApiCache.test.ts` |
+| **Unit** | One class or pure helper with stubs | `backend/tests/test_scoring_ranking.py`, `test_report.py`, `test_polyline.py`; `frontend/src/utils/*.test.ts`, `ApiCache.test.ts` |
 | **Integration** | Two or more units combined at a real boundary | `test_black_box_validation.py` (handler + validator + address adapter), `test_black_box_state.py` (control + store + handler), `test_api_handlers.py`, `test_fastapi_endpoints.py`, `frontend/src/control/ProfileControl.test.ts` (control + Dexie + validator contract) |
 | **System** | The complete backend/frontend system | `PHASE5_E2E_CHECKLIST.md` (18 live checks), `SLA_BENCHMARK.md` (HTTP/OneMap latency) |
 | **Acceptance** | The customer/user can complete the intended journeys | `PHASE5_E2E_CHECKLIST.md`: create plan, search address, rank, open factsheet, compare, export PDF, import share link, persist after reload, delete safely |
@@ -385,7 +397,7 @@ make test
 make test-frontend
 ```
 
-At the time of writing: backend **167 tests OK**; frontend **39 tests OK**.
+At the time of writing: backend **162 tests OK**; frontend **39 tests OK**.
 
 ## 11. Limitations and next steps
 

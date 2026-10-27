@@ -3,12 +3,23 @@
 - **Version:** 2.0
 - **Date:** 26 October 2026
 - **Units under test:**
-  - `WeightedScoringStrategy.computeSuitabilityScore` — control flow
-  - `RankingControl.generateRankedRecommendations` — control flow
-  - `WeightedScoringStrategy.scoreCandidates` — supporting data flow
+  - `WeightedScoringStrategy.scoreCandidates` — complex scoring logic (control flow + data flow)
+  - `RankingControl.generateRankedRecommendations` — complex ranking logic (control flow + data flow)
+  - `WeightedScoringStrategy.computeSuitabilityScore` — supporting wrapper
 - **Test suite:** `backend/tests/test_white_box.py`
 - **Execution:** `python -m unittest tests.test_white_box -v`
-- **Result:** **17 tests — all passed**
+- **Result:** **22 tests — all passed**
+
+---
+
+## 0. Assignment requirement mapping
+
+| Requirement | Evidence in this document |
+| --- | --- |
+| 3.2.2 — basis path testing for two complex methods | `WeightedScoringStrategy.scoreCandidates` (`V(G)=6`) and `RankingControl.generateRankedRecommendations` (`V(G)=5`) in sections 4A and 5. |
+| 3.2.3 — minimise test cases | One basis set per method; supplementary boundary and data-flow tests are explicitly separated from the basis paths. |
+| 3.2.4 — execute and document results | Every test table records Name, Location, Input, Oracle, Log and Status; section 9 records execution summaries. |
+| Supporting method | `WeightedScoringStrategy.computeSuitabilityScore` (`V(G)=2`) remains as a wrapper check, not one of the two complex methods. |
 
 ---
 
@@ -32,9 +43,10 @@ including the ranking → scoring boundary.
 
 ### In scope
 
-- `WeightedScoringStrategy.computeSuitabilityScore` — CFG and DU analysis.
-- `RankingControl.generateRankedRecommendations` — CFG and DU analysis.
+- `WeightedScoringStrategy.scoreCandidates` — control flow and DU analysis.
+- `RankingControl.generateRankedRecommendations` — control flow and DU analysis.
 - `RankingControl._rankableSubzones` — availability guard covered by WB-RR-08.
+- `WeightedScoringStrategy.computeSuitabilityScore` — supporting wrapper (CFG and DU analysis).
 - `WeightedScoringStrategy.scoreCandidates` — DU analysis for the decision-
   relevant variables (`eligible`, `raw_by_criterion`, `commute`, `raw`,
   `warning_list`, `available_weight`, `raw_rows`, `normalised`,
@@ -43,9 +55,9 @@ including the ranking → scoring boundary.
 ### Out of scope
 
 - A statement-by-statement CFG for `scoreCandidates`; its full CFG is large and
-  is represented here through data-flow pairs and behavioural tests. Its control
-  decisions are exercised by `test_scoring_ranking.py` and the new data-flow
-  tests.
+  is represented here by a high-level basis-path graph and behavioural tests. Its
+  detailed decisions are also exercised by `test_scoring_ranking.py` and the
+  data-flow tests.
 - Exception paths. The analysed methods do not catch exceptions; failures
   propagate to the caller and do not create additional internal decisions.
 - Performance, concurrency and external I/O failures.
@@ -70,12 +82,12 @@ tests** at that seam. They do not replace the system/acceptance evidence in
 
 | Level | White-box evidence |
 | --- | --- |
-| **Unit** | CFG/basis-path tests for `computeSuitabilityScore` and `generateRankedRecommendations`; DU tests for `scoreCandidates`. |
+| **Unit** | CFG/basis-path tests for `scoreCandidates` and `generateRankedRecommendations`; DU tests for `computeSuitabilityScore` and `scoreCandidates`. |
 | **Integration** | `WB-DF-RR-01/02/03` record the values passed from ranking to a scoring stub; `test_scoring_ranking.py` exercises the real strategy with fixture controls. |
 | **System** | `PHASE5_E2E_CHECKLIST.md` and `SLA_BENCHMARK.md`. |
 | **Acceptance** | Eighteen user-journey checks in `PHASE5_E2E_CHECKLIST.md`. |
 
-## 4. Unit 1 control flow — `computeSuitabilityScore`
+## 4. Supporting wrapper — `computeSuitabilityScore`
 
 ### 4.1 Source
 
@@ -132,6 +144,73 @@ Location abbreviation: `WB` = `backend/tests/test_white_box.py`.
 | --- | --- | --- | --- | --- | --- | --- |
 | WB-CSS-01 | Non-empty items returns total score | `WB::ComputeSuitabilityScoreWhiteBoxTests::test_wb_css_01_non_empty_items_returns_total_score` | Fixture subzone, valid profile, 20-minute commute | Return equals `scoreCandidates(...)[0].totalScore`; value in `[0, 100]` | `score == expected; 0 <= score <= 100` | Pass |
 | WB-CSS-02 | Empty items returns zero | `WB::ComputeSuitabilityScoreWhiteBoxTests::test_wb_css_02_empty_items_returns_zero` | Same candidate; `minimumPrimarySchools=2` removes it | `0.0` | `0.0` | Pass |
+
+## 4A. Unit 1 — `WeightedScoringStrategy.scoreCandidates`
+
+This is the first of the two complex methods required by the testing brief.
+The high-level CFG collapses loop headers into blocks and counts only the
+branch predicates, giving a compact basis set for the core scoring logic.
+
+### 4A.1 High-level control-flow graph
+
+```mermaid
+flowchart TD
+    A[1 Start] --> B{2 eligibility filter satisfied?}
+    B -- no --> G[6 return empty / skip candidate]
+    B -- yes --> C{3 total_rating > 0?}
+    C -- no --> E{5 available_weight <= 0?}
+    C -- yes --> D{4 any raw criterion value?}
+    D -- no --> E
+    D -- yes --> F{5 missing criterion row?}
+    F -- no --> H[6 build weighted item]
+    F -- yes --> E
+    E -- yes --> I[6 skip item + warning]
+    E -- no --> H
+    H --> G
+    I --> G
+```
+
+### 4A.2 Cyclomatic complexity
+
+| Metric | Value |
+| --- | --- |
+| Predicate nodes | 5 (eligibility, weight guard, raw availability, missing row, available-weight guard) |
+| `V(G)` | `5 + 1 = 6` |
+| Basis paths | 6 |
+
+### 4A.3 Basis paths and tests
+
+| Path | Predicate outcome | Test |
+| --- | --- | --- |
+| BP-SC-1 | Eligible; weights positive; raw values present; no missing row; item built | WB-SC-BP-01 |
+| BP-SC-2 | Eligible subset reduced by amenity minimum | WB-SC-BP-02 |
+| BP-SC-3 | Eligible; `total_rating == 0`; no available weight | WB-SC-BP-03 |
+| BP-SC-4 | Eligible; one missing criterion row; item still built and reweighted | WB-SC-BP-04 |
+| BP-SC-5 | Eligible; every criterion missing; item skipped with warning | WB-SC-BP-05 |
+| BP-SC-6 | No candidate passes the budget filter; empty cohort | WB-SC-BP-06 |
+
+Location abbreviation: `WB` = `backend/tests/test_white_box.py`.
+
+| ID | Name | Location | Input | Oracle | Log | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| WB-SC-BP-01 | All criteria available | `WB::ScoreCandidatesBasisPathTests::test_wb_sc_bp_01_all_criteria_available_produces_items` | Valid profile, three fixture subzones, all commutes | 3 items; 5 non-missing rows each; weights sum to 1.0 | `items=3; nonMissing=5; weights sum=1.0` | Pass |
+| WB-SC-BP-02 | Amenity minimum filters a candidate | `WB::ScoreCandidatesBasisPathTests::test_wb_sc_bp_02_amenity_minimum_removes_candidate` | `minimumTertiarySchools=1`, `minimumHospitals=1` | Only TAMPINES01 remains | `items=[TAMPINES01]` | Pass |
+| WB-SC-BP-03 | Zero importance ratings | `WB::ScoreCandidatesBasisPathTests::test_wb_sc_bp_03_zero_weights_produce_no_items` | All weights `0` | No items; `SCORING` warning per candidate | `items=[]; datasetCode=SCORING` | Pass |
+| WB-SC-BP-04 | Missing criterion reweights | `WB::ScoreCandidatesBasisPathTests::test_wb_sc_bp_04_missing_criterion_renormalises_weights` | JURONG01 green coverage missing | Missing row; remaining weights sum to 1.0; warning | `GREEN_COVERAGE missing; sum=1.0; warning present` | Pass |
+| WB-SC-BP-05 | No criteria available | `WB::ScoreCandidatesBasisPathTests::test_wb_sc_bp_05_no_available_criteria_skips_item` | TAMPINES01 all criteria missing; no commute | Item skipped; “No criteria…” warning | `items=[]; warning present` | Pass |
+| WB-SC-BP-06 | Budget rejects all candidates | `WB::ScoreCandidatesBasisPathTests::test_wb_sc_bp_06_budget_filter_removes_all_candidates` | `budgetMax=1000` | Empty item list | `items=[]` | Pass |
+
+The infeasible `definition is None` branch is excluded because every criterion
+ID comes from the frozen catalogue. Loop-header paths are represented by the
+eligibility and raw-value block nodes above.
+
+### 4A.4 Test minimisation
+
+- One baseline fixture covers the “all criteria available” path.
+- Each remaining basis path changes one input only: an amenity minimum, zero
+  weights, one missing value, all values missing, or an impossible budget.
+- Existing data-flow tests reuse the same fixtures instead of creating a second
+  cross-product of values.
 
 ## 5. Unit 2 control flow — `generateRankedRecommendations`
 
@@ -322,7 +401,7 @@ the dead-store cleanup described in section 8.
 | Pair | Variable | Definition | Use | Kind | Covered by |
 | --- | --- | --- | --- | --- | --- |
 | DF-SC-01 | `warning_list` | 50 | 96: missing-data warning append | c-use | WB-DF-SC-03 |
-| DF-SC-02 | `warning_list` | 50 | 112: no-available-criteria warning append | c-use | WB-DF-SC-04 |
+| DF-SC-02 | `warning_list` | 50 | 112: no-available-criteria warning append | c-use | WB-SC-BP-05 |
 | DF-SC-03 | `eligible` | 51 | 77: raw-value collection loop | c-use | WB-DF-SC-01 |
 | DF-SC-04 | `eligible` | 51 | 85: item-building loop | c-use | All scoring tests |
 | DF-SC-05 | `raw_by_criterion` | 74 | 92: criterion value lookup | c-use | All scoring tests |
@@ -330,7 +409,7 @@ the dead-store cleanup described in section 8.
 | DF-SC-07 | `commute` | 78 | 79: raw-value argument | c-use | WB-DF-SC-02 |
 | DF-SC-08 | `raw` | 79 | 80: `raw is not None` predicate | p-use | WB-DF-SC-02 (true/false) |
 | DF-SC-09 | `raw` | 93 | 94: `raw is None` predicate | p-use | WB-DF-SC-02 (true/false) |
-| DF-SC-10 | `available_weight` | 87 | 111: `available_weight <= 0` predicate | p-use | WB-DF-SC-04 (true), other tests (false) |
+| DF-SC-10 | `available_weight` | 87 | 111: `available_weight <= 0` predicate | p-use | WB-SC-BP-05 (true), other tests (false) |
 | DF-SC-11 | `raw_rows` | 88 | 123: criterion-score loop | c-use | All scoring tests |
 | DF-SC-12 | `normalised` | 140 | 144: weighted contribution | c-use | All scoring tests |
 | DF-SC-13 | `renormalised_weight` | 143 | 151: score row | c-use | All scoring tests |
@@ -343,7 +422,6 @@ the dead-store cleanup described in section 8.
 | WB-DF-SC-01 | Eligible guards raw-value collection | `WB::ScoringDataFlowWhiteBoxTests::test_wb_df_sc_01_eligible_definition_guards_raw_value_collection` | Budget `450000`; all three fixture subzones | Only BEDOK01/JURONG01 scored; TAMPINES01 never reaches `_rawValue` | `items={BEDOK01,JURONG01}; TAMPINES01 not in raw calls` | Pass |
 | WB-DF-SC-02 | Missing commute reaches missing criterion | `WB::ScoringDataFlowWhiteBoxTests::test_wb_df_sc_02_missing_commute_definition_reaches_missing_criterion` | Commute dict omits JURONG01 | JURONG01 `COMMUTE_TIME` is missing; remaining weights sum to 1.0; raw call sees `None` | `COMMUTE_TIME missing; raw=(COMMUTE_TIME,JURONG01,None); weights sum=1.0` | Pass |
 | WB-DF-SC-03 | Warning list is mutated by missing data | `WB::ScoringDataFlowWhiteBoxTests::test_wb_df_sc_03_warning_list_definition_is_mutated_by_missing_data` | JURONG01 green coverage `None`; caller supplies `warnings=[]` | Caller's list receives a GREEN_COVERAGE warning for JURONG01 | `warnings contains JURONG01/GREEN_COVERAGE` | Pass |
-| WB-DF-SC-04 | Zero available weight skips item and warns | `WB::ScoringDataFlowWhiteBoxTests::test_wb_df_sc_04_zero_available_weight_skips_item_and_warns` | TAMPINES01 all criteria missing; no commute | No item; `SCORING` warning says no positive weight/data | `items=[]; SCORING warning present` | Pass |
 | WB-DF-RR-01 | Inputs flow from retrieval to scoring and result | `WB::RankingDataFlowWhiteBoxTests::test_wb_df_rr_01_inputs_flow_from_retrieval_to_scoring_and_result` | Anchor; two commute estimates; global + retained warnings; two stub items | Commute call gets origin/mode/subzones; scoring gets profile, commute data, warnings; result keeps items, snapshot and retained warnings | `3 boundary calls recorded; items=[BEDOK01,TAMPINES01]; snapshot=profile-1` | Pass |
 | WB-DF-RR-02 | Limit and retained codes filter warnings | `WB::RankingDataFlowWhiteBoxTests::test_wb_df_rr_02_limit_and_retained_codes_filter_warnings` | `limit=1`; warnings for global, TAMPINES01 and BEDOK01 | Only TAMPINES01 item and its warning survive; BEDOK01 warning dropped | `items=[TAMPINES01]; warnings=[None,TAMPINES01]` | Pass |
 | WB-DF-RR-03 | Compute passes arguments to candidates | `WB::RankingDataFlowWhiteBoxTests::test_wb_df_rr_03_compute_passes_arguments_to_candidates` | Recording strategy returns one item with `totalScore=77.7` | Score `77.7`; one-candidate list; commute map; same profile object | `score=77.7; subzones=[TAMPINES01]; commutes={TAMPINES01:20min}` | Pass |
@@ -354,17 +432,18 @@ the dead-store cleanup described in section 8.
 | --- | --- | --- | --- | --- |
 | `computeSuitabilityScore` | Yes | Yes | Yes (true/false) | WB-CSS-01/02, WB-DF-RR-03 |
 | `generateRankedRecommendations` | Yes | Yes | Yes (anchor, limit, filter, loop) | WB-RR-01…07, WB-DF-RR-01/02 |
-| `scoreCandidates` (listed pairs) | Yes | Yes | Yes (raw and available-weight predicates; `definition is None` infeasible) | WB-DF-SC-01…04 plus scoring tests |
+| `scoreCandidates` (listed pairs) | Yes | Yes | Yes (raw and available-weight predicates; `definition is None` infeasible) | WB-DF-SC-01…03 plus WB-SC-BP-05 |
 
 ## 7. Combined coverage summary
 
 | Unit / technique | `V(G)` | Basis paths | Tests |
 | --- | --- | --- | --- |
-| `computeSuitabilityScore` — control flow | 2 | 2 | WB-CSS-01, WB-CSS-02 |
+| `computeSuitabilityScore` — supporting wrapper | 2 | 2 | WB-CSS-01, WB-CSS-02 |
+| `scoreCandidates` — control flow | 6 | 6 | WB-SC-BP-01…06 |
 | `generateRankedRecommendations` — control flow | 5 | 5 + 2 boundary extras + availability guard | WB-RR-01…08 |
-| `scoreCandidates` — data flow | — | — | WB-DF-SC-01…04 |
+| `scoreCandidates` — data flow | — | — | WB-DF-SC-01…03 + WB-SC-BP-05 |
 | Ranking boundary — data flow | — | — | WB-DF-RR-01…03 |
-| **Total** | — | **7 basis paths** | **17 tests** |
+| **Total** | — | **13 basis paths** | **22 tests** |
 
 Coverage was established by test design and assertions rather than a
 line-coverage tool. Every CFG node is reached by at least one basis path, every
@@ -417,7 +496,7 @@ python -m unittest tests.test_white_box -v
 Observed summary:
 
 ```text
-Ran 17 tests in 0.040s
+Ran 22 tests in 0.050s
 
 OK
 ```
@@ -432,7 +511,7 @@ make test
 Observed summary at the time of writing:
 
 ```text
-Ran 167 tests
+Ran 162 tests
 OK
 ```
 
@@ -454,13 +533,14 @@ Tests 39 passed (39)
 
 | Requirement | Evidence |
 | --- | --- |
+| CFG for `scoreCandidates` | Section 4A.1 |
 | CFG for scoring wrapper | Section 4.2 |
 | CFG for ranking | Section 5.2 |
-| Cyclomatic complexity | Sections 4.3 and 5.3 |
-| Basis-path test-case table | Sections 4.4, 4.5, 5.4 and 5.5 |
+| Cyclomatic complexity | Sections 4.3, 4A.2 and 5.3 |
+| Basis-path test-case table | Sections 4A.3, 4.4, 4.5, 5.4 and 5.5 |
 | Definition-use tables | Sections 6.2, 6.3 and 6.4 |
 | Data-flow tests | Section 6.5 |
-| Deck-level test details (Name/Location/Input/Oracle/Log) | Sections 4.5, 5.5, 5.6 and 6.5 |
+| Test-case details (Name/Location/Input/Oracle/Log) | Sections 4A.3, 4.5, 5.5, 5.6 and 6.5 |
 | Implemented tests | `backend/tests/test_white_box.py` |
-| Expected/actual results | Sections 4.5, 5.5, 5.6 and 6.5 |
+| Expected/actual results | Sections 4A.3, 4.5, 5.5, 5.6 and 6.5 |
 | Data-flow anomaly and fix | Section 8, DF-ANOM-01 |

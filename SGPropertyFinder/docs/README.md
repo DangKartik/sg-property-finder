@@ -8,7 +8,7 @@ and is kept only for project history.
 step-by-step setup, dependency installation and run commands.
 
 **Current state:** the backend controls, adapters, scoring, ranking, factsheet,
-PDF and REST endpoints are implemented and covered by 167 `unittest` tests. The
+PDF and REST endpoints are implemented and covered by 162 `unittest` tests. The
 React/TypeScript frontend is implemented with Dexie, Leaflet, forms, comparison,
 enriched PDF export (ReportLab), share-link import, IndexedDB API caching,
 data-refresh control on the map, hard amenity minimums, selection-driven amenity
@@ -23,7 +23,9 @@ All application documentation lives in `SGPropertyFinder/docs/`.
 | --- | --- |
 | [`README.md`](README.md) | This overview: what the app is, structure, classes, setup and run commands. |
 | [`BACKEND.md`](BACKEND.md) | Backend run/test instructions, test inventory and implementation notes. |
+| [`BACKEND_CLASS_REFERENCE.md`](BACKEND_CLASS_REFERENCE.md) | Backend classes, design intent and key public methods. |
 | [`FRONTEND.md`](FRONTEND.md) | Frontend run/build instructions and implemented features. |
+| [`FRONTEND_CLASS_REFERENCE.md`](FRONTEND_CLASS_REFERENCE.md) | Frontend classes/components, props, design intent and key public methods. |
 | [`DATA_ASSETS.md`](DATA_ASSETS.md) | Data sources, snapshot formats and regeneration rules. |
 | [`PROJECT_STATUS.md`](PROJECT_STATUS.md) | Handover status, completed work, gaps, frozen decisions and verification. |
 | [`SPECIFICATIONS.md`](SPECIFICATIONS.md) | Frozen scoring, budget, environment, geography, commute, snapshot and API rules. |
@@ -50,8 +52,10 @@ SGPropertyFinder/
 ├── docs/
 │   ├── README.md
 │   ├── BACKEND.md
+│   ├── BACKEND_CLASS_REFERENCE.md
 │   ├── DATA_ASSETS.md
 │   ├── FRONTEND.md
+│   ├── FRONTEND_CLASS_REFERENCE.md
 │   ├── PROJECT_STATUS.md
 │   ├── BLACK_BOX_TESTING.md
 │   ├── ENVIRONMENT.md
