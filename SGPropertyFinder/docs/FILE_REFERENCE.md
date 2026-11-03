@@ -1,7 +1,7 @@
 # File Reference — Backend and Frontend
 
-- **Version:** 1.0
-- **Date:** 26 October 2026
+- **Version:** 2.0
+- **Date:** 3 November 2026
 - **Application:** SG Property Finder
 - **Scope:** every source, test, data and configuration file in `SGPropertyFinder/backend` and `SGPropertyFinder/frontend`, plus the supporting `scripts/` and `docs/` folders.
 
@@ -34,6 +34,38 @@ HTTP /api/v1/*
 
 The backend is stateless. Profiles live in the browser's IndexedDB; the only
 server-side state is the short-lived PDF report store.
+
+---
+
+## 1a. Folder map
+
+| Folder | Purpose |
+| --- | --- |
+| `backend/` | FastAPI application, domain code, tests and local data assets. |
+| `backend/app/api/` | Transport-agnostic request handlers. |
+| `backend/app/control/` | Application logic: validation, retrieval, ranking, comparison, factsheet, map, report. |
+| `backend/app/entity/` | Domain entities and enums. |
+| `backend/app/schemas/` | DTOs and the standard API envelope. |
+| `backend/app/container/` | In-memory registries and short-lived stores. |
+| `backend/app/adapter/` | OneMap and data.gov.sg integrations. |
+| `backend/app/strategy/` | Criterion catalogue and scoring strategy. |
+| `backend/app/services/` | Dataset freshness, live environment and profile factory. |
+| `backend/app/core/` | Cache, geometry, polyline, serialization and time helpers. |
+| `backend/assets/data/` | Local snapshots and fallback datasets. |
+| `backend/tests/` | Unit, integration, system and formal black/white-box tests. |
+| `backend/tests/fixtures/` | Small deterministic test snapshots. |
+| `frontend/src/api/` | API contracts and fetch/cache client. |
+| `frontend/src/boundary/` | React boundary components and UI tests. |
+| `frontend/src/container/` | IndexedDB repositories for profiles and API responses. |
+| `frontend/src/control/` | Client profile controller and lifecycle tests. |
+| `frontend/src/types/` | Browser-facing DTOs. |
+| `frontend/src/utils/` | Formatting, weights, amenities, polyline and availability helpers. |
+| `frontend/src/test/` | Vitest setup. |
+| `scripts/` | Development, test, benchmark, amenity-build and cleanup commands. |
+| `docs/` | Submission and project documentation. |
+
+Generated/dependency folders such as `frontend/node_modules/` and
+`frontend/dist/` are not hand-edited.
 
 ---
 
@@ -279,26 +311,20 @@ server-side state is the short-lived PDF report store.
 
 ## 5. Documentation
 
-All application documentation is kept in `SGPropertyFinder/docs/`.
+The submission documentation is kept in `SGPropertyFinder/docs/`:
 
 | File | Purpose |
 | --- | --- |
-| `docs/README.md` | Documentation index plus the full application overview, structure, commands and implementation status. |
-| `docs/BACKEND.md` | Backend run instructions, test inventory and implementation notes. |
+| `docs/FILE_REFERENCE.md` | This file: folder map and responsibilities of every source, test, data and support file. |
 | `docs/BACKEND_CLASS_REFERENCE.md` | Backend classes, design intent, key public methods and usage flows. |
-| `docs/FRONTEND.md` | Frontend run/build instructions and implemented features. |
 | `docs/FRONTEND_CLASS_REFERENCE.md` | Frontend classes/components, props, design intent, key methods and user flows. |
-| `docs/DATA_ASSETS.md` | Data sources, snapshot formats, categories and regeneration rules. |
-| `docs/PROJECT_STATUS.md` | Handover document: completed work, frozen decisions, known gaps and verification summary. |
-| `docs/SPECIFICATIONS.md` | Frozen scoring, budget, environment, geography, commute, snapshot and API rules. |
-| `docs/BLACK_BOX_TESTING.md` | **Updated:** EP, BVA and state-transition testing with Name/Location/Input/Oracle/Log, test levels, coverage and execution order. |
-| `docs/WHITE_BOX_TESTING.md` | **Updated:** CFGs, cyclomatic complexity, basis paths and data-flow (DU) testing for scoring/ranking. |
-| `docs/FILE_REFERENCE.md` | This file: responsibilities of every backend/frontend/support file. |
 | `docs/ENVIRONMENT.md` | `.env` setup and environment-variable reference. |
-| `docs/OPEN_ISSUES.md` | Accepted data/functional limitations and production-only gaps. |
-| `docs/SLA_BENCHMARK.md` | Phase 5 latency benchmark method and results. |
-| `docs/sla_benchmark_results.json` | Raw benchmark samples (generated evidence, not Markdown). |
-| `docs/PHASE5_E2E_CHECKLIST.md` | 18-check live browser/API end-to-end checklist. |
+| `docs/WHITE_BOX_TESTING.md` | CFGs, cyclomatic complexity, basis paths, data-flow testing and coverage. |
+| `docs/BLACK_BOX_TESTING.md` | EP, BVA and state-transition testing with Name/Location/Input/Oracle/Log records. |
+| `docs/EXTERNAL_API_DATA.md` | External API endpoints, returned payload shapes, field mappings and fallback behaviour. |
+| `docs/REQUIREMENTS_TRACEABILITY.md` | FR/NFR and use-case traceability with verification methods, evidence and status. |
+| `docs/LIMITATIONS.md` | Current data, functional, performance and production limitations. |
+| `docs/SPECIFICATIONS_AND_ARCHITECTURE.md` | Frozen rules, architecture, API contract and design decisions. |
 
 ## 6. Root files
 
@@ -315,7 +341,7 @@ All application documentation is kept in `SGPropertyFinder/docs/`.
 
 | Task | Files |
 | --- | --- |
-| Add or change a scoring rule | `backend/app/strategy/weighted_scoring_strategy.py`, `backend/app/strategy/criterion_catalog.py`, `docs/SPECIFICATIONS.md`, scoring tests |
+| Add or change a scoring rule | `backend/app/strategy/weighted_scoring_strategy.py`, `backend/app/strategy/criterion_catalog.py`, `docs/SPECIFICATIONS_AND_ARCHITECTURE.md`, scoring tests |
 | Add a new API endpoint | `backend/app/api/handlers.py`, `backend/main.py`, `frontend/src/api/contracts.ts`, `frontend/src/api/client.ts`, endpoint tests |
 | Change profile validation | `backend/app/control/input_validation_control.py`, `backend/app/services/profile_factory.py`, `frontend/src/boundary/ProfileFormUI.tsx`, `frontend/src/control/ProfileControl.ts`, validation tests |
 | Change profile storage/CRUD | `frontend/src/container/ProfileCatalog.ts`, `frontend/src/control/ProfileControl.ts`, `frontend/src/App.tsx`, `ProfileControl.test.ts` |
@@ -329,7 +355,7 @@ All application documentation is kept in `SGPropertyFinder/docs/`.
 ## 8. Notes for maintainers
 
 - `backend/assets/data/hdb_resale.csv` is a 24 MB real snapshot; do not regenerate or commit replacements unnecessarily.
-- `package-lock.json` and `docs/sla_benchmark_results.json` are generated artifacts; update them through their tools/scripts.
+- `package-lock.json` is generated; update it through npm.
 - The backend never stores user profiles; `ProfileCatalog` (Dexie) is the source of truth in the browser.
 - `.env` contains credentials and is intentionally untracked.
 - Tests use local fixtures and never call OneMap or data.gov.sg; live checks belong to the E2E/SLA documents.

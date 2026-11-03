@@ -4,7 +4,7 @@
 - **Date:** 27 October 2026
 - **Scope:** `SGPropertyFinder/backend`
 - **Purpose:** document the backend classes, their design intent, key public methods and usage so the implementation can be traced from the design class diagram and sequence diagrams.
-- **Related documents:** `SPECIFICATIONS.md`, `FILE_REFERENCE.md`, `BACKEND.md`, `WHITE_BOX_TESTING.md`, `BLACK_BOX_TESTING.md`.
+- **Related documents:** `SPECIFICATIONS_AND_ARCHITECTURE.md`, `FILE_REFERENCE.md`, `WHITE_BOX_TESTING.md`, `BLACK_BOX_TESTING.md`, `EXTERNAL_API_DATA.md`, `LIMITATIONS.md`.
 
 ---
 
@@ -570,8 +570,7 @@ POST /api/v1/reports/pdf
 ## 15. Related evidence
 
 - Class/file responsibilities: `FILE_REFERENCE.md`.
-- Frozen scoring/API rules: `SPECIFICATIONS.md`.
-- Backend setup and tests: `BACKEND.md`.
-- White-box methods and basis paths: `WHITE_BOX_TESTING.md`.
-- Black-box validation and state tests: `BLACK_BOX_TESTING.md`.
-- Data provenance: `DATA_ASSETS.md`.
+- Frozen scoring/API rules: `SPECIFICATIONS_AND_ARCHITECTURE.md`.
+- Environment/run setup: `ENVIRONMENT.md`.
+- External payloads: `EXTERNAL_API_DATA.md`.
+- Current limitations: `LIMITATIONS.md`.

@@ -202,6 +202,52 @@ Check that the backend is running:
 
 Press **Ctrl+C** in the terminal to stop both servers.
 
+## Run without Make (manual)
+
+You do not need GNU Make to run the application. Use two terminals.
+
+### First-time installation
+
+From the `SGPropertyFinder` folder:
+
+```powershell
+python -m pip install -r backend/requirements.txt
+npm --prefix frontend install --no-audit --no-fund
+```
+
+If `python` is not recognised on Windows, use the Python launcher:
+
+```powershell
+py -m pip install -r backend/requirements.txt
+```
+
+### Terminal 1 — backend
+
+```powershell
+cd SGPropertyFinder/backend
+python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
+```
+
+If `python` is not recognised:
+
+```powershell
+py -m uvicorn main:app --reload --host 127.0.0.1 --port 8000
+```
+
+### Terminal 2 — frontend
+
+Open a second terminal from the repository root:
+
+```powershell
+cd SGPropertyFinder/frontend
+npm run dev
+```
+
+Then open <http://localhost:5173>. The Vite development server proxies `/api`
+requests to the backend at <http://127.0.0.1:8000>.
+
+Stop each server with **Ctrl+C** in its own terminal.
+
 ## Make command reference
 
 Run these from the `SGPropertyFinder` folder.

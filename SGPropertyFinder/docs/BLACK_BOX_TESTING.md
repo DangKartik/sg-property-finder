@@ -63,9 +63,9 @@ Two rejection mechanisms are tested separately:
 
 ### 2.2 Out of scope
 
-- Live OneMap/data.gov.sg timing; see `SLA_BENCHMARK.md`.
+- Live OneMap/data.gov.sg timing; see NFR-02 in `REQUIREMENTS_TRACEABILITY.md`.
 - Ranking quality and scoring maths; see `WHITE_BOX_TESTING.md`.
-- Accessibility and browser rendering; see `PHASE5_E2E_CHECKLIST.md`.
+- Accessibility and browser rendering; see `LIMITATIONS.md` and `REQUIREMENTS_TRACEABILITY.md`.
 - Security penetration testing and production concurrency.
 
 ## 3. Levels of testing
@@ -78,8 +78,8 @@ the linked documents so the level boundaries stay clear.
 | --- | --- | --- |
 | **Unit** | One class or pure helper with stubs | `backend/tests/test_scoring_ranking.py`, `test_report.py`, `test_polyline.py`; `frontend/src/utils/*.test.ts`, `ApiCache.test.ts` |
 | **Integration** | Two or more units combined at a real boundary | `test_black_box_validation.py` (handler + validator + address adapter), `test_black_box_state.py` (control + store + handler), `test_api_handlers.py`, `test_fastapi_endpoints.py`, `frontend/src/control/ProfileControl.test.ts` (control + Dexie + validator contract) |
-| **System** | The complete backend/frontend system | `PHASE5_E2E_CHECKLIST.md` (18 live checks), `SLA_BENCHMARK.md` (HTTP/OneMap latency) |
-| **Acceptance** | The customer/user can complete the intended journeys | `PHASE5_E2E_CHECKLIST.md`: create plan, search address, rank, open factsheet, compare, export PDF, import share link, persist after reload, delete safely |
+| **System** | The complete backend/frontend system | `REQUIREMENTS_TRACEABILITY.md` (18-check walkthrough summary and NFR-02 benchmark) |
+| **Acceptance** | The customer/user can complete the intended journeys | `REQUIREMENTS_TRACEABILITY.md`: create plan, search address, rank, open factsheet, compare, export PDF, import share link, persist after reload, delete safely |
 
 The new state suites are integration tests: they exercise a controller against
 its real in-memory/IndexedDB collaborator, not a mock of the whole workflow.
@@ -412,4 +412,4 @@ At the time of writing: backend **162 tests OK**; frontend **39 tests OK**.
 - No formal user-acceptance session with external participants; the 18-check
   Dialog Map E2E checklist is the acceptance evidence.
 - Concurrency (two browser tabs editing one profile) and multi-worker report
-  stores remain production gaps documented in `PROJECT_STATUS.md`.
+  stores remain current limitations documented in `LIMITATIONS.md`.

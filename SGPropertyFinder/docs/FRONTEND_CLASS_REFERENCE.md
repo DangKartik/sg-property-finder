@@ -4,7 +4,7 @@
 - **Date:** 27 October 2026
 - **Scope:** `SGPropertyFinder/frontend/src`
 - **Purpose:** document the frontend classes, boundary components, props, design intent and usage so the React implementation can be traced from the design class diagram, sequence diagrams and dialog map.
-- **Related documents:** `README.md`, `FRONTEND.md`, `FILE_REFERENCE.md`, `SPECIFICATIONS.md`.
+- **Related documents:** `SPECIFICATIONS_AND_ARCHITECTURE.md`, `FILE_REFERENCE.md`, `REQUIREMENTS_TRACEABILITY.md`, `BLACK_BOX_TESTING.md`, `WHITE_BOX_TESTING.md`, `LIMITATIONS.md`.
 
 ---
 

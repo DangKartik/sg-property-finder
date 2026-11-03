@@ -1,10 +1,140 @@
-# Frozen Specification — v1
+# Specifications and Architecture
 
-This file records the frozen rules that implementation follows. Resolved
-decisions and accepted limitations are summarized in `OPEN_ISSUES.md` and
-`PROJECT_STATUS.md`.
+- **Version:** 1.0
+- **Date:** 3 November 2026
+- **Scope:** frozen functional rules and the implemented system architecture
+- **Related documents:** `FILE_REFERENCE.md`, `BACKEND_CLASS_REFERENCE.md`, `FRONTEND_CLASS_REFERENCE.md`, `REQUIREMENTS_TRACEABILITY.md`, `LIMITATIONS.md`
 
-## 1. Criterion catalogue
+This document records the frozen rules the implementation follows and the
+architecture used to satisfy them.
+
+---
+
+## 1. Architecture overview
+
+### 1.1 System context
+
+SG Property Finder is a browser-based neighbourhood recommender with a stateless
+Python backend.
+
+```mermaid
+flowchart LR
+    USER[User] --> BROWSER[React frontend]
+    BROWSER -->|JSON over /api/v1| FASTAPI[FastAPI backend]
+    FASTAPI --> DATAGOV[data.gov.sg]
+    FASTAPI --> ONEMAP[OneMap]
+    BROWSER -->|profiles + cached responses| IDB[(Browser IndexedDB)]
+    FASTAPI -->|temporary PDFs| REPORTFS[(Report files)]
+```
+
+- The backend has **no user database**. Profiles are stored in browser IndexedDB.
+- The only backend state is the short-lived PDF report store and in-process TTL
+  caches.
+- All external data access is behind adapters.
+
+### 1.2 Backend architecture
+
+| Layer | Package | Responsibility |
+| --- | --- | --- |
+| Boundary/API | `backend/main.py`, `backend/app/api` | FastAPI routes, headers, envelopes and HTTP adaptation. |
+| Control | `backend/app/control` | Validation, retrieval, ranking, comparison, factsheet, map and report logic. |
+| Entity | `backend/app/entity`, `backend/app/schemas` | Domain objects and transport DTOs. |
+| Container | `backend/app/container` | Subzone registry, town mapping and report store. |
+| Adapter | `backend/app/adapter` | OneMap and data.gov.sg integration. |
+| Strategy | `backend/app/strategy` | Criterion catalogue and weighted scoring. |
+| Service/utility | `backend/app/services`, `backend/app/core` | Dataset freshness, live environment, parsing, cache, geometry, time and serialization. |
+
+`bootstrap.buildContext()` is the composition root. It creates the registry,
+adapters, controls, strategies and report store, marks subzones with insufficient
+commute data, and enriches each subzone with pricing/amenity/environment indicators.
+
+### 1.3 Frontend architecture
+
+| Layer | Folder | Responsibility |
+| --- | --- | --- |
+| Boundary | `frontend/src/boundary` | Forms, results, map, factsheet, comparison, report and notification UI. |
+| Control | `frontend/src/control` | Profile CRUD and validation workflow. |
+| Container | `frontend/src/container` | IndexedDB repositories for profiles and API responses. |
+| API | `frontend/src/api` | Contracts and fetch client with ETag/TTL cache. |
+| Entity/DTO | `frontend/src/types` | Transport DTOs mirrored from the backend. |
+| Utility | `frontend/src/utils` | Formatting, weights, amenities, polyline and availability helpers. |
+
+`App.tsx` owns UI state and orchestration. Components receive capabilities
+through props rather than creating API clients or storage themselves.
+
+### 1.4 Request/data flow
+
+```text
+React boundary
+  -> api/client.ts
+  -> FastAPI route
+  -> handlers.py
+  -> AppContext control
+  -> strategy / container / adapter / entity
+  -> ApiEnvelope
+  -> React boundary
+```
+
+For a recommendation request:
+
+```text
+ProfileFormUI
+  -> ProfileControl (validate + save to IndexedDB)
+  -> POST /api/v1/recommendations
+  -> handlers.recommendations
+  -> profileDtoFromDict -> PreferenceProfile
+  -> RankingControl
+     -> SubzoneRegistry (available subzones)
+     -> CommuteControl (matrix/live/fallback)
+     -> WeightedScoringStrategy.scoreCandidates
+  -> RecommendationSet
+  -> ResultsListUI / NeighborhoodMapUI
+```
+
+### 1.5 Data and caching strategy
+
+- **Static snapshots:** `backend/assets/data/` contains subzones, HDB resale,
+  amenities, tertiary schools, environment baselines and the commute matrix.
+- **Freshness:** `DatasetService` refreshes subzone/HDB snapshots when older than
+  `DATA_MAX_AGE_HOURS` (default 24).
+- **Client cache:** `ApiCache` stores API envelopes in IndexedDB with ETag/TTL
+  metadata and serves stale data with a warning when the backend is offline.
+- **Server cache:** adapters and commute control use TTL caches; live route
+  results are cached for 7 days.
+
+### 1.6 Design patterns used
+
+- **Strategy:** `ScoringStrategy` / `WeightedScoringStrategy` allow the scoring
+  algorithm to be replaced independently of ranking.
+- **Dependency injection / composition root:** `buildContext()` wires concrete
+  adapters and controls; tests inject fakes.
+- **Adapter:** OneMap and data.gov.sg details stay in `app/adapter`.
+- **Container/repository:** `SubzoneRegistry`, `ProfileCatalog` and `ApiCache`
+  encapsulate in-memory/IndexedDB collections.
+- **DTO boundary:** `app/schemas` and `frontend/src/types/dto.ts` keep transport
+  shapes separate from domain entities.
+- **Strategy for missing data:** retrieval controls return `RetrievalResult` with
+  explicit warnings instead of silently substituting zero.
+
+### 1.7 Deployment topology
+
+The intended academic/local deployment is:
+
+```text
+Browser -> Vite dev server (port 5173)
+        -> /api proxy -> Uvicorn/FastAPI (port 8000)
+```
+
+The frontend production build is emitted to `frontend/dist`. A production
+deployment would require HTTPS, a reverse proxy, CI/CD and a shared report store;
+those are current limitations, not implemented features.
+
+---
+
+## 2. Criterion catalogue
+
+This section and the following sections record the frozen implementation rules.
+
 
 | ID | Name | Unit | Direction | Fixed domain | Radius / basis | Default importance |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -19,7 +149,7 @@ rates every criterion from **1 (not important) to 10 (very important)**;
 ratings do not need to sum to 100. `CriterionWeight.criterionId` must match this
 catalogue.
 
-## 2. Normalisation and scoring
+## 3. Normalisation and scoring
 
 After the hard budget and amenity-minimum filters, each raw value is normalised
 against its **fixed absolute domain** (not the candidate set), so scores remain
@@ -77,7 +207,7 @@ outside the top 20 are discarded and their warnings are omitted. The comparison
 endpoint uses the full internal ranking so subzones outside the top 20 can still
 be compared.
 
-## 3. Budget semantics
+## 4. Budget semantics
 
 - `budgetMax` is a hard filter.
 - A subzone is eligible when at least one selected flat type has a median price
@@ -93,7 +223,7 @@ keyed by HDB town, not URA subzone. The application deliberately keeps the
 town-level median proxy and does not build a block-to-subzone mapping. The
 UI/PDF labels this as a **Town-Level Median Proxy**.
 
-## 3a. Hard amenity minimums
+## 4a. Hard amenity minimums
 
 The profile can specify five whole-number minimums. They are hard filters and
 are applied before scoring, after the budget filter:
@@ -114,7 +244,7 @@ are applied before scoring, after the budget filter:
   `tertiary_schools.json` supplement (JCs, Millennia Institute, mixed-level
   schools with JC/IB levels, and autonomous universities).
 
-## 4. Static vs live environment data
+## 5. Static vs live environment data
 
 ### Score-impact data (static baselines)
 
@@ -134,7 +264,7 @@ identical ranking requests using the same snapshot.
 Live values are shown in `FactSheetUI` with an `asOf` timestamp and must not
 affect suitability scores. This preserves deterministic rankings.
 
-## 5. Geography and distance definitions
+## 6. Geography and distance definitions
 
 - **Subzone anchor:** Shapely `representative_point()` of the URA subzone polygon
   (guaranteed to lie inside the polygon).
@@ -150,7 +280,7 @@ affect suitability scores. This preserves deterministic rankings.
   are converted to a single `representative_point()` when the amenities snapshot
   is generated, so counts use that point coordinate.
 
-## 6. Commute strategy and latency
+## 7. Commute strategy and latency
 
 - **Default departure:** next weekday at 08:30 SGT.
 - **Precomputed matrix:** public-transport travel times for 319/332 subzone
@@ -181,7 +311,7 @@ affect suitability scores. This preserves deterministic rankings.
 candidates are estimated in memory. The first cold-cache ranking should still be
 benchmarked against the 5-second target.
 
-## 7. Data snapshot and ingestion contract
+## 8. Data snapshot and ingestion contract
 
 `DatasetMetadata`:
 
@@ -199,7 +329,7 @@ recordCount     number of records in the snapshot
 - `RecommendationSet.dataSnapshotId` and `dataAsOf` must identify the exact
   snapshot used for that ranking.
 
-## 8. API contract
+## 9. API contract
 
 All endpoints return the standard envelope:
 
@@ -250,7 +380,7 @@ Error responses use `success=false`, `data=null`, `error={code,message,details}`
 `INSUFFICIENT_DATA` is returned when a factsheet or comparison requests a
 subzone marked `dataAvailable=false`.
 
-## 9. PDF report contract
+## 10. PDF report contract
 
 `PdfReport` contains only browser-safe metadata:
 

@@ -78,14 +78,14 @@ isolation with deterministic stubs. Where a method crosses a collaborator
 boundary (`RankingControl` → commute control → scoring strategy), the new
 data-flow tests use recording stubs, which makes them **integration-style unit
 tests** at that seam. They do not replace the system/acceptance evidence in
-`PHASE5_E2E_CHECKLIST.md`.
+`REQUIREMENTS_TRACEABILITY.md`.
 
 | Level | White-box evidence |
 | --- | --- |
 | **Unit** | CFG/basis-path tests for `scoreCandidates` and `generateRankedRecommendations`; DU tests for `computeSuitabilityScore` and `scoreCandidates`. |
 | **Integration** | `WB-DF-RR-01/02/03` record the values passed from ranking to a scoring stub; `test_scoring_ranking.py` exercises the real strategy with fixture controls. |
-| **System** | `PHASE5_E2E_CHECKLIST.md` and `SLA_BENCHMARK.md`. |
-| **Acceptance** | Eighteen user-journey checks in `PHASE5_E2E_CHECKLIST.md`. |
+| **System** | `REQUIREMENTS_TRACEABILITY.md` (benchmark and acceptance evidence). |
+| **Acceptance** | Eighteen user-journey checks summarised in `REQUIREMENTS_TRACEABILITY.md`. |
 
 ## 4. Supporting wrapper — `computeSuitabilityScore`
 
