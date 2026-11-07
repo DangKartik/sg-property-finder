@@ -3,19 +3,15 @@
 ## Deliverables
 
 - Project documentation
-- Architecture diagram
-- Class diagram
-- Dialog map
+- System diagrams
+- Supporting documents
+- Demo video
 - Application source code
 
-## Files
+## Folders
 
-The following files contain the Lab 5 deliverables:
-
-- `Documents/Documentations.pdf` - consolidated project documentation, testing evidence and references.
-- `Diagrams/ArchitectureDiagram.png` - system architecture diagram.
-- `Diagrams/Class Diagram.pdf` - class diagram.
-- `Diagrams/Dialog Map.pdf` - dialog map and Excalidraw link.
+- [`Diagram Images`](Diagram%20Images/README.md) - final diagram images in PNG format.
+- [`Supporting Documents`](Supporting%20Documents/README.md) - compiled documents and reference PDFs.
 
 ## Demo Video
 
