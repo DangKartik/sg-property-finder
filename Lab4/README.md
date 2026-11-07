@@ -12,7 +12,8 @@
 
 The following files contain the Lab 4 deliverables:
 
-- `Lab4 Test Cases and Testing Results.pdf` - black-box, white-box, integration, frontend and acceptance testing evidence.
+- `Lab4 Test Cases and Testing Results.pdf` - class-focused black-box EP/BVA testing for `InputValidationControl`, followed by white-box control-flow graphs, basis paths and test results for `WeightedScoringStrategy.scoreCandidates` and `RankingControl.generateRankedRecommendations`. Supplementary white-box evidence is in the appendices.
+- `generate_test_report.py` - regenerates the PDF from the executed test suites.
 - `SC2006 Live Demo Script .pdf` - live demonstration script.
 
 ## Application Source Code
