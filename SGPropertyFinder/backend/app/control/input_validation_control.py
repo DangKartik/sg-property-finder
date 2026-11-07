@@ -1,8 +1,4 @@
-"""Profile input validation."""
-
-from __future__ import annotations
-
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from app.entity.enums import TransitMode
 from app.entity.types import ValidationResult
@@ -14,81 +10,99 @@ if TYPE_CHECKING:
 
 
 class InputValidationControl:
-    """Stereotype: Control. Validates profile input before persistence or ranking."""
-
-    def __init__(self, oneMapAdapter: OneMapApiAdapter | None = None) -> None:
-        """Create the validator, optionally with address verification."""
+    def __init__(self, oneMapAdapter: Optional[OneMapApiAdapter] = None):
         self.oneMapAdapter = oneMapAdapter
 
-    def validateProfileData(self, data: ProfileDTO) -> ValidationResult:
-        """Validate budget, flat types, address, mode and weights."""
+    def validateProfileData(self, data: 'ProfileDTO') -> ValidationResult:
         result = ValidationResult(isValid=True, errors=[])
 
-        if not data.profileName or not data.profileName.strip():
-            result.addError("profileName", "Enter a profile name.")
+        # Profile name
+        profile_name = getattr(data, 'profileName', None)
+        if not profile_name or not str(profile_name).strip():
+            result.addError("profileName", "Profile name must not be empty or contain only whitespace.")
 
-        if data.budgetMin < 0:
-            result.addError("budgetMin", "Budget minimum cannot be negative.")
-        if data.budgetMax <= 0:
-            result.addError("budgetMax", "Budget maximum must be greater than zero.")
-        if data.budgetMax <= data.budgetMin:
-            result.addError("budgetMax", "Budget maximum must be greater than the minimum.")
+        # Budget
+        budget_min = getattr(data, 'budgetMin', None)
+        budget_max = getattr(data, 'budgetMax', None)
 
-        if not data.selectedFlatTypes:
-            result.addError("selectedFlatTypes", "Select at least one flat type to continue.")
+        if not isinstance(budget_min, (int, float)) or budget_min < 0:
+            result.addError("budgetMin", "budgetMin must be greater than or equal to 0.")
 
-        if not data.workplaceAddress and data.anchorCoordinates is None:
-            result.addError("workplaceAddress", "Enter a workplace address or select a map anchor.")
+        if not isinstance(budget_max, (int, float)) or budget_max <= 0:
+            result.addError("budgetMax", "budgetMax must be greater than 0.")
 
-        if data.workplaceAddress and self.oneMapAdapter is not None:
+        if isinstance(budget_min, (int, float)) and isinstance(budget_max, (int, float)):
+            if budget_max <= budget_min:
+                result.addError("budgetMax", "budgetMax must be strictly greater than budgetMin.")
+
+        # Flat types
+        selected_flat_types = getattr(data, 'selectedFlatTypes', None)
+        if not selected_flat_types or len(selected_flat_types) == 0:
+            result.addError("selectedFlatTypes", "selectedFlatTypes must contain at least one selected flat type.")
+
+        # Workplace address
+        workplace_address = getattr(data, 'workplaceAddress', None)
+        anchor_coordinates = getattr(data, 'anchorCoordinates', None)
+        has_address = bool(workplace_address and str(workplace_address).strip())
+        has_coordinates = bool(anchor_coordinates)
+
+        if not has_address and not has_coordinates:
+            result.addError(
+                "workplaceAddress",
+                "The user must provide either a non-empty workplaceAddress or anchorCoordinates."
+            )
+        elif has_address and self.oneMapAdapter is not None:
             try:
-                matches = self.oneMapAdapter.searchAddress(data.workplaceAddress)
-            except Exception:
-                result.addError("workplaceAddress", "Unable to verify the address. Try again.")
-                matches = []
-            if not matches:
-                result.addError(
-                    "workplaceAddress",
-                    "Address not Found. Enter a valid postal code or building name.",
-                )
+                matches = self.oneMapAdapter.searchAddress(workplace_address)
+                if not matches:
+                    result.addError("workplaceAddress", "The provided workplace address could not be found.")
+            except Exception as e:
+                result.addError("workplaceAddress", f"Address verification failed: {str(e)}")
 
-        valid_criteria = {
-            definition.criterionId
-            for definition in buildDefaultCriterionCatalog().getAllCriteria()
-        }
-        if not data.criteriaWeights:
-            result.addError("criteriaWeights", "Rate at least one criterion.")
+        # Criteria weights
+        criteria_weights = getattr(data, 'criteriaWeights', None)
+        if not criteria_weights:
+            result.addError("criteriaWeights", "At least one criterion weight must be provided.")
         else:
-            for weight in data.criteriaWeights:
-                if weight.getCriterionId() not in valid_criteria:
-                    result.addError(
-                        "criteriaWeights",
-                        f"Unknown criterion: {weight.getCriterionId()}.",
-                    )
-                value = weight.getWeightValue()
-                if value < 1.0 or value > 10.0:
-                    result.addError(
-                        "criteriaWeights",
-                        f"Importance for {weight.getCriterionId()} must be between 1 and 10.",
-                    )
+            catalog = buildDefaultCriterionCatalog().getAllCriteria()
 
-        for field_name, label in (
-            ("minimumPrimarySchools", "Primary school"),
-            ("minimumSecondarySchools", "Secondary school"),
-            ("minimumTertiarySchools", "Tertiary school"),
-            ("minimumMalls", "Mall"),
-            ("minimumHospitals", "Hospital"),
-        ):
-            value = getattr(data, field_name)
-            if not isinstance(value, int) or isinstance(value, bool):
-                result.addError(field_name, f"{label} minimum must be a whole number.")
-            elif value < 0 or value > 50:
-                result.addError(
-                    field_name,
-                    f"{label} minimum must be between 0 and 50.",
-                )
+            # Defensively handle the catalog returning either a dict or a list of objects
+            valid_ids = set(catalog.keys()) if isinstance(catalog, dict) else {getattr(c, 'id', c) for c in catalog}
 
-        if not isinstance(data.preferredCommuteMode, TransitMode):
-            result.addError("preferredCommuteMode", "Select a valid commute mode.")
+            # Defensively handle criteriaWeights as a dict or an iterable of objects
+            items = criteria_weights.items() if isinstance(criteria_weights, dict) else [
+                (getattr(cw, 'criterionId', cw), getattr(cw, 'weight', cw)) for cw in criteria_weights
+            ]
+
+            for c_id, weight in items:
+                if c_id not in valid_ids:
+                    result.addError("criteriaWeights", f"Unknown criterion ID: {c_id}")
+                if not isinstance(weight, (int, float)) or not (1.0 <= weight <= 10.0):
+                    result.addError("criteriaWeights", f"Criterion weight for '{c_id}' must be between 1.0 and 10.0, inclusive.")
+
+        # Minimum amenities
+        amenity_fields = [
+            "minimumPrimarySchools",
+            "minimumSecondarySchools",
+            "minimumTertiarySchools",
+            "minimumMalls",
+            "minimumHospitals"
+        ]
+        for field in amenity_fields:
+            val = getattr(data, field, None)
+
+            # Checking specifically for type 'int' excludes 'bool', since type(True) is bool, not int.
+            if type(val) is not int:
+                result.addError(field, f"{field} must be an integer, excluding Boolean values.")
+            elif not (0 <= val <= 50):
+                result.addError(field, f"{field} must be between 0 and 50, inclusive.")
+
+        # Preferred commute mode
+        commute_mode = getattr(data, 'preferredCommuteMode', None)
+        if not isinstance(commute_mode, TransitMode):
+            try:
+                TransitMode(commute_mode)
+            except (ValueError, TypeError):
+                result.addError("preferredCommuteMode", "preferredCommuteMode must be a valid member of the TransitMode enumeration.")
 
         return result
