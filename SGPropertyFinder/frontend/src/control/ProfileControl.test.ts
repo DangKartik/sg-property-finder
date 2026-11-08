@@ -192,9 +192,25 @@ describe("ProfileControl state-based black-box tests", () => {
   });
 });
 
-describe("ProfileControl active plan", () => {
+describe("ProfileControl plan persistence", () => {
   beforeEach(async () => {
     await clearProfiles();
+  });
+
+  it("keeps the identifier and creation time when a plan is updated", async () => {
+    const control = new ProfileControl(new ProfileCatalog(), acceptingValidator);
+    const id = await control.createProfile(makeProfile({ profileId: "plan-kept" }));
+    const created = await new ProfileCatalog().getProfile(id);
+
+    await control.updateProfile(
+      id,
+      makeProfile({ profileId: id, profileName: "Renamed", creationTime: created?.creationTime ?? null }),
+    );
+
+    const updated = await new ProfileCatalog().getProfile(id);
+    expect(updated?.profileId).toBe(id);
+    expect(updated?.profileName).toBe("Renamed");
+    expect(updated?.creationTime).toBe(created?.creationTime);
   });
 
   it("restores the active plan after a reload", async () => {

@@ -111,6 +111,28 @@ class ScoringTests(unittest.TestCase):
             green = next(score for score in item.criterionScores if score.criterionId == "GREEN_COVERAGE")
             self.assertAlmostEqual(green.normalisedScore, 0.3, places=3)
 
+    def test_values_outside_the_fixed_domain_are_clamped(self) -> None:
+        for subzone in self.registry.getAllSubzones():
+            subzone.indicators.greenCoveragePercent500m = 150.0
+        items = self.strategy.scoreCandidates(
+            self.registry.getAllSubzones(), self.profile, self.commutes
+        )
+        for item in items:
+            green = next(score for score in item.criterionScores if score.criterionId == "GREEN_COVERAGE")
+            self.assertEqual(green.normalisedScore, 1.0)
+
+    def test_valid_zero_is_scored_rather_than_treated_as_missing(self) -> None:
+        for subzone in self.registry.getAllSubzones():
+            subzone.indicators.greenCoveragePercent500m = 0.0
+        items = self.strategy.scoreCandidates(
+            self.registry.getAllSubzones(), self.profile, self.commutes
+        )
+        for item in items:
+            green = next(score for score in item.criterionScores if score.criterionId == "GREEN_COVERAGE")
+            self.assertFalse(green.isMissing)
+            self.assertEqual(green.normalisedScore, 0.0)
+            self.assertGreater(green.weight, 0.0)
+
     def test_tie_break_uses_shortest_commute(self) -> None:
         subzones = self.registry.getAllSubzones()[:2]
         for subzone in subzones:
