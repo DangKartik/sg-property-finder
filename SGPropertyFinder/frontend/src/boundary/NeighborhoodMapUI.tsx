@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import type { Feature, GeoJsonObject } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
 import {
@@ -16,7 +16,7 @@ import type {
   RouteDataDTO,
 } from "../types/dto";
 import { decodePolyline } from "../utils/polyline";
-import { scoreColor } from "../utils/format";
+import { SCORE_BANDS, scoreColor } from "../utils/format";
 import {
   ALL_AMENITY_GROUP_IDS,
   AMENITY_GROUPS,
@@ -189,10 +189,11 @@ export function NeighborhoodMapUI({
       )}
       <div className="map-legend" aria-label="Suitability score legend">
         <span>Score</span>
-        <span className="legend-swatch" style={{ backgroundColor: "#dc2626" }} /> 0–29
-        <span className="legend-swatch" style={{ backgroundColor: "#f59e0b" }} /> 30–59
-        <span className="legend-swatch" style={{ backgroundColor: "#65a30d" }} /> 60–74
-        <span className="legend-swatch" style={{ backgroundColor: "#0f766e" }} /> 75–100
+        {[...SCORE_BANDS].reverse().map((band) => (
+          <Fragment key={band.label}>
+            <span className="legend-swatch" style={{ backgroundColor: band.color }} /> {band.label}
+          </Fragment>
+        ))}
       </div>
     </section>
   );
