@@ -169,7 +169,7 @@ class WeightedScoringStrategy(ScoringStrategy):
             key=lambda item: (
                 -item.totalScore,
                 (commutes.get(item.subzoneId).durationMinutes if commutes.get(item.subzoneId) else 9999),
-                self._priceSortKey(item.subzoneId, subzones),
+                self._pricePerSqmSortKey(item.subzoneId, subzones),
                 item.subzoneId,
             )
         )
@@ -252,11 +252,11 @@ class WeightedScoringStrategy(ScoringStrategy):
         )
 
     @staticmethod
-    def _priceSortKey(subzone_id: str, subzones: list[Subzone]) -> float:
+    def _pricePerSqmSortKey(subzone_id: str, subzones: list[Subzone]) -> float:
         for subzone in subzones:
             if subzone.subzoneCode == subzone_id and subzone.indicators is not None:
-                if subzone.indicators.medianResalePrice is not None:
-                    return subzone.indicators.medianResalePrice
+                if subzone.indicators.medianPricePerSqm is not None:
+                    return subzone.indicators.medianPricePerSqm
         return float("inf")
 
     @staticmethod

@@ -54,6 +54,17 @@ export class ProfileCatalog {
     return this.profiles.delete(profileId);
   }
 
+  /** Persists which plan is active, so the next page load restores it. */
+  async markActive(profileId: string): Promise<void> {
+    const stored = await this.db.profiles.toArray();
+    const updated = stored.map((profile) => ({
+      ...profile,
+      isActive: profile.profileId === profileId,
+    }));
+    await this.db.profiles.bulkPut(updated);
+    this.profiles = new Map(updated.map((profile) => [profile.profileId as string, profile]));
+  }
+
   async addProfile(profile: ProfileDTO): Promise<void> {
     await this.saveToLocalStorage(profile);
   }

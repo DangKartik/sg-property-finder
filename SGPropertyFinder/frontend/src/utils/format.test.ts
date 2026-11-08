@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatDate, formatNumber, formatPrice, scoreColor } from "./format";
+import { SCORE_BANDS, formatDate, formatNumber, formatPrice, scoreColor } from "./format";
 
 describe("format helpers", () => {
   it("formats prices and numbers for Singapore", () => {
@@ -22,5 +22,12 @@ describe("format helpers", () => {
     expect(scoreColor(45)).toBe("#f59e0b");
     expect(scoreColor(30)).toBe("#ea580c");
     expect(scoreColor(29)).toBe("#dc2626");
+  });
+
+  it("lists every colour band that the map uses in its legend", () => {
+    expect(SCORE_BANDS).toHaveLength(5);
+    for (const band of SCORE_BANDS) {
+      expect(scoreColor(band.min)).toBe(band.color);
+    }
   });
 });

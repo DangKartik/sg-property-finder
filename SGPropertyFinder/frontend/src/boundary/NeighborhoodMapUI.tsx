@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import type { Feature, GeoJsonObject } from "geojson";
 import type { Layer, PathOptions } from "leaflet";
 import {
@@ -16,7 +16,7 @@ import type {
   RouteDataDTO,
 } from "../types/dto";
 import { decodePolyline } from "../utils/polyline";
-import { scoreColor } from "../utils/format";
+import { SCORE_BANDS, scoreColor } from "../utils/format";
 import {
   ALL_AMENITY_GROUP_IDS,
   AMENITY_GROUPS,
@@ -37,6 +37,7 @@ export interface NeighborhoodMapUIProps {
   onSelect: (subzoneId: string) => void;
   onRefresh?: () => void;
   refreshing?: boolean;
+  refreshDisabled?: boolean;
 }
 
 const SINGAPORE_CENTER: [number, number] = [1.3521, 103.8198];
@@ -55,6 +56,7 @@ export function NeighborhoodMapUI({
   onSelect,
   onRefresh,
   refreshing = false,
+  refreshDisabled = false,
 }: NeighborhoodMapUIProps) {
   const [visibleGroups, setVisibleGroups] = useState<string[]>(
     ALL_AMENITY_GROUP_IDS,
@@ -158,10 +160,11 @@ export function NeighborhoodMapUI({
         <button
           className="button small map-refresh-button"
           onClick={onRefresh}
-          disabled={refreshing}
+          disabled={refreshing || refreshDisabled}
+          aria-busy={refreshing}
           title="Refresh subzone and HDB data"
         >
-          Refresh
+          {refreshing ? "Refreshing…" : "Refresh"}
         </button>
       )}
       {amenities.length > 0 && (
@@ -189,10 +192,11 @@ export function NeighborhoodMapUI({
       )}
       <div className="map-legend" aria-label="Suitability score legend">
         <span>Score</span>
-        <span className="legend-swatch" style={{ backgroundColor: "#dc2626" }} /> 0–29
-        <span className="legend-swatch" style={{ backgroundColor: "#f59e0b" }} /> 30–59
-        <span className="legend-swatch" style={{ backgroundColor: "#65a30d" }} /> 60–74
-        <span className="legend-swatch" style={{ backgroundColor: "#0f766e" }} /> 75–100
+        {[...SCORE_BANDS].reverse().map((band) => (
+          <Fragment key={band.label}>
+            <span className="legend-swatch" style={{ backgroundColor: band.color }} /> {band.label}
+          </Fragment>
+        ))}
       </div>
     </section>
   );
