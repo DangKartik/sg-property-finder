@@ -133,6 +133,20 @@ export default function App() {
     }
   }, [notify]);
 
+  const rememberActiveProfile = useCallback(
+    async (profileId: string) => {
+      try {
+        await profileControl.activateProfile(profileId);
+      } catch (error) {
+        notify(
+          "Cannot remember the active plan",
+          error instanceof Error ? error.message : "IndexedDB is unavailable.",
+        );
+      }
+    },
+    [notify],
+  );
+
   const runRanking = useCallback(
     async (profile: ProfileDTO) => {
       setBusy(true);
@@ -222,6 +236,7 @@ export default function App() {
         if (shareEnvelope?.success && shareEnvelope.data) {
           const scenario = shareEnvelope.data;
           const savedProfileId = await profileCatalog.saveToLocalStorage(scenario.profile);
+          await rememberActiveProfile(savedProfileId);
           const savedProfiles = await profileCatalog.loadFromLocalStorage();
           if (!mounted) return;
           const savedProfile =
@@ -256,9 +271,9 @@ export default function App() {
         }
 
         if (loadedProfiles.length > 0) {
-          const first = loadedProfiles[0];
-          setActiveProfileId(first.profileId);
-          await runRanking(first);
+          const restored = loadedProfiles.find((profile) => profile.isActive) ?? loadedProfiles[0];
+          setActiveProfileId(restored.profileId);
+          await runRanking(restored);
         }
       } catch (error) {
         if (mounted) {
@@ -276,7 +291,7 @@ export default function App() {
     return () => {
       mounted = false;
     };
-  }, [notify, runRanking]);
+  }, [notify, runRanking, rememberActiveProfile]);
 
   useEffect(() => {
     if (!selectedSubzoneId || !activeProfile?.anchorCoordinates || !routeDestination) {
@@ -308,6 +323,7 @@ export default function App() {
   ]);
 
   async function handleSaved(profileId: string) {
+    await rememberActiveProfile(profileId);
     const loaded = await refreshProfiles();
     const profile = loaded.find((item) => item.profileId === profileId);
     setActiveProfileId(profileId);
@@ -325,6 +341,7 @@ export default function App() {
     setShowForm(false);
     setEditingProfile(null);
     setFactsheetCode(null);
+    await rememberActiveProfile(profileId);
     await runRanking(profile);
   }
 
@@ -338,7 +355,10 @@ export default function App() {
         setRecommendations(null);
         setSelectedSubzoneId(null);
         setComparisonIds([]);
-        if (next) await runRanking(next);
+        if (next) {
+          await rememberActiveProfile(next.profileId as string);
+          await runRanking(next);
+        }
       }
     } catch (error) {
       notify("Could not delete plan", error instanceof Error ? error.message : "Try again.");

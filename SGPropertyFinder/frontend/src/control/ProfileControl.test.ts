@@ -191,3 +191,21 @@ describe("ProfileControl state-based black-box tests", () => {
     expect(afterDelete.some((profile) => profile.profileId === id)).toBe(false);
   });
 });
+
+describe("ProfileControl active plan", () => {
+  beforeEach(async () => {
+    await clearProfiles();
+  });
+
+  it("restores the active plan after a reload", async () => {
+    const control = new ProfileControl(new ProfileCatalog(), acceptingValidator);
+    await control.createProfile(makeProfile({ profileId: "plan-a", profileName: "Plan A" }));
+    await control.createProfile(makeProfile({ profileId: "plan-b", profileName: "Plan B" }));
+
+    await control.activateProfile("plan-b");
+
+    const reloaded = await new ProfileCatalog().loadFromLocalStorage();
+    const active = reloaded.filter((profile) => profile.isActive);
+    expect(active.map((profile) => profile.profileId)).toEqual(["plan-b"]);
+  });
+});
