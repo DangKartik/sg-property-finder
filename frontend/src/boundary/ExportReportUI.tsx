@@ -121,6 +121,7 @@ export function ExportReportUI({
           </div>
         ) : (
           <div className="export-result">
+            <p role="status">Report generated successfully.</p>
             <div>
               <strong>{result.report.fileName}</strong>
               <p className="muted">

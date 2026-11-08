@@ -26,13 +26,25 @@ export function formatDate(value: string | null | undefined): string {
   return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleString("en-SG");
 }
 
+export interface ScoreBand {
+  min: number;
+  color: string;
+  label: string;
+}
+
+/** Score bands shared by the map colouring and the map legend, highest first. */
+export const SCORE_BANDS: ScoreBand[] = [
+  { min: 75, color: "#0f766e", label: "75–100" },
+  { min: 60, color: "#65a30d", label: "60–74" },
+  { min: 45, color: "#f59e0b", label: "45–59" },
+  { min: 30, color: "#ea580c", label: "30–44" },
+  { min: 0, color: "#dc2626", label: "0–29" },
+];
+
 export function scoreColor(score: number | null | undefined): string {
   if (score === null || score === undefined) {
     return "#94a3b8";
   }
-  if (score >= 75) return "#0f766e";
-  if (score >= 60) return "#65a30d";
-  if (score >= 45) return "#f59e0b";
-  if (score >= 30) return "#ea580c";
-  return "#dc2626";
+  const band = SCORE_BANDS.find((candidate) => score >= candidate.min);
+  return (band ?? SCORE_BANDS[SCORE_BANDS.length - 1]).color;
 }

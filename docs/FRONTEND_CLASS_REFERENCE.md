@@ -1,10 +1,10 @@
 # Frontend Class and Component Reference
 
-- **Version:** 1.0
-- **Date:** 27 October 2026
+- **Version:** 1.1
+- **Date:** 8 November 2026
 - **Scope:** `SGPropertyFinder/frontend/src`
 - **Purpose:** document the frontend classes, boundary components, props, design intent and usage so the React implementation can be traced from the design class diagram, sequence diagrams and dialog map.
-- **Related documents:** `README.md`, `FRONTEND.md`, `FILE_REFERENCE.md`, `SPECIFICATIONS.md`.
+- **Related documents:** `SPECIFICATIONS_AND_ARCHITECTURE.md`, `FILE_REFERENCE.md`, `REQUIREMENTS_TRACEABILITY.md`, `BLACK_BOX_TESTING.md`, `WHITE_BOX_TESTING.md`, `LIMITATIONS.md`.
 
 ---
 
@@ -57,11 +57,12 @@ Key internal actions (public behaviour within the UI):
 | Action | Purpose |
 | --- | --- |
 | `runRanking(profile)` | Calls the ranking API, stores the recommendation set and clears map/result selection. |
-| `handleSaved(profileId)` | Refreshes local profiles, activates the saved plan and reruns ranking. |
+| `rememberActiveProfile(profileId)` | Persists the active-plan flag through `ProfileControl.activateProfile`; used after create, edit, delete and share import. |
+| `handleSaved(profileId)` | Refreshes local profiles, activates the saved plan, persists the active flag and reruns ranking. |
 | `handleSelectProfile(id)` | Activates a saved plan and reruns ranking. |
 | `handleDeleteProfile(id)` | Deletes a plan and activates the next one if needed. |
 | `handleRefreshData()` | Calls `/data/refresh`, reloads amenities/status and reruns the active ranking. |
-| `selectSubzone(id)` | Selects an available subzone; unavailable subzones show the red bottom notice and clear prior selection. |
+| `selectSubzone(id)` | Selects an available subzone; unavailable subzones show a persistent, dismissible red bottom notice and clear prior selection. |
 | `openFactsheet(id)` | Opens a factsheet for an available subzone; otherwise shows the insufficient-data notice. |
 | `toggleComparison(id)` | Adds/removes an available subzone, with a four-item cap. |
 | `openComparison()` | Opens the comparison matrix when at least two subzones are selected. |
@@ -156,9 +157,10 @@ Boundary components render UI and call callbacks/API contracts. They do not own 
 | `routeOrigin` / `routeDestination` | `CoordinatesDTO \| null` | Route endpoints. |
 | `onSelect` | `(subzoneId) => void` | Polygon click. |
 | `onRefresh` | `() => void` | Data refresh button. |
-| `refreshing` | `boolean` | Disable refresh while busy. |
+| `refreshing` | `boolean` | Shows `Refreshing…` and disables the button during refresh. |
+| `refreshDisabled` | `boolean` | Disables refresh while ranking/busy without changing the label. |
 
-**Behaviour:** unavailable polygons are grey/dashed with an “Insufficient data” tooltip; clicks route through App’s guard. Amenity categories can be toggled and are shown only for the selected subzone.
+**Behaviour:** unavailable polygons are grey/dashed with an “Insufficient data” tooltip; clicks route through App’s guard. Amenity categories can be toggled and are shown only for the selected subzone. The map legend renders all five `SCORE_BANDS` (75–100, 60–74, 45–59, 30–44, 0–29).
 
 ### `FactSheetUI`
 
@@ -179,7 +181,7 @@ Boundary components render UI and call callbacks/API contracts. They do not own 
 - **Location:** `src/boundary/ExportReportUI.tsx`
 - **Intent:** generate/download a PDF and copy the shareable URL.
 - **Props:** `open`, `profile`, `recommendationSet`, `subzoneCodes`, `reportApi`, `onClose`, `onNotify`.
-- **Behaviour:** chooses selected codes or the first three recommendations, calls `generatePdfReport`, downloads through `downloadReport`, shows expiry and copies the share URL.
+- **Behaviour:** chooses selected codes or the first three recommendations, calls `generatePdfReport`, downloads through `downloadReport`, shows expiry and copies the share URL. A successful export keeps the modal open and shows the “Report generated successfully.” status message with the download/share actions.
 
 ### `NotificationModalUI`
 
@@ -203,6 +205,7 @@ Boundary components render UI and call callbacks/API contracts. They do not own 
 | `createProfile` | `createProfile(data: ProfileDTO): Promise<string>` | Validates, assigns an ID/creation time if absent and saves to the catalog. |
 | `updateProfile` | `updateProfile(profileId: string, data: ProfileDTO): Promise<boolean>` | Validates and replaces the record; returns `true`. |
 | `deleteProfile` | `deleteProfile(profileId: string): Promise<boolean>` | Deletes from the catalog; returns whether an in-memory record existed. |
+| `activateProfile` | `activateProfile(profileId: string): Promise<void>` | Marks one stored plan as active through `ProfileCatalog.markActive` so reloads restore it. |
 
 **Raises:** `ProfileValidationError` when the backend returns `success=false` or `isValid=false`.
 
@@ -240,8 +243,9 @@ ProfileFormUI
 | `getProfile` | `getProfile(profileId): Promise<ProfileDTO \| undefined>` | Checks the in-memory map, then Dexie. |
 | `getAllProfiles` | `getAllProfiles(): Promise<ProfileDTO[]>` | Reloads all profiles. |
 | `removeProfile` | `removeProfile(profileId): Promise<boolean>` | Alias for delete. |
+| `markActive` | `markActive(profileId: string): Promise<void>` | Sets `ProfileDTO.isActive` on exactly the selected stored plan, updates all other flags to `false`, bulk-writes IndexedDB and refreshes the in-memory map. |
 
-**Design note:** each instance has its own in-memory map. The app uses one instance; tests that create a second reader must call `loadFromLocalStorage()` to refresh it.
+**Design note:** each instance has its own in-memory map. The app uses one instance; tests that create a second reader must call `loadFromLocalStorage()` to refresh it. The active-plan flag is persisted, so `App` restores the marked plan on reload instead of always taking the first profile.
 
 ### `ApiCache`
 
@@ -320,7 +324,7 @@ These interfaces mirror backend envelopes and transport payloads. They are inten
 
 | Group | Key types | Usage |
 | --- | --- | --- |
-| Profile | `ProfileDTO`, `CriterionWeightDTO`, `ValidationResultDTO`, `ValidationErrorDTO` | Form and profile control. |
+| Profile | `ProfileDTO` (including `isActive`), `CriterionWeightDTO`, `ValidationResultDTO`, `ValidationErrorDTO` | Form, profile control and active-plan persistence. |
 | Recommendations | `RecommendationSetDTO`, `RecommendationItemDTO`, `CriterionScoreDTO` | Results list/map scores. |
 | Factsheet | `NeighborhoodDetailDTO`, `HousePricingDTO`, `AmenityInfoDTO`, `EnvironmentInfoDTO`, `CommuteEstimateDTO`, `SubzoneIndicatorsDTO` | Factsheet and comparison. |
 | Map/route | `MapDataDTO`, `RouteDataDTO`, `CoordinatesDTO`, `AmenityPointDTO` | Leaflet and route overlays. |
@@ -348,7 +352,8 @@ These interfaces mirror backend envelopes and transport payloads. They are inten
 | `formatPrice` | `(value) => string` | Currency display. |
 | `formatNumber` | `(value, digits = 0) => string` | Numeric display with em dash fallback. |
 | `formatDate` | `(value) => string` | Local date/time display. |
-| `scoreColor` | `(score) => string` | Choropleth colour bands. |
+| `SCORE_BANDS` | `ScoreBand[]` | Single source for the five map colours and legend labels: 75–100, 60–74, 45–59, 30–44, 0–29. |
+| `scoreColor` | `(score) => string` | Choropleth colour from the shared `SCORE_BANDS`. |
 
 ### `src/utils/polyline.ts`
 
@@ -379,6 +384,7 @@ ProfileFormUI
      -> api.validateProfileData
      -> ProfileCatalog.saveToLocalStorage
   -> App.handleSaved
+     -> App.rememberActiveProfile -> ProfileControl.activateProfile -> ProfileCatalog.markActive
   -> App.runRanking
 ```
 
@@ -444,13 +450,14 @@ Map feature dataAvailable=false
 
 ## 11. Testing hooks
 
-- `ProfileControl.test.ts` — black-box profile lifecycle.
+- `ProfileControl.test.ts` — black-box profile lifecycle, identifier/creation-time preservation, and active-plan restoration after reload.
+- `ExportReportUI.test.tsx` — successful PDF export and confirmation notice.
 - `ResultsListUI.test.tsx` — ranked cards, warning counts and insufficient-data label.
 - `ProfileFormUI.test.tsx` — hard-minimum submission.
 - `ProfileSelectorUI.test.tsx` — plan selection, edit/delete confirmation and one-plan guard.
 - `ApiCache.test.ts` — cache persistence/pruning.
 - `client.test.ts` — cache reuse, refresh invalidation and stale fallback.
-- `utils/*.test.ts` — formatting, weights, amenities, polyline and unavailable-subzone extraction.
+- `utils/*.test.ts` — formatting (including all five legend bands), weights, amenities, polyline and unavailable-subzone extraction.
 
 Run with:
 

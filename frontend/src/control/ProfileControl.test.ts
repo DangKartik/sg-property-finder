@@ -191,3 +191,37 @@ describe("ProfileControl state-based black-box tests", () => {
     expect(afterDelete.some((profile) => profile.profileId === id)).toBe(false);
   });
 });
+
+describe("ProfileControl plan persistence", () => {
+  beforeEach(async () => {
+    await clearProfiles();
+  });
+
+  it("keeps the identifier and creation time when a plan is updated", async () => {
+    const control = new ProfileControl(new ProfileCatalog(), acceptingValidator);
+    const id = await control.createProfile(makeProfile({ profileId: "plan-kept" }));
+    const created = await new ProfileCatalog().getProfile(id);
+
+    await control.updateProfile(
+      id,
+      makeProfile({ profileId: id, profileName: "Renamed", creationTime: created?.creationTime ?? null }),
+    );
+
+    const updated = await new ProfileCatalog().getProfile(id);
+    expect(updated?.profileId).toBe(id);
+    expect(updated?.profileName).toBe("Renamed");
+    expect(updated?.creationTime).toBe(created?.creationTime);
+  });
+
+  it("restores the active plan after a reload", async () => {
+    const control = new ProfileControl(new ProfileCatalog(), acceptingValidator);
+    await control.createProfile(makeProfile({ profileId: "plan-a", profileName: "Plan A" }));
+    await control.createProfile(makeProfile({ profileId: "plan-b", profileName: "Plan B" }));
+
+    await control.activateProfile("plan-b");
+
+    const reloaded = await new ProfileCatalog().loadFromLocalStorage();
+    const active = reloaded.filter((profile) => profile.isActive);
+    expect(active.map((profile) => profile.profileId)).toEqual(["plan-b"]);
+  });
+});

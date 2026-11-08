@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { NeighborhoodDetailsApi } from "../api/contracts";
 import { requireData } from "../api/client";
 import type { NeighborhoodDetailDTO, ProfileDTO } from "../types/dto";
-import { formatDate, formatNumber, formatPrice } from "../utils/format";
+import { formatNumber, formatPrice } from "../utils/format";
 import { groupAmenitiesByCategory } from "../utils/amenities";
 
 export interface FactSheetUIProps {
@@ -132,10 +132,8 @@ export function FactSheetUI({
               <h3>Environment</h3>
               <dl className="fact-list">
                 <div><dt>Green coverage</dt><dd>{formatNumber(detail.environment.greenCoveragePercent, 1)}%</dd></div>
-                <div><dt>Weather</dt><dd>{detail.environment.weatherPattern}</dd></div>
                 <div><dt>PM2.5</dt><dd>{formatNumber(detail.environment.pm25, 1)} µg/m³</dd></div>
                 <div><dt>UVI</dt><dd>{formatNumber(detail.environment.uvi, 1)}</dd></div>
-                <div><dt>Data as of</dt><dd>{formatDate(detail.environment.asOf)}</dd></div>
               </dl>
             </section>
 

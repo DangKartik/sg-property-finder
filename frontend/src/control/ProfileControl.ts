@@ -46,6 +46,10 @@ export class ProfileControl {
     return this.profileCatalog.deleteProfile(profileId);
   }
 
+  async activateProfile(profileId: string): Promise<void> {
+    await this.profileCatalog.markActive(profileId);
+  }
+
   private async validate(data: ProfileDTO): Promise<void> {
     const envelope = await this.validator.validateProfileData(data);
     if (!envelope.success || !envelope.data) {

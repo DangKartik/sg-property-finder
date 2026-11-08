@@ -1,7 +1,7 @@
 # Formal White-Box Testing
 
-- **Version:** 2.0
-- **Date:** 26 October 2026
+- **Version:** 2.1
+- **Date:** 8 November 2026
 - **Units under test:**
   - `WeightedScoringStrategy.scoreCandidates` — complex scoring logic (control flow + data flow)
   - `RankingControl.generateRankedRecommendations` — complex ranking logic (control flow + data flow)
@@ -78,14 +78,14 @@ isolation with deterministic stubs. Where a method crosses a collaborator
 boundary (`RankingControl` → commute control → scoring strategy), the new
 data-flow tests use recording stubs, which makes them **integration-style unit
 tests** at that seam. They do not replace the system/acceptance evidence in
-`PHASE5_E2E_CHECKLIST.md`.
+`REQUIREMENTS_TRACEABILITY.md`.
 
 | Level | White-box evidence |
 | --- | --- |
 | **Unit** | CFG/basis-path tests for `scoreCandidates` and `generateRankedRecommendations`; DU tests for `computeSuitabilityScore` and `scoreCandidates`. |
 | **Integration** | `WB-DF-RR-01/02/03` record the values passed from ranking to a scoring stub; `test_scoring_ranking.py` exercises the real strategy with fixture controls. |
-| **System** | `PHASE5_E2E_CHECKLIST.md` and `SLA_BENCHMARK.md`. |
-| **Acceptance** | Eighteen user-journey checks in `PHASE5_E2E_CHECKLIST.md`. |
+| **System** | `REQUIREMENTS_TRACEABILITY.md` (benchmark and acceptance evidence). |
+| **Acceptance** | Eighteen user-journey checks summarised in `REQUIREMENTS_TRACEABILITY.md`. |
 
 ## 4. Supporting wrapper — `computeSuitabilityScore`
 
@@ -511,7 +511,7 @@ make test
 Observed summary at the time of writing:
 
 ```text
-Ran 162 tests
+Ran 168 tests
 OK
 ```
 
@@ -525,8 +525,8 @@ npm test
 Observed summary at the time of writing:
 
 ```text
-Test Files 11 passed (11)
-Tests 39 passed (39)
+Test Files 12 passed (12)
+Tests 43 passed (43)
 ```
 
 ## 10. Traceability
