@@ -60,12 +60,6 @@ export default function App() {
     setNotification({ title, message });
   }, []);
 
-  useEffect(() => {
-    if (!bottomNotice) return;
-    const timer = window.setTimeout(() => setBottomNotice(null), 4500);
-    return () => window.clearTimeout(timer);
-  }, [bottomNotice]);
-
   const showInsufficientDataNotice = useCallback(
     (subzoneId: string) => {
       const name = findSubzoneName(mapData, subzoneId);
