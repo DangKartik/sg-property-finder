@@ -589,7 +589,15 @@ export default function App() {
 
       {bottomNotice && (
         <div className="bottom-toast" role="status" aria-live="polite">
-          {bottomNotice}
+          <span>{bottomNotice}</span>
+          <button
+            type="button"
+            className="bottom-toast-close"
+            onClick={() => setBottomNotice(null)}
+            aria-label="Dismiss unavailable-data notice"
+          >
+            ×
+          </button>
         </div>
       )}
 
