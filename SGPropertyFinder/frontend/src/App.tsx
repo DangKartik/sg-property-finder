@@ -478,7 +478,8 @@ export default function App() {
               routeDestination={routeDestination}
               onSelect={selectSubzone}
               onRefresh={() => void handleRefreshData()}
-              refreshing={refreshingData || busy}
+              refreshing={refreshingData}
+              refreshDisabled={busy}
             />
             {selectedSubzoneId && (
               <div className="map-selection-bar">

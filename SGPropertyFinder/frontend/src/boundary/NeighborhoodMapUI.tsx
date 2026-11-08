@@ -37,6 +37,7 @@ export interface NeighborhoodMapUIProps {
   onSelect: (subzoneId: string) => void;
   onRefresh?: () => void;
   refreshing?: boolean;
+  refreshDisabled?: boolean;
 }
 
 const SINGAPORE_CENTER: [number, number] = [1.3521, 103.8198];
@@ -55,6 +56,7 @@ export function NeighborhoodMapUI({
   onSelect,
   onRefresh,
   refreshing = false,
+  refreshDisabled = false,
 }: NeighborhoodMapUIProps) {
   const [visibleGroups, setVisibleGroups] = useState<string[]>(
     ALL_AMENITY_GROUP_IDS,
@@ -158,10 +160,11 @@ export function NeighborhoodMapUI({
         <button
           className="button small map-refresh-button"
           onClick={onRefresh}
-          disabled={refreshing}
+          disabled={refreshing || refreshDisabled}
+          aria-busy={refreshing}
           title="Refresh subzone and HDB data"
         >
-          Refresh
+          {refreshing ? "Refreshing…" : "Refresh"}
         </button>
       )}
       {amenities.length > 0 && (
