@@ -128,6 +128,40 @@ class ScoringTests(unittest.TestCase):
         items = self.strategy.scoreCandidates(subzones, profile, commutes)
         self.assertEqual(items[0].subzoneId, "TAMPINES01")
 
+    def _tied_subzones(self) -> list:
+        subzones = [self.registry.getSubzone("TAMPINES01"), self.registry.getSubzone("BEDOK01")]
+        for subzone in subzones:
+            subzone.indicators.medianResalePrice = 400000
+            subzone.indicators.medianPriceByFlatType = {"4 ROOM": 400000}
+        return subzones
+
+    def _equal_commutes(self) -> dict[str, CommuteEstimate]:
+        return {
+            "TAMPINES01": CommuteEstimate(30, 12, 1, TransitMode.PUBLIC_TRANSIT),
+            "BEDOK01": CommuteEstimate(30, 12, 1, TransitMode.PUBLIC_TRANSIT),
+        }
+
+    def test_tie_break_uses_lower_median_price_per_square_metre(self) -> None:
+        # TAMPINES01 sorts after BEDOK01 by code, so only the price key can put it first.
+        tampines, bedok = self._tied_subzones()
+        tampines.indicators.medianPricePerSqm = 5400.0
+        bedok.indicators.medianPricePerSqm = 6200.0
+        items = self.strategy.scoreCandidates(
+            [tampines, bedok], make_profile(weights={"PRICE": 10}), self._equal_commutes()
+        )
+        self.assertEqual(items[0].totalScore, items[1].totalScore)
+        self.assertEqual([item.subzoneId for item in items], ["TAMPINES01", "BEDOK01"])
+
+    def test_tie_break_falls_back_to_subzone_code(self) -> None:
+        # The input lists TAMPINES01 first, so only the code key can put BEDOK01 first.
+        tampines, bedok = self._tied_subzones()
+        tampines.indicators.medianPricePerSqm = 5800.0
+        bedok.indicators.medianPricePerSqm = 5800.0
+        items = self.strategy.scoreCandidates(
+            [tampines, bedok], make_profile(weights={"PRICE": 10}), self._equal_commutes()
+        )
+        self.assertEqual([item.subzoneId for item in items], ["BEDOK01", "TAMPINES01"])
+
 
 class RankingTests(unittest.TestCase):
     def test_ranking_control_returns_sorted_set(self) -> None:
