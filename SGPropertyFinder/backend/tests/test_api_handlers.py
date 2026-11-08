@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 
 from app.api import handlers
 from app.bootstrap import buildContext
@@ -64,6 +65,17 @@ class ApiHandlerTests(unittest.TestCase):
         result = handlers.recommendations(profilePayload(), self.context)
         self.assertTrue(result.success, result.error)
         self.assertEqual(len(result.data["items"]), 3)
+
+    def test_concurrent_identical_requests_return_the_same_ranking(self) -> None:
+        payload = profilePayload()
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            results = list(pool.map(lambda _: handlers.recommendations(payload, self.context), range(24)))
+        self.assertTrue(all(result.success for result in results))
+        rankings = {
+            tuple((item["subzoneId"], item["totalScore"]) for item in result.data["items"])
+            for result in results
+        }
+        self.assertEqual(len(rankings), 1)
 
     def test_recommendations_apply_hard_minimums(self) -> None:
         payload = profilePayload()

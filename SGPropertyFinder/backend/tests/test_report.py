@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import shutil
 import tempfile
+import time
 import unittest
+from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -129,6 +131,17 @@ class ReportTests(unittest.TestCase):
             "Housing affordability",
         ]:
             self.assertIn(expected, text)
+
+    def test_pdf_for_four_neighbourhoods_meets_the_five_second_target(self) -> None:
+        details = [
+            replace(self.details[0], subzoneCode=f"AREA0{index}", subzoneName=f"Area {index}")
+            for index in range(1, 5)
+        ]
+        started = time.perf_counter()
+        report = self.control.generatePdfReport(self.recommendations, details)
+        elapsed = time.perf_counter() - started
+        self.assertGreater(report.sizeBytes, 0)
+        self.assertLess(elapsed, 5.0)
 
     def test_export_to_file(self) -> None:
         report = self.control.generatePdfReport(self.recommendations, self.details)
