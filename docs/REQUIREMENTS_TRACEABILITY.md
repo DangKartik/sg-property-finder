@@ -101,7 +101,7 @@ Full class/method references:
 ## 5a. Use-case traceability (17-use-case model)
 
 The current model has 17 use cases (`UC1`–`UC17`) and is defined in
-`Lab5/Supporting Documents/Use Case Diagram and Description.pdf`. Refresh data is
+the use case diagram (`docs/diagrams/use-case-diagram.png`). Refresh data is
 a supporting system action (`FR-10`, `NFR-05`), not a separately named use case.
 
 | Use case | Actor goal | Main flow | Requirements | Implementation | Evidence |
@@ -153,7 +153,6 @@ a supporting system action (`FR-10`, `NFR-05`), not a separately named use case.
 ### Automated tests
 
 ```powershell
-cd SGPropertyFinder
 make test
 make test-frontend
 ```
@@ -168,14 +167,12 @@ Frontend: 43 tests OK
 ### Build
 
 ```powershell
-cd SGPropertyFinder
 make build
 ```
 
 ### Performance
 
 ```powershell
-cd SGPropertyFinder
 make benchmark
 ```
 
@@ -187,7 +184,6 @@ results when re-run.
 Run the current use cases UC1–UC17 against the running app:
 
 ```powershell
-cd SGPropertyFinder
 make dev
 ```
 

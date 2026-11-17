@@ -2,7 +2,7 @@
 
 - **Version:** 1.1
 - **Date:** 8 November 2026
-- **Scope:** `SGPropertyFinder/frontend/src`
+- **Scope:** `frontend/src`
 - **Purpose:** document the frontend classes, boundary components, props, design intent and usage so the React implementation can be traced from the design class diagram, sequence diagrams and dialog map.
 - **Related documents:** `SPECIFICATIONS_AND_ARCHITECTURE.md`, `FILE_REFERENCE.md`, `REQUIREMENTS_TRACEABILITY.md`, `BLACK_BOX_TESTING.md`, `WHITE_BOX_TESTING.md`, `LIMITATIONS.md`.
 
@@ -462,7 +462,7 @@ Map feature dataAvailable=false
 Run with:
 
 ```powershell
-cd SGPropertyFinder/frontend
+cd frontend
 npm test
 npm run build
 ```

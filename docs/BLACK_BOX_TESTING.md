@@ -371,13 +371,13 @@ Documented behaviours:
 ## 10. Reproduction
 
 ```powershell
-cd SGPropertyFinder/backend
+cd backend
 python -m unittest tests.test_black_box_validation -v
 python -m unittest tests.test_black_box_state -v
 ```
 
 ```powershell
-cd SGPropertyFinder/frontend
+cd frontend
 npx vitest run src/control/ProfileControl.test.ts
 ```
 
@@ -392,7 +392,6 @@ Test Files 1 passed; Tests 7 passed
 Full regression:
 
 ```powershell
-cd SGPropertyFinder
 make test
 make test-frontend
 ```
@@ -405,7 +404,7 @@ At the time of writing: backend **168 tests OK**; frontend **43 tests OK**.
   quality or scoring maths.
 - HTTP transport has a smoke test in `test_fastapi_endpoints.py`; the full EP/BVA
   matrix uses the transport-agnostic handler boundary for speed and determinism.
-- Live OneMap behaviour is simulated; network timing belongs to the Phase 5 SLA
+- Live OneMap behaviour is simulated; network timing belongs to the SLA
   benchmark.
 - No property-based/fuzz testing for malformed JSON shapes or very large numeric
   values yet.

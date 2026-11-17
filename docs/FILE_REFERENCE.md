@@ -3,7 +3,7 @@
 - **Version:** 2.1
 - **Date:** 8 November 2026
 - **Application:** SG Property Finder
-- **Scope:** every source, test, data and configuration file in `SGPropertyFinder/backend` and `SGPropertyFinder/frontend`, plus the supporting `scripts/` and `docs/` folders.
+- **Scope:** every source, test, data and configuration file in `backend` and `frontend`, plus the supporting `scripts/` and `docs/` folders.
 
 This document explains what each file is responsible for, where it sits in the
 ECB-style architecture, and which files to change for common tasks.
@@ -306,13 +306,13 @@ Generated/dependency folders such as `frontend/node_modules/` and
 | --- | --- |
 | `scripts/dev.py` | Starts FastAPI and Vite together, waits for both, opens the browser and stops both on Ctrl+C. |
 | `scripts/test_backend.py` | Runs the backend `unittest` discovery from the correct working directory. |
-| `scripts/benchmark_api.py` | Phase 5 SLA benchmark: spawns the API, measures cold/warm HTTP and OneMap latency and writes results. |
+| `scripts/benchmark_api.py` | SLA benchmark: spawns the API, measures cold/warm HTTP and OneMap latency and writes results. |
 | `scripts/build_amenities.py` | Rebuilds `amenities.json` from data.gov.sg datasets and OneMap themes; geocodes schools, groups MRT exits, merges the tertiary supplement and writes metadata. |
 | `scripts/clean.py` | Removes `frontend/dist` and Python cache directories. |
 
 ## 5. Documentation
 
-The submission documentation is kept in `SGPropertyFinder/docs/`:
+The project documentation is kept in `docs/`:
 
 | File | Purpose |
 | --- | --- |
@@ -331,9 +331,9 @@ The submission documentation is kept in `SGPropertyFinder/docs/`:
 
 | File | Purpose |
 | --- | --- |
-| `SGPropertyFinder/Makefile` | One-command install, dev, test, benchmark, amenities, build and clean targets. |
-| `SGPropertyFinder/.env.example` | Template for `.env`; documents OneMap/data.gov.sg settings. |
-| `SGPropertyFinder/.env` | Local secrets; ignored by Git, never commit or document values. |
+| `Makefile` | One-command install, dev, test, benchmark, amenities, build and clean targets. |
+| `.env.example` | Template for `.env`; documents OneMap/data.gov.sg settings. |
+| `.env` | Local secrets; ignored by Git, never commit or document values. |
 | `SGPropertyFinder/.gitignore` | Ignores `.env`, `node_modules`, `dist`, Python caches and generated report files. |
 
 ---

@@ -489,7 +489,7 @@ Documented structural behaviours:
 ## 9. Reproduction
 
 ```powershell
-cd SGPropertyFinder/backend
+cd backend
 python -m unittest tests.test_white_box -v
 ```
 
@@ -504,7 +504,6 @@ OK
 Full backend regression:
 
 ```powershell
-cd SGPropertyFinder
 make test
 ```
 
@@ -518,7 +517,7 @@ OK
 Frontend regression (unchanged by white-box work):
 
 ```powershell
-cd SGPropertyFinder/frontend
+cd frontend
 npm test
 ```
 

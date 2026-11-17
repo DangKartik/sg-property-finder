@@ -21,7 +21,7 @@ Usage
 -----
     python scripts/build_amenities.py
 
-Run it from the ``SGPropertyFinder`` directory (or use ``make amenities``).
+Run it from the repository root (or use ``make amenities``).
 The script uses the OneMap credentials in ``.env`` to geocode school postal
 codes and to query the mall/hospital POI layers.
 """

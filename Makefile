@@ -13,7 +13,7 @@ help:
 	@echo   make frontend         - run only Vite on port 5173
 	@echo   make test             - run backend unittest suite
 	@echo   make test-frontend    - run frontend Vitest suite
-	@echo   make benchmark        - run the Phase 5 SLA benchmark
+	@echo   make benchmark        - run the latency benchmark
 	@echo   make amenities        - rebuild backend/assets/data/amenities.json
 	@echo   make build            - type-check and build the frontend
 	@echo   make clean            - remove frontend dist and Python caches

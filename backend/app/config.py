@@ -12,7 +12,7 @@ class Settings:
     """Stereotype: configuration. Runtime settings sourced from `.env`.
 
     The class keeps secrets out of source control and never logs their values.
-    `fromEnv()` loads `SGPropertyFinder/.env` without overriding variables
+    `fromEnv()` loads `.env` without overriding variables
     already present in the process environment.
     """
 

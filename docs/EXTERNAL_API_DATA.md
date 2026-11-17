@@ -450,7 +450,7 @@ returns `NeighborhoodDetailDTO`, and a ranking request returns
 
 ## 7. Security and configuration
 
-- OneMap credentials are read from `SGPropertyFinder/.env` via `Settings.fromEnv()`
+- OneMap credentials are read from `.env` via `Settings.fromEnv()`
   and are never logged or returned to the browser.
 - `DATA_GOV_SG_API_KEY` is optional and only raises rate limits.
 - `.env` is ignored by Git.

@@ -2,7 +2,7 @@
 
 - **Version:** 1.1
 - **Date:** 8 November 2026
-- **Scope:** `SGPropertyFinder/backend`
+- **Scope:** `backend`
 - **Purpose:** document the backend classes, their design intent, key public methods and usage so the implementation can be traced from the design class diagram and sequence diagrams.
 - **Related documents:** `SPECIFICATIONS_AND_ARCHITECTURE.md`, `FILE_REFERENCE.md`, `WHITE_BOX_TESTING.md`, `BLACK_BOX_TESTING.md`, `EXTERNAL_API_DATA.md`, `LIMITATIONS.md`.
 

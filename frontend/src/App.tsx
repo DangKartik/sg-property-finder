@@ -436,7 +436,7 @@ export default function App() {
     <div className="app-shell">
       <header className="app-header">
         <div>
-          <p className="eyebrow">SC2006 · Neighbourhood recommender</p>
+          <p className="eyebrow">Singapore · Neighbourhood recommender</p>
           <h1>SG Property Finder</h1>
           <p className="header-subtitle">
             Rank neighbourhoods by affordability, commute, schools, greenery and amenities.

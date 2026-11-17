@@ -3,7 +3,6 @@
 ## Setup
 
 ```bash
-cd SGPropertyFinder
 cp .env.example .env
 ```
 
