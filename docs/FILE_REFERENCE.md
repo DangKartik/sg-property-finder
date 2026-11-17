@@ -62,7 +62,7 @@ server-side state is the short-lived PDF report store.
 | `frontend/src/utils/` | Formatting, weights, amenities, polyline and availability helpers. |
 | `frontend/src/test/` | Vitest setup. |
 | `scripts/` | Development, test, benchmark, amenity-build and cleanup commands. |
-| `docs/` | Submission and project documentation. |
+| `docs/` | Project documentation. |
 
 Generated/dependency folders such as `frontend/node_modules/` and
 `frontend/dist/` are not hand-edited.

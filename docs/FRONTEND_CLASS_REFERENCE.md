@@ -8,7 +8,7 @@
 
 ---
 
-## 1. How to read this reference
+## 1. Conventions used in this reference
 
 - React function components are documented as **boundary classes**; their public API is their props.
 - **Intent** explains the component’s role in the UI.

@@ -8,7 +8,7 @@
 
 ---
 
-## 1. How to read this reference
+## 1. Conventions used in this reference
 
 - **Intent** states why the class exists, not just what it stores.
 - **Key public methods** are the methods other layers may call. Private helpers are omitted unless they explain an important design decision.
