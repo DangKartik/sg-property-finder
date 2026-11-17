@@ -236,4 +236,4 @@ Run these from the repository root.
 | Address search or routes fail | Check `ONEMAP_EMAIL` and `ONEMAP_PASSWORD` in `.env` |
 | Dependencies fail to install | Confirm Python is 3.11+ and Node.js is 24 (or 22.22+), then run `make install` again |
 
-For all backend configuration options, see [`docs/ENVIRONMENT.md`](docs/ENVIRONMENT.md).
+For all backend configuration options, see [`docs/ENVIRONMENT.md`](ENVIRONMENT.md).
