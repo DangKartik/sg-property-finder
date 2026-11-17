@@ -334,7 +334,7 @@ The project documentation is kept in `docs/`:
 | `Makefile` | One-command install, dev, test, benchmark, amenities, build and clean targets. |
 | `.env.example` | Template for `.env`; documents OneMap/data.gov.sg settings. |
 | `.env` | Local secrets; ignored by Git, never commit or document values. |
-| `SGPropertyFinder/.gitignore` | Ignores `.env`, `node_modules`, `dist`, Python caches and generated report files. |
+| `.gitignore` | Ignores `.env`, `node_modules`, `dist`, Python caches and generated report files. |
 
 ---
 

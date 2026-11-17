@@ -1,4 +1,4 @@
-# Formal White-Box Testing
+# White-Box Testing
 
 - **Version:** 2.1
 - **Date:** 8 November 2026
@@ -9,17 +9,6 @@
 - **Test suite:** `backend/tests/test_white_box.py`
 - **Execution:** `python -m unittest tests.test_white_box -v`
 - **Result:** **22 tests — all passed**
-
----
-
-## 0. Assignment requirement mapping
-
-| Requirement | Evidence in this document |
-| --- | --- |
-| 3.2.2 — basis path testing for two complex methods | `WeightedScoringStrategy.scoreCandidates` (`V(G)=6`) and `RankingControl.generateRankedRecommendations` (`V(G)=5`) in sections 4A and 5. |
-| 3.2.3 — minimise test cases | One basis set per method; supplementary boundary and data-flow tests are explicitly separated from the basis paths. |
-| 3.2.4 — execute and document results | Every test table records Name, Location, Input, Oracle, Log and Status; section 9 records execution summaries. |
-| Supporting method | `WeightedScoringStrategy.computeSuitabilityScore` (`V(G)=2`) remains as a wrapper check, not one of the two complex methods. |
 
 ---
 
@@ -147,7 +136,7 @@ Location abbreviation: `WB` = `backend/tests/test_white_box.py`.
 
 ## 4A. Unit 1 — `WeightedScoringStrategy.scoreCandidates`
 
-This is the first of the two complex methods required by the testing brief.
+This is the first of the two complex methods under test.
 The high-level CFG collapses loop headers into blocks and counts only the
 branch predicates, giving a compact basis set for the core scoring logic.
 

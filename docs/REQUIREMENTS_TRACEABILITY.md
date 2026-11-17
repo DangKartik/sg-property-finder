@@ -3,10 +3,10 @@
 - **Version:** 1.1
 - **Date:** 8 November 2026
 - **Application:** SG Property Finder
-- **Requirement source:** project brief supplied for the neighbourhood recommender
+- **Requirement source:** the product requirements for the neighbourhood recommender
 - **Scope:** functional requirements FR-01–FR-11 and non-functional requirements NFR-01–NFR-09
-- **Requirement detail:** FR-01–FR-11 are high-level groups; the SRS and RTM trace the detailed `REQ-4.x.x-nn` requirements.
-- **Use-case model:** 17 use cases, `UC1`–`UC17`; see `Use Case Diagram and Description.pdf`
+- **Requirement detail:** FR-01–FR-11 are high-level groups of more detailed requirements.
+- **Use-case model:** 17 use cases, `UC1`–`UC17`; see the [use case diagram](diagrams/use-case-diagram.png)
 - **Evidence baseline:** backend **168 tests**, frontend **43 tests**, build passing, SLA benchmark and 18-check E2E checklist completed
 
 ---
@@ -137,7 +137,7 @@ a supporting system action (`FR-10`, `NFR-05`), not a separately named use case.
 
 ### Requirement-level open gaps
 
-1. **FR-01 interpretation:** public transport and recreation are represented inside amenity/green criteria rather than separate weighted criteria. If the brief requires them separately, add dedicated criteria and form sliders.
+1. **FR-01 interpretation:** public transport and recreation are represented inside amenity/green criteria rather than separate weighted criteria. If they need their own weights, add dedicated criteria and form sliders.
 2. **NFR-01 usability:** need a task-based usability study or participant feedback.
 3. **NFR-03 accuracy:** need independent reconciliation against source datasets or a second implementation.
 4. **NFR-04 reliability:** need production deployment, uptime monitoring and an availability record.

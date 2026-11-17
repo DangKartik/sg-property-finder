@@ -1,4 +1,4 @@
-# Formal Black-Box Testing
+# Black-Box Testing
 
 - **Version:** 2.1
 - **Date:** 8 November 2026
@@ -9,18 +9,6 @@
   - `backend/tests/test_black_box_state.py` — report state machine (8 tests)
   - `frontend/src/control/ProfileControl.test.ts` — profile state machine (7 tests)
 - **Result:** **52 test methods / 83 logical cases — all passed**
-
----
-
-## 0. Assignment requirement mapping
-
-| Requirement | Evidence in this document |
-| --- | --- |
-| 3.2.1 — EP/BVA for one important control class | `InputValidationControl` is tested through the `handlers.validateProfile` boundary; EP classes and BVA tables are in sections 5.1–5.2 and 6. |
-| 3.2.2 — basis path testing for two complex methods | Covered in `WHITE_BOX_TESTING.md`: `WeightedScoringStrategy.scoreCandidates` (`V(G)=6`) and `RankingControl.generateRankedRecommendations` (`V(G)=5`). |
-| 3.2.3 — minimise test cases | One baseline payload, one-factor-at-a-time classes and boundary values; no full cross-product. The minimisation rationale is in section 4.4. |
-| 3.2.4 — execute and document results | Every table records Input, Oracle and Log; section 10 records execution summaries. |
-| Test report format | Each row is a test case with Name, Location, Input, Oracle, Log and Status. |
 
 ---
 
